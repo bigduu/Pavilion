@@ -32,6 +32,8 @@ type StackLayer = {
   role: string
   description: string
   bullets: string[]
+  href?: string
+  cta?: string
 }
 
 type JourneyStep = {
@@ -46,6 +48,8 @@ type ShowcasePanel = {
   description: string
   badge: string
   lines: string[]
+  imageSrc: string
+  imageAlt: string
 }
 
 type DownloadCardKind = 'release' | 'guide' | 'source'
@@ -195,26 +199,35 @@ type Translation = {
 }
 
 const LANGUAGE_STORAGE_KEY = 'pavilion-locale'
-const GITHUB_URL = 'https://github.com/bigduu/Zenith'
+const BODHI_GITHUB_URL = 'https://github.com/bigduu/Bodhi'
+const LOTUS_GITHUB_URL = 'https://github.com/bigduu/Lotus'
+const BAMBOO_GITHUB_URL = 'https://github.com/bigduu/Bamboo-agent'
 const BODHI_RELEASES_URL = 'https://github.com/bigduu/Bodhi/releases'
+const BODHI_LATEST_RELEASE_URL = 'https://github.com/bigduu/Bodhi/releases/latest'
 
-const quickstartCode = String.raw`# quick start with Bodhi desktop
-cd bodhi
-npm install
-npm run tauri:dev
+const quickstartCode = String.raw`# clone the public stack side-by-side
+mkdir bodhi-stack && cd bodhi-stack
+git clone https://github.com/bigduu/Bamboo-agent.git bamboo
+git clone https://github.com/bigduu/Lotus.git lotus
+git clone https://github.com/bigduu/Bodhi.git bodhi
 
-# full workspace
-git clone --recursive https://github.com/bigduu/Zenith.git
-cd Zenith
-
-# bamboo runtime
+# terminal 1: bamboo runtime
 cd bamboo
-cargo run --bin bamboo -- serve --port 9562 --bind 127.0.0.1
+cargo run --bin bamboo -- serve --port 9562 --bind 127.0.0.1 --data-dir /tmp/bamboo-data
 
-# lotus UI
+# terminal 2: lotus ui
 cd ../lotus
 npm install
-npm run dev`
+npm run dev
+
+# terminal 3: bodhi desktop shell
+cd ../bodhi
+npm install
+npm run tauri:dev`
+
+const repoGuideCode = String.raw`Bodhi   https://github.com/bigduu/Bodhi
+Lotus   https://github.com/bigduu/Lotus
+Bamboo  https://github.com/bigduu/Bamboo-agent`
 
 const apiCode = String.raw`# core runtime
 POST /api/v1/chat
@@ -271,12 +284,12 @@ const translations: Record<Locale, Translation> = {
     },
     hero: {
       kicker: 'BODHI · LOCAL AI AGENT',
-      title: '让你的 AI 不只会回答，而是真的开始做事。',
+      title: '别再只和 AI 聊天。让它在你的电脑上真正做事。',
       subtitle:
-        'Bodhi 是运行在你自己机器上的本地 Agent。由 Bamboo 执行引擎驱动，配合 Lotus 的实时交互界面，让你能发起任务、看到进度、连接工具，并把重复工作沉淀成自动化流程。',
-      primaryCta: '开始使用',
-      secondaryCta: '查看 GitHub',
-      chips: ['本地优先', '实时进度', 'MCP 扩展', '工作流与定时任务'],
+        'Bodhi 是一个本地优先、Rust 驱动的 AI Agent。它不是把模型塞进聊天框里，而是由 Bamboo 自研 runtime 和 Lotus 界面层共同构成的完整产品：能执行任务、实时展示过程、接入 MCP，并把重复工作沉淀成自动化。',
+      primaryCta: '下载 Bodhi',
+      secondaryCta: '查看快速开始',
+      chips: ['Rust 驱动', '本地优先', '过程可见', 'MCP 与自动化'],
       stats: [
         {
           value: 'Local-first',
@@ -322,69 +335,85 @@ const translations: Record<Locale, Translation> = {
     proof: {
       items: [
         'Rust 驱动的本地执行引擎',
+        '核心执行链路自研而非简单套壳',
         'Server-Sent Events 实时流式反馈',
         '桌面端引导式上手',
         'MCP 可扩展能力',
         'Workflows 与 Schedules 自动化',
-        '多 Provider 兼容',
       ],
     },
     showcase: {
-      kicker: 'PRODUCT DEMO',
-      title: '把产品本身展示出来，而不是只用抽象概念讲故事',
+      kicker: 'PRODUCT SURFACES',
+      title: 'Bodhi 的差异化，不只存在于文案里，也直接体现在真实产品界面里。',
       description:
-        '第二轮增强把“下载、首次运行、进度反馈、自动化沉淀”放到了更靠前的位置，让官网更像一个真正能转化的产品站。',
+        '从设置中心到环境变量、指标汇总，这些界面共同说明 Bodhi 已经是一套完整的本地 agent 产品，而不是把模型临时放进聊天框里的演示。',
       panels: [
         {
-          kicker: 'Desktop onboarding',
-          title: '先把第一次体验跑通',
-          description: '用更短的上手路径，把安装、Provider 配置和首次运行衔接起来。',
-          badge: 'Welcome -> Setup -> Run',
-          lines: ['检测网络与 Provider 环境', '减少首次使用阻力', '让用户更快看到结果'],
+          kicker: 'System control surface',
+          title: '从第一眼开始，就像一套真正可配置的产品',
+          description: 'System Settings 让 Provider、系统能力与运行边界都有清晰入口，帮助用户快速建立“这不是聊天壳”的认知。',
+          badge: 'System Settings',
+          lines: ['统一设置中心而不是零散配置', '更适合桌面端首次引导', '直接体现产品完整度'],
+          imageSrc: '/screenshots/bodhi-system-settings-provider.png',
+          imageAlt: 'Bodhi System Settings 真实界面截图',
         },
         {
-          kicker: 'Visible execution',
-          title: '执行过程就是产品卖点的一部分',
-          description: '官网中直接模拟 Bodhi 的运行状态，让用户一眼明白它不是纯聊天工具。',
-          badge: 'Todo · Tool · SSE',
-          lines: ['实时任务流与工具调用', '结果逐步生成而非黑箱完成', '适合复杂任务与长任务'],
+          kicker: 'Local execution context',
+          title: '把环境变量和本地执行控制交回给用户自己',
+          description: 'Env Vars 页面把变量注入、secret 管理与 Bash 使用路径做成了可理解的产品能力，而不是隐藏在工程细节里。',
+          badge: 'Env Vars',
+          lines: ['支持本地执行上下文准备', '更清晰地管理 secret 与环境变量', '体现 local-first 的真实控制力'],
+          imageSrc: '/screenshots/bodhi-env-vars.png',
+          imageAlt: 'Bodhi Env Vars 真实界面截图',
         },
         {
-          kicker: 'Durable automation',
-          title: '从一次会话延伸到长期自动化',
-          description: '通过 workflow 与 schedule，把有效结果积累成可以复用、自动执行的系统。',
-          badge: 'Workflow -> Schedule',
-          lines: ['保存高频任务流程', '定时自动运行', '把 agent 变成长期协作者'],
+          kicker: 'Product feedback loop',
+          title: '通过 Metrics 看见长期使用，而不只是一次成功对话',
+          description: 'Metrics 界面把历史使用、效率信号与产品反馈回路展示出来，让 Bodhi 更像一个可持续使用的工作系统。',
+          badge: 'Metrics',
+          lines: ['看到使用汇总和长期信号', '帮助用户理解产品不是一次性工具', '强化系统化与可持续使用心智'],
+          imageSrc: '/screenshots/bodhi-metrics.png',
+          imageAlt: 'Bodhi Metrics 真实界面截图',
         },
       ],
     },
     comparison: {
       kicker: 'WHY BODHI',
-      title: '大多数 AI 产品停在回答，Bodhi 会继续把工作往前推。',
+      title: '很多 AI agent 还停在“会聊”，Bodhi 要解决的是“能不能真正把工作推进下去”。',
       description:
-        '如果你已经厌倦“得到一段答案，然后还得自己继续做事”，Bodhi 会给你更可执行、更可见、也更可复用的工作方式。',
-      ordinaryLabel: '普通 AI Chat',
+        '真正的差距不在模型接得多不多，而在执行链路是不是自己的、过程是不是可见、系统是不是可控，以及一次有效结果能不能沉淀成长期自动化。',
+      ordinaryLabel: '黑箱 / 套壳式 agent',
       bodhiLabel: 'Bodhi',
       rows: [
         {
+          topic: '产品本质',
+          ordinary: '更像聊天入口或能力拼装层',
+          bodhi: '围绕本地执行、可见过程和自动化构建的完整产品',
+        },
+        {
           topic: '结果形式',
-          ordinary: '返回一段文本或建议',
-          bodhi: '发起并推进实际任务',
+          ordinary: '给你一段答案，然后你继续收尾',
+          bodhi: '直接发起任务，并把工作往前推进',
         },
         {
           topic: '过程可见性',
-          ordinary: '过程大多不可见',
-          bodhi: 'token、任务、工具与事件持续流动',
+          ordinary: '大多是黑箱，用户只能等结果',
+          bodhi: 'token、任务、工具与事件流全程可见',
         },
         {
-          topic: '能力扩展',
-          ordinary: '受限于固定产品边界',
-          bodhi: '通过 MCP、工具与 Provider 持续扩展',
+          topic: '底层实现',
+          ordinary: '常常依赖第三方框架拼装核心能力',
+          bodhi: 'Rust 本地 runtime + 核心执行链路自研',
         },
         {
-          topic: '复用方式',
-          ordinary: '每次都从头开始',
-          bodhi: '沉淀为 workflow 与 schedule',
+          topic: '本地控制力',
+          ordinary: '运行边界、数据路径与环境感知较弱',
+          bodhi: 'local-first，数据、工具和执行节奏都更可控',
+        },
+        {
+          topic: '长期复用',
+          ordinary: '每次从头开始，很难形成系统资产',
+          bodhi: '沉淀为 workflow 与 schedule，形成长期工作系统',
         },
       ],
     },
@@ -395,11 +424,11 @@ const translations: Record<Locale, Translation> = {
         '无论你是第一次接触 agent，还是希望把它接入自己的工作系统，Bodhi 都有一条自然的成长路径。',
       items: [
         {
-          kicker: '01 · Local-first runtime',
-          title: '在你自己的机器上运行',
+          kicker: '01 · Rust-native runtime',
+          title: '不是套壳出来的 Agent，而是有自己执行内核的产品',
           description:
-            'Bamboo 提供本地 Agent runtime，让你的数据、配置、工具和执行节奏都保持可控，而不是藏在远端黑箱里。',
-          points: ['本地运行与本地数据目录', '对执行环境有感知', '适合隐私敏感与深度自定义场景'],
+            'Bamboo 不是把一堆外部能力随意拼起来的中间层，而是用 Rust 实现的本地 Agent runtime。执行、事件流、工具系统与自动化能力都在你们自己的掌控范围内。',
+          points: ['Rust 实现的本地执行核心', '核心链路自研而不是简单包装', '更适合长期演进与产品级打磨'],
         },
         {
           kicker: '02 · Live execution visibility',
@@ -410,10 +439,10 @@ const translations: Record<Locale, Translation> = {
         },
         {
           kicker: '03 · MCP + providers + tools',
-          title: '把模型、工具和外部系统接进来',
+          title: '可扩展，但不是靠外包核心能力来成立',
           description:
-            'Bodhi 不把能力锁死在一个产品边界里。你可以配置 Provider、连接 MCP Server，并逐步把自己的工作环境接入。',
-          points: ['兼容 OpenAI、Anthropic、Gemini 等', '通过 MCP 持续扩展', '把你的文件、命令和系统接入 agent'],
+            'Bodhi 可以接入 Provider、MCP Server 和外部工具，但它的差异点不是“能接很多东西”这么简单，而是即使不依赖重型外部框架，它也有自己完整的执行骨架。',
+          points: ['兼容 OpenAI、Anthropic、Gemini 等', '通过 MCP 持续扩展', '扩展建立在自有 runtime 之上'],
         },
         {
           kicker: '04 · Workflows + schedules',
@@ -424,19 +453,52 @@ const translations: Record<Locale, Translation> = {
         },
       ],
     },
+    download: {
+      kicker: 'DOWNLOAD BODHI',
+      title: '把“想试试”变成一个明确的下载动作',
+      description:
+        '下载区应该同时回答两件事：为什么 Bodhi 值得试，以及现在应该从哪里开始。这里把产品价值、稳定入口和深入路径放在同一个区域里。',
+      cards: [
+        {
+          kind: 'release',
+          kicker: 'Desktop release',
+          title: '从桌面端开始使用 Bodhi',
+          description: '优先给想直接体验产品的人一个最短路径。',
+          bullets: ['跳转到 GitHub Releases', '适合最终用户体验完整产品形态', '把下载按钮放在官网中高曝光位置'],
+          cta: '打开 Releases',
+        },
+        {
+          kind: 'guide',
+          kicker: 'Quick start docs',
+          title: '先看上手文档再决定深入',
+          description: '适合想先理解安装、Provider 和首次运行路径的用户。',
+          bullets: ['文档页承接首次运行', '说明 Setup、Provider 和第一次任务', '减少不必要的安装疑问'],
+          cta: '查看快速开始',
+        },
+        {
+          kind: 'source',
+          kicker: 'Developer path',
+          title: '从 Bodhi、Lotus 与 Bamboo 的公开入口开始',
+          description: '适合开发者或想立刻理解三层边界与产品实现方式的人。',
+          bullets: ['Bodhi：桌面壳、发布与原生集成', 'Lotus：React / Vite 交互层与实时 UI', 'Bamboo：Rust runtime、API、MCP 与自动化'],
+          cta: '打开开发者入口',
+        },
+      ],
+      note: 'Bodhi 提供稳定的 release 入口；如果你想先理解设置路径与能力边界，也可以先从文档开始，再决定下载方式。',
+    },
     architecture: {
       kicker: 'SYSTEM DESIGN',
       title: '一个完整的本地 Agent 系统，而不是一层聊天界面',
       description:
         'Bodhi 负责体验入口，Lotus 负责交互层，Bamboo 负责本地执行与扩展能力。Pavilion 则负责把价值、使用路径与文档讲清楚。',
-      flowLabel: '请求流向',
-      flowTitle: '从目标输入到自动化执行',
+      flowLabel: '用户路径与执行链路',
+      flowTitle: '从目标输入，到 Bodhi / Lotus / Bamboo 协作完成一次执行',
       flowSteps: [
-        '你描述目标',
-        'Bodhi 提供桌面入口与引导',
-        'Lotus 展示实时会话、设置与进度',
-        'Bamboo 调度任务、工具、MCP 与 Provider',
-        '结果沉淀为 workflow 或 schedule',
+        '你描述一个要推进的目标',
+        'Bodhi 作为桌面入口承接下载、首次运行与产品体验',
+        'Lotus 把设置、会话与实时进度可视化呈现出来',
+        'Bamboo 在本地调度任务、工具、MCP 与 Provider',
+        '结果继续沉淀为 workflow 或 schedule，形成长期自动化',
       ],
       layers: [
         {
@@ -444,18 +506,24 @@ const translations: Record<Locale, Translation> = {
           role: 'Desktop shell',
           description: '桌面应用入口，负责首次启动、窗口行为、原生集成与发布交付。',
           bullets: ['桌面安装与启动', '引导式设置流程', '把 Web 体验收敛成产品形态'],
+          href: BODHI_GITHUB_URL,
+          cta: '查看 Bodhi 仓库',
         },
         {
           name: 'Lotus',
           role: 'UI layer',
           description: '聊天、多窗格、设置中心与实时状态展示，让 Agent 的执行过程真正可见。',
           bullets: ['聊天与多窗格交互', 'SSE 实时状态订阅', 'Provider / MCP / Schedule 设置中心'],
+          href: LOTUS_GITHUB_URL,
+          cta: '查看 Lotus 仓库',
         },
         {
           name: 'Bamboo',
           role: 'Local runtime',
           description: '本地 Rust 执行内核，提供 API、工具系统、事件流、工作流、调度与扩展能力。',
           bullets: ['本地 Agent runtime', '内置工具与 HTTP API', 'MCP、workflow、schedule 支撑'],
+          href: BAMBOO_GITHUB_URL,
+          cta: '查看 Bamboo 仓库',
         },
         {
           name: 'Extensions',
@@ -497,7 +565,7 @@ const translations: Record<Locale, Translation> = {
       kicker: 'DOCS ENTRY',
       title: '把首页留给价值，把深度留给文档',
       description:
-        'Pavilion 不需要在一页塞完所有细节。首页负责让用户想试，文档负责让用户真正上手、扩展与集成。',
+        '首页负责帮助你建立对产品的判断；文档负责带你完成设置、扩展能力，并在需要时进入更深入的开发者资料。',
       cards: [
         {
           anchor: 'first-run',
@@ -515,10 +583,38 @@ const translations: Record<Locale, Translation> = {
         },
         {
           anchor: 'developers',
-          title: '把 Bamboo 接入你的系统',
-          description: '开发者可以从 API、模块边界、仓库结构和集成方式开始深入。',
-          bullets: ['Rust runtime 与 HTTP API', '事件流与前后端边界', 'Monorepo / submodule 协作方式'],
+          title: '进入 Bodhi / Lotus / Bamboo 开发者路径',
+          description: '从三个公开仓库与 API 边界理解桌面壳、交互层和本地 runtime。',
+          bullets: ['Bodhi：桌面壳与发布交付', 'Lotus：前端交互、设置与实时界面', 'Bamboo：Rust runtime、API、MCP 与自动化'],
           cta: '查看开发者指南',
+        },
+      ],
+    },
+    faq: {
+      kicker: 'FAQ',
+      title: '把第一次访问时最容易卡住的问题提前回答掉',
+      description:
+        '把最常见的疑问提前回答清楚，可以明显降低理解成本，也能让下载和文档路径更加顺畅。',
+      items: [
+        {
+          question: 'Bodhi 和 Bamboo、Lotus 分别是什么关系？',
+          answer:
+            'Bodhi 是用户直接使用的桌面产品，Lotus 是它的 UI 层，Bamboo 是本地 Agent runtime 与执行引擎。Pavilion 负责把这套系统对外讲清楚。',
+        },
+        {
+          question: 'Bodhi 是不是只是一个聊天界面？',
+          answer:
+            '不是。它的关键差异是能执行任务、展示实时进度、调用工具、接 MCP、保存 workflow，并通过 schedules 做自动化。',
+        },
+        {
+          question: '我应该从哪里开始体验？',
+          answer:
+            '最推荐的入口是桌面端 Bodhi。你也可以先阅读文档里的 First run 章节，确认 Provider 和首次运行路径后再下载。',
+        },
+        {
+          question: '如果我是开发者，应该从哪个模块开始看？',
+          answer:
+            '先按公开仓库边界进入：桌面壳与发布看 Bodhi，前端交互与实时界面看 Lotus，本地执行、API、MCP 与自动化看 Bamboo。Pavilion 文档页已经按这三层整理入口。',
         },
       ],
     },
@@ -526,8 +622,8 @@ const translations: Record<Locale, Translation> = {
       title: '从 Bodhi 开始；需要深入时，再进入 Bamboo、Lotus 与文档。',
       description:
         '把 Pavilion 作为你的第一站：先理解价值，再进入安装、能力扩展和开发者资料。',
-      primaryCta: '阅读文档',
-      secondaryCta: '前往 GitHub',
+      primaryCta: '下载 Bodhi',
+      secondaryCta: '阅读文档',
     },
     docs: {
       kicker: 'BODHI DOCUMENTATION',
@@ -593,10 +689,11 @@ const translations: Record<Locale, Translation> = {
           title: '开发者入口',
           paragraphs: [
             '如果你是开发者，最重要的是先理解三层边界：Bodhi 是桌面壳，Lotus 是 UI 资产源，Bamboo 是运行时与 API 核心。',
-            '仓库采用 monorepo + submodule 结构。功能改动应优先在对应子模块完成，再回到根仓更新 submodule pointer。',
-            '前端实时行为重点关注 Lotus 的事件订阅与多窗格结构；后端则关注 Bamboo 的路由、工具能力、调度与 MCP 管理。',
+            '现在最直接的公开入口不是一个抽象的根仓概念，而是这三个公开仓库本身。你可以按职责直接进入对应项目，而不是先理解内部协作方式。',
+            '前端实时行为重点关注 Lotus 的事件订阅与多窗格结构；后端则关注 Bamboo 的路由、工具能力、调度与 MCP 管理；桌面发布与原生集成则在 Bodhi。',
           ],
-          bullets: ['先改子模块，再更新根仓指针', '前端关注 Lotus，桌面壳关注 Bodhi，执行面关注 Bamboo', '把官网、文档与产品定位保持一致'],
+          bullets: ['桌面壳看 Bodhi，前端交互看 Lotus，执行面看 Bamboo', '优先按公开职责边界理解项目，而不是先理解内部仓库组织', '把官网、文档与真实产品边界保持一致'],
+          code: repoGuideCode,
         },
         {
           id: 'api',
@@ -625,6 +722,8 @@ const translations: Record<Locale, Translation> = {
       why: 'Why Bodhi',
       capabilities: 'Capabilities',
       architecture: 'Architecture',
+      download: 'Download',
+      faq: 'FAQ',
       docs: 'Docs',
       github: 'GitHub',
       home: 'Home',
@@ -637,12 +736,12 @@ const translations: Record<Locale, Translation> = {
     },
     hero: {
       kicker: 'BODHI · LOCAL AI AGENT',
-      title: 'Your AI should do more than answer. It should move work forward.',
+      title: 'Stop chatting with AI. Start running work locally.',
       subtitle:
-        'Bodhi is a local AI agent that runs on your own machine. Powered by Bamboo and shaped through the Lotus interface layer, it helps you launch tasks, see progress live, connect tools, and turn repeatable work into automation.',
-      primaryCta: 'Get started',
-      secondaryCta: 'View GitHub',
-      chips: ['Local-first', 'Streaming progress', 'MCP extensible', 'Workflows and schedules'],
+        'Bodhi is a local-first AI agent powered by a Rust runtime you actually control. It is not just a model wrapped in chat: Bamboo provides the in-house execution core, Lotus makes the process visible, and together they turn tasks, tools, MCP, and automation into one product.',
+      primaryCta: 'Download Bodhi',
+      secondaryCta: 'Open quick start',
+      chips: ['Rust-powered', 'Local-first', 'Visible execution', 'MCP and automation'],
       stats: [
         {
           value: 'Local-first',
@@ -688,40 +787,85 @@ const translations: Record<Locale, Translation> = {
     proof: {
       items: [
         'Rust-powered local runtime',
+        'Core execution path built in-house',
         'Server-Sent Events for live feedback',
         'Desktop onboarding flow',
         'MCP extensibility',
         'Workflow and schedule automation',
-        'Multi-provider ready',
+      ],
+    },
+    showcase: {
+      kicker: 'PRODUCT SURFACES',
+      title: 'Bodhi’s differentiation is visible in the product itself, not only in the copy.',
+      description:
+        'From system settings to environment control and usage metrics, these screens show that Bodhi is already a full local agent product rather than a temporary chat wrapper around a model.',
+      panels: [
+        {
+          kicker: 'System control surface',
+          title: 'It looks configurable because it already is',
+          description: 'System Settings gives providers, system capabilities, and runtime boundaries a real product surface that quickly signals product depth.',
+          badge: 'System Settings',
+          lines: ['A unified control surface instead of scattered setup', 'Fits first-run onboarding well', 'Makes product completeness visible immediately'],
+          imageSrc: '/screenshots/bodhi-system-settings-provider.png',
+          imageAlt: 'Real Bodhi System Settings screenshot',
+        },
+        {
+          kicker: 'Local execution context',
+          title: 'Environment variables and execution context stay in your hands',
+          description: 'The Env Vars surface turns variable injection, secret handling, and Bash context into a visible product capability instead of buried implementation detail.',
+          badge: 'Env Vars',
+          lines: ['Prepares real local execution context', 'Makes secret and variable handling clearer', 'Shows what local-first control actually means'],
+          imageSrc: '/screenshots/bodhi-env-vars.png',
+          imageAlt: 'Real Bodhi Env Vars screenshot',
+        },
+        {
+          kicker: 'Product feedback loop',
+          title: 'Metrics make long-term use visible, not just one successful chat',
+          description: 'The Metrics view exposes historical signals and product feedback loops that make Bodhi feel like a durable system instead of a one-off experiment.',
+          badge: 'Metrics',
+          lines: ['Shows usage summaries and long-term signals', 'Helps users see the system beyond one run', 'Reinforces durability and product maturity'],
+          imageSrc: '/screenshots/bodhi-metrics.png',
+          imageAlt: 'Real Bodhi Metrics screenshot',
+        },
       ],
     },
     comparison: {
       kicker: 'WHY BODHI',
-      title: 'Most AI products stop at answers. Bodhi keeps the work moving.',
+      title: 'Many agent products still optimize for “chatting well.” Bodhi is built to actually move work.',
       description:
-        'If you are tired of getting a paragraph back and then doing the real work yourself, Bodhi gives you a more executable, visible, and reusable model of work.',
-      ordinaryLabel: 'Typical AI chat',
+        'The real difference is not how many models are connected. It is whether the execution path is yours, whether the process is visible, whether the system stays controllable, and whether one successful run can compound into durable automation.',
+      ordinaryLabel: 'Black-box / wrapper-style agents',
       bodhiLabel: 'Bodhi',
       rows: [
         {
+          topic: 'Product shape',
+          ordinary: 'Feels like a chat shell or a capability mashup',
+          bodhi: 'Built as a full product around local execution, visibility, and automation',
+        },
+        {
           topic: 'Output',
-          ordinary: 'Returns text or suggestions',
-          bodhi: 'Starts and advances real tasks',
+          ordinary: 'Gives you an answer and leaves the rest to you',
+          bodhi: 'Starts real tasks and keeps the work moving',
         },
         {
           topic: 'Visibility',
-          ordinary: 'Execution is mostly hidden',
-          bodhi: 'Tokens, tasks, tools, and events stay visible',
+          ordinary: 'Mostly black-box execution',
+          bodhi: 'Tokens, tasks, tools, and event flow stay visible',
         },
         {
-          topic: 'Extensibility',
-          ordinary: 'Bound by a fixed product surface',
-          bodhi: 'Extends through MCP, tools, and providers',
+          topic: 'Foundation',
+          ordinary: 'Often assembled around third-party agent frameworks',
+          bodhi: 'Rust-native runtime with a core execution path built in-house',
         },
         {
-          topic: 'Reuse',
-          ordinary: 'Starts from scratch each time',
-          bodhi: 'Compounds into workflows and schedules',
+          topic: 'Local control',
+          ordinary: 'Weaker control over runtime boundaries and environment awareness',
+          bodhi: 'Local-first, with tighter control over data, tools, and execution rhythm',
+        },
+        {
+          topic: 'Compounding value',
+          ordinary: 'Starts from scratch every time',
+          bodhi: 'Turns successful runs into workflows and schedules',
         },
       ],
     },
@@ -732,14 +876,14 @@ const translations: Record<Locale, Translation> = {
         'Whether you are new to agents or ready to plug one into your own system, Bodhi gives you a clear path from first run to serious automation.',
       items: [
         {
-          kicker: '01 · Local-first runtime',
-          title: 'Run your agent where your work already lives',
+          kicker: '01 · Rust-native runtime',
+          title: 'Not a thin wrapper around someone else’s agent stack',
           description:
-            'Bamboo provides the local agent runtime so data, tools, configuration, and execution remain understandable and controllable.',
+            'Bamboo is a Rust-built local runtime, not just a loose integration layer. Execution, streaming, tools, and automation sit inside a product-controlled core path that you can evolve with confidence.',
           points: [
-            'Runs locally with a real data directory',
-            'Closer to your actual files and workflows',
-            'Fits privacy-sensitive and highly customized environments',
+            'Rust implementation at the runtime layer',
+            'Core execution path built in-house',
+            'Better suited for long-term product quality and control',
           ],
         },
         {
@@ -755,13 +899,13 @@ const translations: Record<Locale, Translation> = {
         },
         {
           kicker: '03 · MCP + providers + tools',
-          title: 'Connect models, tools, and external systems',
+          title: 'Extensible without outsourcing the product core',
           description:
-            'Bodhi does not lock capability inside a narrow app boundary. Configure providers, connect MCP servers, and plug your real environment into the agent loop.',
+            'Bodhi can connect providers, MCP servers, and external tools, but the real strength is that extensibility sits on top of a runtime you own rather than replacing it.',
           points: [
             'Works with OpenAI, Anthropic, Gemini, and more',
             'Expands through MCP servers',
-            'Brings files, commands, and systems into execution',
+            'Extensibility sits on top of a self-owned runtime core',
           ],
         },
         {
@@ -777,19 +921,52 @@ const translations: Record<Locale, Translation> = {
         },
       ],
     },
+    download: {
+      kicker: 'DOWNLOAD BODHI',
+      title: 'Turn interest into a real install step',
+      description:
+        'This section answers two questions clearly: why Bodhi is worth trying, and where to start right now. Product value, stable entry points, and deeper paths live together here.',
+      cards: [
+        {
+          kind: 'release',
+          kicker: 'Desktop release',
+          title: 'Start with the Bodhi desktop product',
+          description: 'The shortest path for users who want to try the real product surface first.',
+          bullets: ['Jump to GitHub Releases', 'Best for end-user evaluation', 'Keeps the CTA near the highest-intent sections'],
+          cta: 'Open releases',
+        },
+        {
+          kind: 'guide',
+          kicker: 'Quick start docs',
+          title: 'Read the first-run path before installing',
+          description: 'Good for users who want to understand setup, providers, and the first task loop first.',
+          bullets: ['Docs carry the first-run flow', 'Clarifies setup and provider expectations', 'Reduces avoidable install confusion'],
+          cta: 'Open quick start',
+        },
+        {
+          kind: 'source',
+          kicker: 'Developer path',
+          title: 'Start from the public Bodhi, Lotus, and Bamboo entry points',
+          description: 'Best for developers or anyone who wants to understand the product through its three real layers.',
+          bullets: ['Bodhi: desktop shell, release surface, and native integration', 'Lotus: React / Vite interaction layer and live UI', 'Bamboo: Rust runtime, APIs, MCP, and automation'],
+          cta: 'Open developer path',
+        },
+      ],
+      note: 'Bodhi gives you a stable release entry. If you want more context first, start from the docs and then move into installation when you are ready.',
+    },
     architecture: {
       kicker: 'SYSTEM DESIGN',
       title: 'A complete local agent system, not just a chat layer',
       description:
         'Bodhi is the product surface. Lotus is the interaction layer. Bamboo is the local runtime and execution engine. Pavilion explains the value, path, and documentation clearly.',
-      flowLabel: 'Request flow',
-      flowTitle: 'From goal input to reusable automation',
+      flowLabel: 'User path and execution chain',
+      flowTitle: 'From user intent to one coordinated run across Bodhi, Lotus, and Bamboo',
       flowSteps: [
-        'You describe a goal',
-        'Bodhi provides the desktop product entry',
-        'Lotus renders chat, settings, and live progress',
-        'Bamboo orchestrates tasks, tools, MCP, and providers',
-        'Results become workflows or schedules',
+        'You describe a goal worth moving forward',
+        'Bodhi provides the desktop entry, onboarding, and product surface',
+        'Lotus renders settings, conversation state, and live progress visibly',
+        'Bamboo orchestrates tasks, tools, MCP servers, and providers locally',
+        'Successful runs compound into workflows or schedules for repeatable automation',
       ],
       layers: [
         {
@@ -798,6 +975,8 @@ const translations: Record<Locale, Translation> = {
           description:
             'The product entry point for onboarding, packaging, native integration, and the desktop experience.',
           bullets: ['Desktop install and launch', 'Guided first-run setup', 'Turns the stack into a coherent product'],
+          href: BODHI_GITHUB_URL,
+          cta: 'Open Bodhi repo',
         },
         {
           name: 'Lotus',
@@ -805,6 +984,8 @@ const translations: Record<Locale, Translation> = {
           description:
             'The React + Vite interaction layer for chat, multi-pane workflows, settings, and visible progress.',
           bullets: ['Chat and multi-pane UX', 'SSE-based progress rendering', 'Provider, MCP, and schedule settings'],
+          href: LOTUS_GITHUB_URL,
+          cta: 'Open Lotus repo',
         },
         {
           name: 'Bamboo',
@@ -812,6 +993,8 @@ const translations: Record<Locale, Translation> = {
           description:
             'The Rust execution core that exposes APIs, built-in tools, streaming events, workflows, schedules, and extension points.',
           bullets: ['Local agent runtime', 'Built-in tools and HTTP API', 'MCP, workflows, and schedules'],
+          href: BAMBOO_GITHUB_URL,
+          cta: 'Open Bamboo repo',
         },
         {
           name: 'Extensions',
@@ -854,7 +1037,7 @@ const translations: Record<Locale, Translation> = {
       kicker: 'DOCS ENTRY',
       title: 'Keep the home page for value. Keep the depth in docs.',
       description:
-        'Pavilion should not force every detail onto one screen. Home creates momentum. Docs support real adoption, extension, and integration.',
+        'The home page helps people judge the product quickly. Docs carry the deeper setup, extension paths, and developer-facing material when users want to go further.',
       cards: [
         {
           anchor: 'first-run',
@@ -872,10 +1055,43 @@ const translations: Record<Locale, Translation> = {
         },
         {
           anchor: 'developers',
-          title: 'Integrate Bamboo into your stack',
-          description: 'Developers can go deeper through APIs, module boundaries, repository structure, and runtime behavior.',
-          bullets: ['Rust runtime and HTTP API', 'Streaming boundaries', 'Monorepo and submodule workflow'],
+          title: 'Follow the Bodhi / Lotus / Bamboo developer path',
+          description: 'Understand the desktop shell, UI layer, and local runtime through their real public boundaries.',
+          bullets: ['Bodhi: desktop shell and release surface', 'Lotus: frontend interactions, settings, and live UI', 'Bamboo: Rust runtime, APIs, MCP, and automation'],
           cta: 'Open developer guide',
+        },
+      ],
+    },
+    faq: {
+      kicker: 'FAQ',
+      title: 'Answer the first points of hesitation before people bounce',
+      description:
+        'Answering the most common questions up front reduces friction, clarifies the product boundary, and makes the path into download and docs smoother.',
+      items: [
+        {
+          question: 'How do Bodhi, Bamboo, and Lotus relate to each other?',
+          answer:
+            'Bodhi is the desktop product people use directly. Lotus is the UI layer. Bamboo is the local agent runtime and execution engine. Pavilion explains the system publicly.',
+        },
+        {
+          question: 'Is Bodhi just a chat interface?',
+          answer:
+            'No. The key difference is that it can execute tasks, show live progress, call tools, connect MCP servers, save workflows, and automate repeatable work with schedules.',
+        },
+        {
+          question: 'Where should I start if I want to try it?',
+          answer:
+            'The best entry is usually the Bodhi desktop flow. If you want more context first, start from the First run section in the docs and then move into installation.',
+        },
+        {
+          question: 'Where should developers begin?',
+          answer:
+            'Start from the public boundaries: Bodhi for desktop shell concerns, Lotus for frontend interaction and live UI, and Bamboo for runtime, APIs, MCP, and automation. The docs page is organized around those three layers already.',
+        },
+        {
+          question: 'What makes Bodhi different from many other agent products?',
+          answer:
+            'A big part of the difference is architectural ownership. Bodhi sits on top of Bamboo, a Rust-built local runtime with a core execution path developed in-house, instead of relying only on a thin wrapper around third-party agent infrastructure.',
         },
       ],
     },
@@ -883,8 +1099,8 @@ const translations: Record<Locale, Translation> = {
       title: 'Start with Bodhi. Go deeper through Bamboo, Lotus, and the docs when you are ready.',
       description:
         'Use Pavilion as the first stop: understand the product, begin the setup path, and then dive into extensibility and developer materials.',
-      primaryCta: 'Read the docs',
-      secondaryCta: 'Open GitHub',
+      primaryCta: 'Download Bodhi',
+      secondaryCta: 'Read the docs',
     },
     docs: {
       kicker: 'BODHI DOCUMENTATION',
@@ -950,10 +1166,11 @@ const translations: Record<Locale, Translation> = {
           title: 'Developer entry',
           paragraphs: [
             'For developers, the most important first step is understanding the boundary: Bodhi is the desktop shell, Lotus is the UI source of truth, and Bamboo is the runtime plus API core.',
-            'The repository uses a monorepo plus submodules. Changes should land in the correct submodule first, then be reflected through updated pointers in the root repository.',
-            'Front-end work centers on Lotus streaming, multi-pane behavior, and settings flows. Backend work centers on Bamboo routes, tools, scheduling, and MCP management.',
+            'The clearest public entry is not an abstract root repository concept but the three public repositories themselves. Enter the layer you need directly instead of learning internal repository choreography first.',
+            'Front-end work centers on Lotus streaming, multi-pane behavior, and settings flows. Backend work centers on Bamboo routes, tools, scheduling, and MCP management. Desktop packaging and native integration live in Bodhi.',
           ],
-          bullets: ['Change submodules first, then update root pointers', 'Keep front-end, desktop, and runtime ownership clear', 'Align website messaging with the actual product boundary'],
+          bullets: ['Bodhi for desktop shell, Lotus for UI, Bamboo for runtime', 'Use public ownership boundaries as the main mental model', 'Keep website messaging aligned with the actual shipped product boundary'],
+          code: repoGuideCode,
         },
         {
           id: 'api',
@@ -1026,6 +1243,19 @@ function useReveal<T extends HTMLElement>(startVisible = false) {
   }, [startVisible])
 
   return { elementRef, isVisible }
+}
+
+function resolveDownloadLink(kind: DownloadCardKind, locale: Locale) {
+  switch (kind) {
+    case 'release':
+      return { href: BODHI_LATEST_RELEASE_URL, external: true }
+    case 'guide':
+      return { href: buildUrl('/docs', locale, 'first-run'), external: false }
+    case 'source':
+      return { href: buildUrl('/docs', locale, 'developers'), external: false }
+    default:
+      return { href: BODHI_GITHUB_URL, external: true }
+  }
 }
 
 function LanguageSwitch({
@@ -1108,9 +1338,44 @@ function HomePage({
   setLocale: (locale: Locale) => void
   content: Translation
 }) {
+  const downloadUrl = buildUrl('/download', locale)
   const docsOverviewUrl = buildUrl('/docs', locale, 'overview')
   const docsFirstRunUrl = buildUrl('/docs', locale, 'first-run')
   const docsUrl = buildUrl('/docs', locale, 'overview')
+  const comparisonSummary =
+    locale === 'zh'
+      ? {
+          ordinaryKicker: 'COMMON AGENT PATTERN',
+          ordinaryTitle: '会聊，但很难真正形成工作系统',
+          ordinaryPoints: [
+            '把模型接进聊天层，但执行链路和产品边界不够扎实',
+            '过程偏黑箱，用户很难判断 agent 到底在做什么',
+            '一次成功结果通常难以沉淀成长期可复用资产',
+          ],
+          bodhiKicker: 'BODHI DIFFERENCE',
+          bodhiTitle: '可执行、可见、可沉淀',
+          bodhiPoints: [
+            'Rust runtime + 自研执行链路，产品核心不是简单套壳',
+            '任务、工具与事件流持续可见，更适合真实工作场景',
+            'workflow 与 schedule 把一次成功经验变成长期自动化',
+          ],
+        }
+      : {
+          ordinaryKicker: 'COMMON AGENT PATTERN',
+          ordinaryTitle: 'Good at chatting, weaker at becoming a real work system',
+          ordinaryPoints: [
+            'A model is placed inside chat, but the execution path and product boundary stay thin',
+            'The process is mostly black-box, so users cannot easily judge what the agent is doing',
+            'One successful result rarely compounds into a durable working system',
+          ],
+          bodhiKicker: 'BODHI DIFFERENCE',
+          bodhiTitle: 'Executable, visible, and compounding by design',
+          bodhiPoints: [
+            'Rust runtime + in-house execution path instead of a thin wrapper',
+            'Tasks, tools, and event flow stay visible, which fits real work better',
+            'Workflows and schedules turn one useful run into lasting automation',
+          ],
+        }
 
   return (
     <div className="page-shell">
@@ -1130,9 +1395,11 @@ function HomePage({
         <nav className="nav-links" aria-label="Primary navigation">
           <a href="#why-bodhi">{content.nav.why}</a>
           <a href="#capabilities">{content.nav.capabilities}</a>
+          <a href={downloadUrl}>{content.nav.download}</a>
           <a href="#architecture">{content.nav.architecture}</a>
+          <a href="#faq">{content.nav.faq}</a>
           <a href={docsUrl}>{content.nav.docs}</a>
-          <a href={GITHUB_URL} target="_blank" rel="noopener noreferrer">
+          <a href={BODHI_GITHUB_URL} target="_blank" rel="noopener noreferrer">
             {content.nav.github}
           </a>
         </nav>
@@ -1156,16 +1423,19 @@ function HomePage({
             </div>
 
             <div className="hero-actions">
-              <a className="button button-primary" href={docsFirstRunUrl}>
+              <a className="button button-primary" href={downloadUrl}>
                 {content.hero.primaryCta}
               </a>
+              <a className="button button-secondary" href={docsFirstRunUrl}>
+                {content.hero.secondaryCta}
+              </a>
               <a
-                className="button button-secondary"
-                href={GITHUB_URL}
+                className="link-inline hero-link-inline"
+                href={BODHI_GITHUB_URL}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {content.hero.secondaryCta}
+                {content.nav.github}
               </a>
             </div>
 
@@ -1184,6 +1454,36 @@ function HomePage({
               <span className="live-pill">{content.hero.liveLabel}</span>
               <span className="live-signal">SSE</span>
             </div>
+
+            <div className="hero-product-shot">
+              <div className="hero-product-topbar">
+                <span className="hero-product-chip">Bodhi Desktop</span>
+                <span className="hero-product-chip hero-product-chip-live">Live execution</span>
+              </div>
+              <img
+                className="hero-product-image"
+                src="/screenshots/bodhi-system-settings-provider.png"
+                alt={locale === 'zh' ? 'Bodhi System Settings 真实界面截图' : 'Real Bodhi System Settings screenshot'}
+                loading="eager"
+              />
+              <div className="hero-product-inset">
+                <img
+                  className="hero-product-inset-image"
+                  src="/screenshots/bodhi-skills.png"
+                  alt={locale === 'zh' ? 'Bodhi Skills 真实界面截图' : 'Bodhi skills inset'}
+                  loading="lazy"
+                />
+              </div>
+              <div className="hero-product-caption">
+                <strong>{locale === 'zh' ? '真实 Bodhi 功能中心' : 'Real Bodhi control surface'}</strong>
+                <span>
+                  {locale === 'zh'
+                    ? '本地运行、设置中心与技能系统都已经是完整产品界面'
+                    : 'Local-first, fully configurable, and already expressed as real product surfaces'}
+                </span>
+              </div>
+            </div>
+
             <h2>{content.hero.liveTitle}</h2>
             <p className="live-summary">{content.hero.liveSummary}</p>
 
@@ -1215,12 +1515,88 @@ function HomePage({
           </ul>
         </RevealSection>
 
+        <RevealSection className="panel section-card showcase-section">
+          <SectionIntro
+            kicker={content.showcase.kicker}
+            title={content.showcase.title}
+            description={content.showcase.description}
+          />
+
+          <div className="showcase-grid">
+            {content.showcase.panels.map((panel, index) => (
+              <article className={`panel-subtle showcase-card ${index === 0 ? 'featured' : ''}`} key={panel.title}>
+                <div className="showcase-media">
+                  <img className="showcase-image" src={panel.imageSrc} alt={panel.imageAlt} loading="lazy" />
+                </div>
+                <div className="showcase-head">
+                  <p className="card-kicker">{panel.kicker}</p>
+                  <span className="showcase-badge">{panel.badge}</span>
+                </div>
+                <h3>{panel.title}</h3>
+                <p>{panel.description}</p>
+                <ul className="showcase-lines">
+                  {panel.lines.map((line) => (
+                    <li key={line}>{line}</li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+        </RevealSection>
+
         <RevealSection id="why-bodhi" className="panel section-card comparison-section">
           <SectionIntro
             kicker={content.comparison.kicker}
             title={content.comparison.title}
             description={content.comparison.description}
           />
+
+          <div
+            className="comparison-callout-grid"
+            aria-label={locale === 'zh' ? 'Bodhi 对比摘要' : 'Bodhi comparison summary'}
+          >
+            <article className="panel-subtle comparison-callout comparison-ordinary">
+              <p className="card-kicker">{comparisonSummary.ordinaryKicker}</p>
+              <h3>{comparisonSummary.ordinaryTitle}</h3>
+              <ul>
+                {comparisonSummary.ordinaryPoints.map((point) => (
+                  <li key={point}>{point}</li>
+                ))}
+              </ul>
+            </article>
+
+            <article className="panel-subtle comparison-callout comparison-bodhi">
+              <p className="card-kicker">{comparisonSummary.bodhiKicker}</p>
+              <h3>{comparisonSummary.bodhiTitle}</h3>
+              <ul>
+                {comparisonSummary.bodhiPoints.map((point) => (
+                  <li key={point}>{point}</li>
+                ))}
+              </ul>
+            </article>
+          </div>
+
+          <article className="panel-subtle comparison-proof-card">
+            <p className="card-kicker">{locale === 'zh' ? 'REAL PRODUCT PROOF' : 'REAL PRODUCT PROOF'}</p>
+            <h3>
+              {locale === 'zh'
+                ? '这不是概念图，而是真实运行中的 Bodhi 扩展能力界面'
+                : 'This is not concept art. It is a live Bodhi extensibility surface.'}
+            </h3>
+            <p>
+              {locale === 'zh'
+                ? '把真实产品画面放到 Why Bodhi 区，是为了让差异化卖点有直接证据：它确实在运行，确实有设置中心、扩展系统和真实可操作的产品能力面。'
+                : 'The point of showing a real product screen here is simple: the differentiation claims are visible in the product itself, not only in marketing copy.'}
+            </p>
+            <div className="comparison-proof-image-wrap">
+              <img
+                className="comparison-proof-image"
+                src="/screenshots/bodhi-mcp.png"
+                alt={locale === 'zh' ? 'Bodhi MCP 真实界面截图' : 'Real Bodhi MCP screenshot'}
+                loading="lazy"
+              />
+            </div>
+          </article>
 
           <div className="comparison-table" role="table" aria-label={content.comparison.title}>
             <div className="comparison-row comparison-head" role="row">
@@ -1272,6 +1648,42 @@ function HomePage({
           </div>
         </RevealSection>
 
+        <RevealSection id="download" className="panel section-card download-section">
+          <SectionIntro
+            kicker={content.download.kicker}
+            title={content.download.title}
+            description={content.download.description}
+          />
+
+          <div className="download-grid">
+            {content.download.cards.map((card) => {
+              const link = resolveDownloadLink(card.kind, locale)
+              return (
+                <article className={`panel-subtle download-card ${card.kind}`} key={card.title}>
+                  <p className="card-kicker">{card.kicker}</p>
+                  <h3>{card.title}</h3>
+                  <p>{card.description}</p>
+                  <ul>
+                    {card.bullets.map((bullet) => (
+                      <li key={bullet}>{bullet}</li>
+                    ))}
+                  </ul>
+                  <a
+                    className={card.kind === 'release' ? 'button button-primary' : 'button button-secondary'}
+                    href={link.href}
+                    target={link.external ? '_blank' : undefined}
+                    rel={link.external ? 'noopener noreferrer' : undefined}
+                  >
+                    {card.cta}
+                  </a>
+                </article>
+              )
+            })}
+          </div>
+
+          <p className="download-note">{content.download.note}</p>
+        </RevealSection>
+
         <RevealSection id="architecture" className="panel section-card architecture-section">
           <SectionIntro
             kicker={content.architecture.kicker}
@@ -1303,6 +1715,11 @@ function HomePage({
                       <li key={bullet}>{bullet}</li>
                     ))}
                   </ul>
+                  {layer.href && layer.cta ? (
+                    <a className="link-inline stack-link" href={layer.href} target="_blank" rel="noopener noreferrer">
+                      {layer.cta}
+                    </a>
+                  ) : null}
                 </article>
               ))}
             </div>
@@ -1352,6 +1769,23 @@ function HomePage({
           </div>
         </RevealSection>
 
+        <RevealSection id="faq" className="panel section-card faq-section">
+          <SectionIntro
+            kicker={content.faq.kicker}
+            title={content.faq.title}
+            description={content.faq.description}
+          />
+
+          <div className="faq-list">
+            {content.faq.items.map((item) => (
+              <details className="panel-subtle faq-item" key={item.question}>
+                <summary>{item.question}</summary>
+                <p>{item.answer}</p>
+              </details>
+            ))}
+          </div>
+        </RevealSection>
+
         <RevealSection className="panel final-cta">
           <div>
             <p className="section-kicker">BODHI NEXT STEP</p>
@@ -1360,19 +1794,249 @@ function HomePage({
           </div>
 
           <div className="hero-actions final-actions">
-            <a className="button button-primary" href={docsOverviewUrl}>
+            <a className="button button-primary" href={downloadUrl}>
               {content.finalCta.primaryCta}
             </a>
-            <a
-              className="button button-secondary"
-              href={GITHUB_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a className="button button-secondary" href={docsOverviewUrl}>
               {content.finalCta.secondaryCta}
             </a>
           </div>
         </RevealSection>
+      </main>
+
+      <footer className="footer-line">
+        <p>{content.footer.home}</p>
+      </footer>
+    </div>
+  )
+}
+
+function DownloadPage({
+  locale,
+  setLocale,
+  content,
+}: {
+  locale: Locale
+  setLocale: (locale: Locale) => void
+  content: Translation
+}) {
+  const homeUrl = buildUrl('/', locale)
+  const downloadUrl = buildUrl('/download', locale)
+  const docsOverviewUrl = buildUrl('/docs', locale, 'overview')
+  const docsFirstRunUrl = buildUrl('/docs', locale, 'first-run')
+
+  const copy =
+    locale === 'zh'
+      ? {
+          kicker: 'DOWNLOAD BODHI',
+          title: '下载 Bodhi，开始使用一个真正能推进工作的本地 Agent。',
+          description:
+            '这是 Bodhi 的稳定下载入口。主按钮始终指向 GitHub 最新 release，因此你总能进入最新可用版本。更重要的是，你下载的不是一个临时聊天套壳，而是一套由 Rust runtime、自研执行链路和桌面体验共同构成的完整产品。',
+          latestKicker: 'Latest release mapping',
+          latestTitle: '稳定下载入口：始终指向最新版本',
+          latestDescription:
+            '无论后续版本怎么迭代，这个入口都可以保持不变。点击主按钮后，GitHub 会自动把用户带到当前最新 release。',
+          primaryCta: '下载最新版本',
+          secondaryCta: '查看所有 Releases',
+          tertiaryCta: '查看快速开始',
+          routeNote: '当前映射地址',
+          sideKicker: 'Why Bodhi',
+          sideTitle: '你下载的不只是一个聊天界面',
+          sidePoints: [
+            'Rust 驱动的本地 runtime，而不是简单套壳',
+            '执行过程可见，任务、工具与事件流都能追踪',
+            'MCP、workflow 和 schedule 让它能长期进化成真正的工作系统',
+          ],
+          screenshotKicker: 'REAL BODHI UI',
+          screenshotTitle: '真实的 Bodhi 界面，而不是概念图',
+          screenshotDescription:
+            '这些截图直接来自真实运行中的 Bodhi。对 Pavilion 来说，真实产品界面比抽象插画更有说服力，也更能支撑“可见执行、本地优先、真实工作流”这些卖点。',
+          screenshotNote:
+            '这组官方截图优先展示设置中心、环境变量、指标、MCP 与技能系统等更能体现产品深度的功能面，而不是重复的聊天视图。',
+          screenshots: [
+            {
+              title: 'System Settings 总览',
+              description: '作为宽幅主视觉，展示 Bodhi 已经具备完整的设置中心，而不是只停留在聊天入口。',
+              src: '/screenshots/bodhi-system-settings-provider.png',
+            },
+            {
+              title: 'Env Vars',
+              description: '强调环境变量可以注入 Bash 使用，并对 secret 做更稳妥的管理与存储。',
+              src: '/screenshots/bodhi-env-vars.png',
+            },
+            {
+              title: 'Metrics',
+              description: '展示真实的使用统计、效率指标与历史汇总，让 Bodhi 更像可长期使用的产品系统。',
+              src: '/screenshots/bodhi-metrics.png',
+            },
+            {
+              title: 'MCP',
+              description: '用真实界面证明 Bodhi 的外部扩展能力不是口号，而是可配置、可观测的产品能力。',
+              src: '/screenshots/bodhi-mcp.png',
+            },
+            {
+              title: 'Skills',
+              description: '展示技能系统的可浏览与可检索形态，让产品的能力边界与增长方式更清晰。',
+              src: '/screenshots/bodhi-skills.png',
+            },
+          ],
+        }
+      : {
+          kicker: 'DOWNLOAD BODHI',
+          title: 'Download Bodhi and start with a local agent that actually moves work.',
+          description:
+            'This is the stable download entry for Bodhi. The primary button always points to the latest GitHub release, so it stays current as versions change. More importantly, what you are downloading is not a disposable chat wrapper but a product built on a Rust runtime, an in-house execution path, and a real desktop experience.',
+          latestKicker: 'Latest release mapping',
+          latestTitle: 'Stable download entry: always points to the latest release',
+          latestDescription:
+            'This route can stay fixed even as versions ship. The primary CTA hands users off to the current latest GitHub release automatically.',
+          primaryCta: 'Download latest release',
+          secondaryCta: 'View all releases',
+          tertiaryCta: 'Open quick start',
+          routeNote: 'Current mapped URL',
+          sideKicker: 'Why Bodhi',
+          sideTitle: 'You are not downloading just another chat interface',
+          sidePoints: [
+            'Rust-powered local runtime instead of a thin wrapper',
+            'Visible execution with tasks, tools, and event flow',
+            'MCP, workflows, and schedules turn one-off chat into a durable system',
+          ],
+          screenshotKicker: 'REAL BODHI UI',
+          screenshotTitle: 'Real Bodhi screens instead of concept art',
+          screenshotDescription:
+            'These images come from a real Bodhi instance. For Pavilion, real product screens are more convincing than abstract visuals because they prove the product is already real, local, and working.',
+          screenshotNote:
+            'This official set focuses on deeper product surfaces such as settings, environment variables, metrics, MCP, and skills instead of repeating the same chat view.',
+          screenshots: [
+            {
+              title: 'System Settings overview',
+              description: 'A strong wide anchor visual that shows Bodhi already has a real settings center, not just a chat entry point.',
+              src: '/screenshots/bodhi-system-settings-provider.png',
+            },
+            {
+              title: 'Env Vars',
+              description: 'Shows that environment variables can be managed for Bash usage with safer secret handling built into the product.',
+              src: '/screenshots/bodhi-env-vars.png',
+            },
+            {
+              title: 'Metrics',
+              description: 'Highlights real usage analytics, efficiency summaries, and historical signals that make Bodhi feel like a durable system.',
+              src: '/screenshots/bodhi-metrics.png',
+            },
+            {
+              title: 'MCP',
+              description: 'Proves external extensibility through a real configuration surface rather than an abstract architecture claim.',
+              src: '/screenshots/bodhi-mcp.png',
+            },
+            {
+              title: 'Skills',
+              description: 'Shows the skill system as a browsable, searchable capability layer with clear product depth.',
+              src: '/screenshots/bodhi-skills.png',
+            },
+          ],
+        }
+
+  return (
+    <div className="page-shell download-shell">
+      <div className="ambient ambient-a" aria-hidden="true" />
+      <div className="ambient ambient-b" aria-hidden="true" />
+      <div className="ambient ambient-c" aria-hidden="true" />
+
+      <header className="top-nav panel">
+        <a className="brand-lockup" href={homeUrl}>
+          <span className="brand-mark">B</span>
+          <span className="brand-copy">
+            <strong>{content.nav.brand}</strong>
+            <small>{content.nav.brandTagline}</small>
+          </span>
+        </a>
+
+        <nav className="nav-links" aria-label="Download navigation">
+          <a href={homeUrl}>{content.nav.home}</a>
+          <a href={downloadUrl}>{content.nav.download}</a>
+          <a href={docsOverviewUrl}>{content.nav.docs}</a>
+          <a href={BODHI_GITHUB_URL} target="_blank" rel="noopener noreferrer">
+            {content.nav.github}
+          </a>
+        </nav>
+
+        <LanguageSwitch locale={locale} onChange={setLocale} label={content.nav.language} />
+      </header>
+
+      <main className="download-main">
+        <section className="panel section-card download-hero">
+          <SectionIntro kicker={copy.kicker} title={copy.title} description={copy.description} />
+
+          <div className="download-hero-grid">
+            <article className="panel-subtle download-latest-card">
+              <p className="card-kicker">{copy.latestKicker}</p>
+              <h3>{copy.latestTitle}</h3>
+              <p>{copy.latestDescription}</p>
+              <div className="download-route-note">
+                <span>{copy.routeNote}</span>
+                <code>{BODHI_LATEST_RELEASE_URL}</code>
+              </div>
+              <div className="hero-actions release-actions">
+                <a
+                  className="button button-primary"
+                  href={BODHI_LATEST_RELEASE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {copy.primaryCta}
+                </a>
+                <a
+                  className="button button-secondary"
+                  href={BODHI_RELEASES_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  {copy.secondaryCta}
+                </a>
+                <a className="button button-secondary" href={docsFirstRunUrl}>
+                  {copy.tertiaryCta}
+                </a>
+              </div>
+            </article>
+
+            <article className="panel-subtle download-side-card">
+              <p className="card-kicker">{copy.sideKicker}</p>
+              <h3>{copy.sideTitle}</h3>
+              <ul className="download-side-list">
+                {copy.sidePoints.map((point) => (
+                  <li key={point}>{point}</li>
+                ))}
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section className="panel section-card screenshot-section">
+          <SectionIntro
+            kicker={copy.screenshotKicker}
+            title={copy.screenshotTitle}
+            description={copy.screenshotDescription}
+          />
+
+          <div className="screenshot-grid">
+            {copy.screenshots.map((shot, index) => (
+              <article
+                className={`screenshot-placeholder screenshot-card ${index === 0 ? 'placeholder-wide' : ''}`}
+                key={shot.title}
+                aria-label={shot.title}
+              >
+                <div className="screenshot-image-wrap">
+                  <img className="screenshot-image" src={shot.src} alt={shot.title} loading="lazy" />
+                </div>
+                <span className="placeholder-index">{String(index + 1).padStart(2, '0')}</span>
+                <strong>{shot.title}</strong>
+                <p>{shot.description}</p>
+              </article>
+            ))}
+          </div>
+
+          <p className="download-note screenshot-note">{copy.screenshotNote}</p>
+        </section>
       </main>
 
       <footer className="footer-line">
@@ -1414,6 +2078,7 @@ function DocsPage({
 
         <nav className="nav-links" aria-label="Documentation navigation">
           <a href={buildUrl('/', locale)}>{content.nav.home}</a>
+          <a href={buildUrl('/download', locale)}>{content.nav.download}</a>
           <a href="#overview">{content.nav.overview}</a>
           <a href="#first-run">{content.nav.firstRun}</a>
           <a href="#power-users">{content.nav.powerUsers}</a>
@@ -1481,6 +2146,7 @@ function DocsPage({
 function App() {
   const currentPath = window.location.pathname.replace(/\/+$/, '') || '/'
   const isDocsRoute = currentPath === '/docs' || currentPath.startsWith('/docs/')
+  const isDownloadRoute = currentPath === '/download' || currentPath.startsWith('/download/')
   const [locale, setLocale] = useState<Locale>(getInitialLocale)
   const content = useMemo(() => translations[locale], [locale])
 
@@ -1494,11 +2160,19 @@ function App() {
   }, [locale])
 
   useEffect(() => {
-    document.title = isDocsRoute ? content.meta.docsTitle : content.meta.homeTitle
-  }, [content, isDocsRoute])
+    document.title = isDocsRoute
+      ? content.meta.docsTitle
+      : isDownloadRoute
+        ? locale === 'zh'
+          ? '下载 Bodhi · 最新版本与真实产品界面'
+          : 'Download Bodhi · Latest release and real product surfaces'
+        : content.meta.homeTitle
+  }, [content, isDocsRoute, isDownloadRoute, locale])
 
   return isDocsRoute ? (
     <DocsPage locale={locale} setLocale={setLocale} content={content} />
+  ) : isDownloadRoute ? (
+    <DownloadPage locale={locale} setLocale={setLocale} content={content} />
   ) : (
     <HomePage locale={locale} setLocale={setLocale} content={content} />
   )
