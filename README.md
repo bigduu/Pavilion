@@ -1,73 +1,54 @@
-# React + TypeScript + Vite
+# Pavilion
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Pavilion is the official website and public documentation surface for the Bodhi AI stack.
 
-Currently, two official plugins are available:
+It is the place where the external story gets unified:
+- **Bodhi AI** as the desktop AI product
+- **Bamboo** as the structured Rust runtime
+- **Lotus** as the visible interaction layer
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## What Pavilion is for
 
-## React Compiler
+Pavilion is not the runtime and not the desktop shell itself.
+Its job is to:
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- explain the product clearly to new users
+- keep marketing language and docs entry points consistent
+- route users toward download, first run, advanced automation, and developer paths
+- make the Bodhi AI / Lotus / Bamboo relationship easy to understand
 
-## Expanding the ESLint configuration
+## Core paths
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- Home page: product positioning and conversion
+- Download page: stable desktop install entry
+- Docs page: first run, automation, architecture, and developer paths
+- Article layer: longer-form founder / product narrative
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Local development
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+cd pavilion
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Build for production:
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run build
 ```
+
+## Messaging boundary
+
+Pavilion should stay aligned with the current external narrative:
+
+- Bodhi AI = the AI that actually works
+- Bamboo = structured local-first Rust runtime
+- Lotus = visible UI layer
+- the stack is differentiated by execution visibility, structured runtime design, and automation that compounds over time
+
+## Related repositories
+
+- Bodhi: https://github.com/bigduu/Bodhi
+- Lotus: https://github.com/bigduu/Lotus
+- Bamboo: https://github.com/bigduu/Bamboo-agent
