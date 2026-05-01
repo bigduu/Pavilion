@@ -80,6 +80,10 @@ type Translation = {
     powerUsers: string
     developers: string
     api: string
+    bodhiServer: string
+    cicd: string
+    multiAgent: string
+    security: string
     language: string
   }
   hero: {
@@ -223,6 +227,10 @@ const translations: Record<Locale, Translation> = {
       powerUsers: '进阶玩法',
       developers: '开发者',
       api: 'API',
+      bodhiServer: 'Bodhi Server',
+      cicd: 'CI/CD',
+      multiAgent: '多 Agent 协作',
+      security: '安全',
       language: '语言',
     },
     hero: {
@@ -483,9 +491,40 @@ const translations: Record<Locale, Translation> = {
             'Bodhi：桌面安装、引导设置、原生集成、发布交付',
             'Lotus：React + Vite 交互层、SSE 实时渲染、设置中心',
             'Bamboo：Rust runtime、HTTP API、内置工具、MCP、Workflow、Schedule',
+            'Bodhi Server：Go 后端服务、认证、数据持久化、Docker 部署',
             'Pavilion：官网与文档入口',
           ],
           code: repoGuideCode,
+        },
+        {
+          id: 'bodhi-server',
+          title: 'Bodhi Server 后端服务',
+          paragraphs: [
+            'Bodhi Server 是 Zenith 栈的服务端组件，采用 Go 语言实现，为 Bamboo runtime 提供补充性的服务端能力。它处理用户认证、数据持久化、以及需要中心化管理的业务逻辑。',
+            '与 Bamboo 的本地运行不同，Bodhi Server 设计为可独立部署的服务。它通过 RESTful API 暴露能力，使用 PostgreSQL 存储数据，JWT 处理认证，并完全支持容器化部署。',
+          ],
+          bullets: [
+            'Go 实现：高性能、编译型、低资源占用',
+            'JWT 认证：基于 golang-jwt/jwt/v5 的安全认证',
+            'PostgreSQL：基于 jackc/pgx/v5 的数据库访问',
+            'Docker 支持：Dockerfile + docker-compose.yml 一键部署',
+            '测试覆盖：internal/config 包已有完整单元测试',
+          ],
+        },
+        {
+          id: 'cicd',
+          title: '发布与自动化',
+          paragraphs: [
+            'Zenith 的发布系统由 GitHub Actions 驱动，核心是两个工作流：Release Train（手动触发）和 Nightly Release（自动调度）。Release Train 按 Bamboo → Lotus → Bodhi 的顺序链式发布，每个步骤验证上游依赖可用后才继续。',
+            '版本管理集中在 release-train.config.json 中，统一控制 Bamboo、Lotus、Bodhi 的版本号。Nightly Release 每天 UTC 04:00 自动计算新版本（格式 YYYY.M.N），更新配置并触发 Release Train。',
+          ],
+          bullets: [
+            'Release Train：链式发布 Bamboo → Lotus → Bodhi，自动验证依赖',
+            'Nightly Release：每日自动版本计算（YYYY.M.N 格式）和发布',
+            '发布门禁：cargo test、type-check、clippy、lint 全部通过',
+            '版本统一：release-train.config.json 集中管理三仓库版本',
+            '故障处理：支持手动重试、跳过测试、版本回滚',
+          ],
         },
       ],
     },
@@ -561,6 +600,66 @@ const translations: Record<Locale, Translation> = {
           ],
           code: apiCode,
         },
+        {
+          id: 'bodhi-server',
+          title: 'Bodhi Server (后端服务)',
+          paragraphs: [
+            'Bodhi Server 是 Zenith 栈的后端 API 服务层，采用 Go 语言编写，负责处理认证、数据持久化和跨平台服务端能力。它为 Bamboo runtime 提供补充性的服务端能力，特别是在需要中心化数据管理和用户认证的场景下。',
+            'Bodhi Server 独立于桌面端运行，通过 RESTful API 与客户端通信。它使用 PostgreSQL 作为数据存储，JWT 进行认证，支持 Docker 部署和容器化运行。',
+          ],
+          bullets: [
+            'Go 后端服务：高性能、低内存占用、易于部署',
+            'JWT 认证：安全的用户认证和会话管理',
+            'PostgreSQL 持久化：可靠的数据存储和查询',
+            'Docker 支持：docker-compose 一键启动',
+            '独立部署：可作为中心化服务为多个客户端提供能力',
+          ],
+        },
+        {
+          id: 'cicd',
+          title: 'CI/CD 与发布系统',
+          paragraphs: [
+            'Zenith 采用全自动化的 CI/CD 流程管理 Bamboo、Lotus、Bodhi 三个仓库的协同发布。Release Train 工作流串联 Bamboo → Lotus → Bodhi 的发布顺序，确保依赖关系正确处理。',
+            'Nightly Release 每天自动计算并发布新版本。版本号遵循 YYYY.M.N 格式（如 2026.4.29），当月份变化时 N 重置为 1。Release Train 会自动验证 crates.io 和 npm 上的包可用性后才继续下一步。',
+          ],
+          bullets: [
+            'Release Train：一键触发 Bamboo → Lotus → Bodhi 的链式发布',
+            'Nightly Release：每日自动版本计算和发布调度',
+            '版本统一管理：release-train.config.json 集中管理三个仓库的版本号',
+            '发布前验证：自动检查 crates.io 和 npm 包可用性',
+            '回滚机制：支持通过 workflow_dispatch 手动触发指定版本发布',
+          ],
+        },
+        {
+          id: 'multi-agent',
+          title: '多 Agent 协作',
+          paragraphs: [
+            'Zenith 使用 GitHub Projects "Zenith Roadmap" 来协调多个 agent 在并行工作时避免冲突。每个 agent 通过认领任务、更新看板状态、提交 PR 的方式参与协作。',
+            '工作流遵循 Backlog → Triaged → Ready → In Progress → In Review → Done 的看板流程。同一模块最多允许 2 个 agent 同时工作，跨模块任务需要串行处理。',
+          ],
+          bullets: [
+            'GitHub Projects 看板：可视化任务状态和优先级',
+            '任务认领机制：通过评论标记 claimed by <agent-id>',
+            '分支命名规范：<module>/<type>/<issue-number>-<short-desc>',
+            '并行约束：同模块最多 2 个 agent，跨模块任务串行',
+            '代码审查：agent 可跨模块互审，最终需要人工合并',
+          ],
+        },
+        {
+          id: 'security',
+          title: '安全与测试',
+          paragraphs: [
+            'Zenith 栈重视工程安全和代码质量。Bamboo 使用 rustls-webpki 进行 TLS 证书验证，已修复潜在的安全漏洞。Bodhi Server 包含完整的单元测试覆盖（internal/config 包）。',
+            '发布流程中包含安全审查检查点，所有代码变更需通过 cargo clippy、单元测试和类型检查才能进入发布候选。',
+          ],
+          bullets: [
+            'TLS 安全：rustls-webpki 用于安全的 TLS 连接',
+            '单元测试：Bodhi Server internal/config 包已覆盖测试',
+            '代码质量：cargo fmt、clippy、Prettier 强制格式化',
+            '发布门禁：测试通过、版本验证、安全检查后方可发布',
+            '依赖审计：定期更新子模块以包含安全修复',
+          ],
+        },
       ],
     },
     footer: {
@@ -589,6 +688,10 @@ const translations: Record<Locale, Translation> = {
       powerUsers: 'Power users',
       developers: 'Developers',
       api: 'API',
+      bodhiServer: 'Bodhi Server',
+      cicd: 'CI/CD',
+      multiAgent: 'Multi-Agent',
+      security: 'Security',
       language: 'Language',
     },
     hero: {
@@ -849,9 +952,40 @@ const translations: Record<Locale, Translation> = {
             'Bodhi: desktop install, guided setup, native integration, release delivery',
             'Lotus: React + Vite interaction layer, SSE live rendering, settings center',
             'Bamboo: Rust runtime, HTTP API, built-in tools, MCP, workflows, schedules',
+            'Bodhi Server: Go backend service, authentication, data persistence, Docker deployment',
             'Pavilion: website and documentation entry point',
           ],
           code: repoGuideCode,
+        },
+        {
+          id: 'bodhi-server',
+          title: 'Bodhi Server Backend',
+          paragraphs: [
+            'Bodhi Server is the server-side component of the Zenith stack, implemented in Go. It provides complementary server-side capabilities to the Bamboo runtime, handling user authentication, data persistence, and centralized business logic.',
+            'Unlike Bamboo\'s local execution, Bodhi Server is designed as an independently deployable service. It exposes capabilities via RESTful APIs, uses PostgreSQL for data storage, JWT for authentication, and fully supports containerized deployment.',
+          ],
+          bullets: [
+            'Go implementation: high performance, compiled, low resource usage',
+            'JWT authentication: secure auth based on golang-jwt/jwt/v5',
+            'PostgreSQL: database access via jackc/pgx/v5',
+            'Docker support: Dockerfile + docker-compose.yml for one-command deployment',
+            'Test coverage: internal/config package has complete unit tests',
+          ],
+        },
+        {
+          id: 'cicd',
+          title: 'Release & Automation',
+          paragraphs: [
+            'Zenith\'s release system is driven by GitHub Actions, centered around two workflows: Release Train (manual trigger) and Nightly Release (automatic scheduling). Release Train chains releases in the order Bamboo → Lotus → Bodhi, verifying upstream dependencies are available before continuing.',
+            'Version management is centralized in release-train.config.json, uniformly controlling versions for Bamboo, Lotus, and Bodhi. Nightly Release automatically calculates new versions (YYYY.M.N format) daily at UTC 04:00, updates the config, and triggers Release Train.',
+          ],
+          bullets: [
+            'Release Train: chained release Bamboo → Lotus → Bodhi with dependency validation',
+            'Nightly Release: automatic version calculation (YYYY.M.N format) and daily publishing',
+            'Release gates: cargo test, type-check, clippy, lint must all pass',
+            'Unified versions: release-train.config.json centrally manages three-repository versions',
+            'Failure handling: supports manual retry, test skipping, and version rollback',
+          ],
         },
       ],
     },
@@ -925,6 +1059,66 @@ const translations: Record<Locale, Translation> = {
             'For frontend clients, desktop behavior, and automation scripts, the most important surfaces are runtime execution, event streaming, MCP management, and schedules.',
           ],
           code: apiCode,
+        },
+        {
+          id: 'bodhi-server',
+          title: 'Bodhi Server (Backend Service)',
+          paragraphs: [
+            'Bodhi Server is the backend API service layer of the Zenith stack, written in Go. It handles authentication, data persistence, and cross-platform server-side capabilities. It complements the Bamboo runtime with centralized data management and user authentication.',
+            'Bodhi Server runs independently from the desktop client, communicating via RESTful APIs. It uses PostgreSQL for data storage, JWT for authentication, and supports Docker deployment with docker-compose.',
+          ],
+          bullets: [
+            'Go backend service: high performance, low memory footprint, easy to deploy',
+            'JWT authentication: secure user authentication and session management',
+            'PostgreSQL persistence: reliable data storage and querying',
+            'Docker support: one-command startup with docker-compose',
+            'Independent deployment: can serve multiple clients as a centralized service',
+          ],
+        },
+        {
+          id: 'cicd',
+          title: 'CI/CD & Release System',
+          paragraphs: [
+            'Zenith uses a fully automated CI/CD pipeline to manage coordinated releases across Bamboo, Lotus, and Bodhi repositories. The Release Train workflow orchestrates releases in the order Bamboo → Lotus → Bodhi, ensuring dependency relationships are handled correctly.',
+            'Nightly Release automatically calculates and publishes new versions daily. Version numbers follow the YYYY.M.N format (e.g., 2026.4.29), with N resetting to 1 when the month changes. The Release Train validates package availability on crates.io and npm before proceeding to the next step.',
+          ],
+          bullets: [
+            'Release Train: one-click chained release of Bamboo → Lotus → Bodhi',
+            'Nightly Release: automatic version calculation and daily release scheduling',
+            'Unified version management: release-train.config.json centrally manages versions for all three repositories',
+            'Pre-release validation: automatic checks for crates.io and npm package availability',
+            'Rollback support: manual workflow_dispatch triggers for specific versions',
+          ],
+        },
+        {
+          id: 'multi-agent',
+          title: 'Multi-Agent Collaboration',
+          paragraphs: [
+            'Zenith uses GitHub Projects "Zenith Roadmap" to coordinate multiple agents working in parallel without conflicts. Each agent participates by claiming tasks, updating board status, and submitting PRs.',
+            'The workflow follows a kanban process: Backlog → Triaged → Ready → In Progress → In Review → Done. A maximum of 2 agents can work on the same module simultaneously, while cross-module tasks must be serialized.',
+          ],
+          bullets: [
+            'GitHub Projects board: visual task status and priority management',
+            'Task claiming: mark tasks with "claimed by <agent-id>" comments',
+            'Branch naming convention: <module>/<type>/<issue-number>-<short-desc>',
+            'Parallel constraints: max 2 agents per module, cross-module tasks serialized',
+            'Code review: agents can cross-review across modules, human merges required',
+          ],
+        },
+        {
+          id: 'security',
+          title: 'Security & Testing',
+          paragraphs: [
+            'The Zenith stack prioritizes engineering security and code quality. Bamboo uses rustls-webpki for TLS certificate verification, with security vulnerabilities promptly patched. Bodhi Server includes comprehensive unit test coverage (internal/config package).',
+            'The release process includes security review checkpoints. All code changes must pass cargo clippy, unit tests, and type checks before becoming release candidates.',
+          ],
+          bullets: [
+            'TLS security: rustls-webpki for secure TLS connections',
+            'Unit tests: Bodhi Server internal/config package has test coverage',
+            'Code quality: cargo fmt, clippy, Prettier enforced formatting',
+            'Release gates: tests pass, version validated, security checks cleared before release',
+            'Dependency auditing: regular submodule updates to include security fixes',
+          ],
         },
       ],
     },
@@ -1700,6 +1894,10 @@ function DocsPage({
           <a href="#power-users">{content.nav.powerUsers}</a>
           <a href="#developers">{content.nav.developers}</a>
           <a href="#api">{content.nav.api}</a>
+          <a href="#bodhi-server">{content.nav.bodhiServer}</a>
+          <a href="#cicd">{content.nav.cicd}</a>
+          <a href="#multi-agent">{content.nav.multiAgent}</a>
+          <a href="#security">{content.nav.security}</a>
         </nav>
 
         <LanguageSwitch locale={locale} onChange={setLocale} label={content.nav.language} />
