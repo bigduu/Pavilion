@@ -1,145 +1,126 @@
-# Pavilion · Zenith 官方网站与文档门户 / Official Website & Docs Surface
+# Pavilion · Official Website & Docs Surface
 
-> 中文：Pavilion 是 Zenith AI 技术栈对外讲故事的地方——一个面向所有访客的官方网站，把 Bodhi AI 这款桌面智能体讲清楚：它能做什么、为什么值得用、怎么下载、怎么上手。
->
-> English: Pavilion is where the Zenith stack tells its story to the outside world — the official website that explains Bodhi AI, the desktop agent, in plain language: what it does, why it matters, where to download it, and how to get started.
+> 📖 中文版请看 **[README.zh-CN.md](./README.zh-CN.md)**
+
+> Pavilion is where the Zenith stack tells its story to the outside world — the official website that explains Bodhi AI, the desktop agent, in plain language: what it does, why it matters, where to download it, and how to get started.
 
 ---
 
-## 1. HOOK
+## HOOK
 
-**中文** — 想象一个住在你电脑里的助手：你交给它一个目标，它会自己拆解任务、动手执行、把每一步实时展示给你看，并且能把重复的工作变成下次自动运行的流程。Pavilion 就是把这件事讲给第一次听说的人的网站——没有术语，只有「它能帮你做什么」。
+Imagine an assistant that lives on your own computer: you hand it a goal, it breaks the work down, gets it done, shows you every step as it happens, and turns repeated chores into automation that runs itself next time. Pavilion is the website that explains all of this to a first-time visitor — no jargon, just "here's what it can do for you."
 
-**English** — Imagine an assistant that lives on your own computer: you hand it a goal, it breaks the work down, gets it done, shows you every step as it happens, and turns repeated chores into automation that runs itself next time. Pavilion is the website that explains all of this to a first-time visitor — no jargon, just "here's what it can do for you."
-
-Pavilion 本身**不是**运行时，也不是桌面应用——它是产品的门面：首页、下载页、文档与文章。
 Pavilion itself is **not** the runtime and **not** the desktop app — it is the product's front door: home, download, docs, and long-form articles.
 
 ---
 
-## 2. KEY CAPABILITIES AT A GLANCE / 核心能力一览
+## Key Capabilities at a Glance
 
-| 能力 / Capability | 说明 / What it is |
+| Capability | What it is |
 |---|---|
-| 四个产品页面 / Four product surfaces | 首页 Home、功能 Features、下载 Download、文档 Docs，全部由 React Router 客户端路由驱动 |
-| 双语切换 / Bilingual by design | 中文 / English 一键切换，记忆偏好并写入 URL（`?lang=zh`） |
-| 真实产品截图 / Real screenshots | `public/screenshots/` 中的实际界面（对话、MCP、指标、设置等），而非概念图 |
-| 长文叙事层 / Article layer | 创始人故事、架构总览、后端深解、CI/CD、多 Agent 协作 |
-| 静态可托管 / Static & shippable | Vite 构建为纯静态站点，开箱即托管 |
-| 真实接口示例 / Honest API examples | 文档中的 API 路径直接映射到 Bamboo 运行时的实际端点 |
+| Four product surfaces | Home, Features, Download, and Docs, all driven by React Router client-side routing |
+| Bilingual by design | One-click 中文 / English switch, remembers the preference and writes it into the URL (`?lang=zh`) |
+| Real screenshots | Actual UI in `public/screenshots/` (chat, MCP, metrics, settings, etc.), not concept art |
+| Article layer | Founder story, architecture overview, backend deep-dive, CI/CD, multi-agent collaboration |
+| Static & shippable | Built by Vite into a pure static site, ready to host out of the box |
+| Honest API examples | API paths in the docs map directly to the real endpoints of the Bamboo runtime |
 
 ---
 
-## 3. ARCHITECTURE / 架构
+## Architecture
 
-**中文** — Pavilion 是一个标准的 React 19 + Vite 8 单页应用（SPA），用 TypeScript 编写。它没有自己的后端：所有文案都来自 `src/i18n/` 下的双语内容字典，页面只是把这些内容渲染出来。它在 Zenith 技术栈里只承担「对外沟通」这一层职责。
-
-**English** — Pavilion is a plain React 19 + Vite 8 single-page app written in TypeScript. It has no backend of its own: all copy lives in bilingual content dictionaries under `src/i18n/`, and the pages simply render it. Within the Zenith stack, it owns exactly one layer — external communication.
+Pavilion is a plain React 19 + Vite 8 single-page app written in TypeScript. It has no backend of its own: all copy lives in bilingual content dictionaries under `src/i18n/`, and the pages simply render it. Within the Zenith stack, it owns exactly one layer — external communication.
 
 ```
 pavilion/
 ├── index.html              # SEO + Open Graph / Twitter meta
 ├── src/
-│   ├── main.tsx            # 入口 / entry
-│   ├── App.tsx             # react-router 路由表 (/ /features /download /docs)
+│   ├── main.tsx            # entry
+│   ├── App.tsx             # react-router route table (/ /features /download /docs)
 │   ├── pages/              # HomePage / FeaturesPage / DownloadPage / DocsPage
 │   ├── components/         # LanguageSwitch / SmartLink / RevealSection / SectionIntro
-│   ├── hooks/useReveal.ts  # 滚动进入动画 / scroll-reveal
-│   ├── i18n/               # zh.ts + en.ts 双语内容字典 / bilingual content
-│   ├── utils/locale.ts     # 语言探测与 URL 构建 / locale detection & URL building
-│   ├── constants.ts        # GitHub 链接、quickstart / API 代码示例
+│   ├── hooks/useReveal.ts  # scroll-reveal
+│   ├── i18n/               # zh.ts + en.ts bilingual content dictionaries
+│   ├── utils/locale.ts     # locale detection & URL building
+│   ├── constants.ts        # GitHub links, quickstart / API code examples
 │   └── test/               # Vitest + Testing Library
-├── articles/               # 长文 Markdown / long-form Markdown
+├── articles/               # long-form Markdown
 └── public/                 # favicon, og-cover, screenshots/
 ```
 
-Pavilion 在整体技术栈中的位置 / Where Pavilion sits in the wider stack:
+Where Pavilion sits in the wider stack:
 
 ```mermaid
 flowchart LR
-  Visitor((访客 / Visitor)) --> Pavilion[Pavilion\n官网 + 文档 / website + docs]
-  Pavilion -. 引导下载 / routes to download .-> Bodhi[bodhi\n桌面外壳 / Tauri shell]
-  Bodhi --> Lotus[lotus\nReact UI 层 / UI layer]
-  Lotus -- HTTP / SSE --> Bamboo[bamboo\nRust 本地运行时 / local agent runtime]
-  Bamboo -. auth / 配额 / LLM 代理 .-> BodhiServer[bodhi-server\nGo 后端 / backend]
+  Visitor((Visitor)) --> Pavilion[Pavilion\nwebsite + docs]
+  Pavilion -. routes to download .-> Bodhi[bodhi\nTauri shell]
+  Bodhi --> Lotus[lotus\nUI layer]
+  Lotus -- HTTP / SSE --> Bamboo[bamboo\nlocal agent runtime]
+  Bamboo -. auth / quota / LLM proxy .-> BodhiServer[bodhi-server\nGo backend]
 ```
 
-> Pavilion 只「指向」其它模块（下载、文档链接），它不调用运行时或后端。
 > Pavilion only *points to* the other modules (download + doc links); it does not call the runtime or backend.
 
 ---
 
-## 4. SIGNATURE DEEP-DIVES / 招牌能力
+## Signature Deep-Dives
 
-### 4.1 外部叙事：四个页面讲一个故事 / The external narrative across four pages
+### The external narrative across four pages
 
-中文 — 整个网站围绕「Bodhi AI 是会动手的桌面智能体」这条主线展开：
+Every surface reinforces one message: *Bodhi AI is a desktop agent that actually does the work.* The Home hero pairs a tagline with a live execution timeline; Features expands each capability with a table of contents; Download routes visitors straight to Bodhi's GitHub Releases; Docs carries first-run, power-user, architecture, API, and contributor tracks. All four are rendered from the bilingual dictionaries in `src/i18n/` — copy is data, not hard-coded JSX. Unknown routes fall back to Home.
 
-- **首页 Home (`/`)** — Hero 标语「Desktop AI that does more than chat / 不止于聊天的桌面 AI」，配一条实时执行时间线（接收目标 → 生成计划 → MCP 执行 → 交给自动化）、亮点（真正执行、默认可见、随时间复利）、产品截图、能力卡片、FAQ。
-- **功能页 Features (`/features`)** — 每项能力的细致拆解，带目录导航。
-- **下载页 Download (`/download`)** — 指向 Bodhi 的 GitHub Releases，最新版本入口与首跑引导。
-- **文档页 Docs (`/docs`)** — 首跑、进阶（Provider / MCP / Workflow / Schedule）、架构、API、Bodhi Server 集成、CI/CD、多 Agent、安全等。
+### Bilingual-first
 
-English — Every surface reinforces one message: *Bodhi AI is a desktop agent that actually does the work.* The Home hero pairs a tagline with a live execution timeline; Features expands each capability with a table of contents; Download routes visitors straight to Bodhi's GitHub Releases; Docs carries first-run, power-user, architecture, API, and contributor tracks. All four are rendered from the bilingual dictionaries in `src/i18n/` — copy is data, not hard-coded JSX. Unknown routes fall back to Home.
+Language is built into the architecture, not bolted on. `locale.ts` resolves the initial locale in order: the `?lang=` query param → `localStorage` (key `pavilion-locale`) → browser language (`zh*` → Chinese, else English). Switching language persists the choice and writes it back into the URL so links stay shareable. `LanguageSwitch` is a simple 中文 / EN toggle present on every page.
 
-### 4.2 双语优先 / Bilingual-first
+### The article layer
 
-中文 — 语言不是事后补丁，而是架构的一部分。`src/utils/locale.ts` 按以下优先级决定初始语言：URL 的 `?lang=` 参数 → `localStorage`（键名 `pavilion-locale`）→ 浏览器语言（`zh*` 走中文，否则英文）。切换语言后，偏好会写回 localStorage 并同步进 URL，便于分享。
+`articles/` holds the long-form narrative and technical deep-dives (Markdown, primarily Chinese):
 
-English — Language is built into the architecture, not bolted on. `locale.ts` resolves the initial locale in order: the `?lang=` query param → `localStorage` (key `pavilion-locale`) → browser language (`zh*` → Chinese, else English). Switching language persists the choice and writes it back into the URL so links stay shareable. `LanguageSwitch` is a simple 中文 / EN toggle present on every page.
-
-### 4.3 文章层：把「为什么」讲透 / The article layer
-
-中文 — `articles/` 下是更长的叙事与技术深解（Markdown，以中文为主）：
-
-| 文章 / Article | 内容 / What it covers |
+| Article | What it covers |
 |---|---|
-| [`why-i-built-my-own-agent.md`](./articles/why-i-built-my-own-agent.md) | 创始人为什么决定自己写一个 Agent — 产品起源叙事 |
-| [`zenith-architecture-overview.md`](./articles/zenith-architecture-overview.md) | Zenith 架构总览：五个子模块（含 Go 后端 bodhi-server）的职责边界 |
-| [`bodhi-server-deep-dive.md`](./articles/bodhi-server-deep-dive.md) | Go 后端 Bodhi Server 的服务端能力（认证、持久化、跨设备同步）深解 |
-| [`ci-cd-and-release-system.md`](./articles/ci-cd-and-release-system.md) | 基于 GitHub Actions 的 Bamboo / Lotus / Bodhi 协同发布流程 |
-| [`multi-agent-collaboration.md`](./articles/multi-agent-collaboration.md) | 用 GitHub Projects「Zenith Roadmap」协调多个 agent 并行工作 |
-
-English — `articles/` holds the long-form narrative and technical deep-dives (Markdown, primarily Chinese), spanning the founder's origin story, the full architecture map, the Go backend internals, the automated release pipeline, and how multiple agents coordinate via the "Zenith Roadmap" GitHub Project.
+| [`why-i-built-my-own-agent.md`](./articles/why-i-built-my-own-agent.md) | Why the founder decided to build an agent from scratch — the product's origin story |
+| [`zenith-architecture-overview.md`](./articles/zenith-architecture-overview.md) | Zenith architecture overview: the responsibility boundaries of the five submodules (including the Go backend bodhi-server) |
+| [`bodhi-server-deep-dive.md`](./articles/bodhi-server-deep-dive.md) | A deep dive into the server-side capabilities of the Go backend Bodhi Server (auth, persistence, cross-device sync) |
+| [`ci-cd-and-release-system.md`](./articles/ci-cd-and-release-system.md) | The coordinated Bamboo / Lotus / Bodhi release pipeline built on GitHub Actions |
+| [`multi-agent-collaboration.md`](./articles/multi-agent-collaboration.md) | Coordinating multiple agents working in parallel via the "Zenith Roadmap" GitHub Project |
 
 ---
 
-## 5. QUICK START / DEVELOPMENT
+## Quick Start / Development
 
-仅列出在 `package.json` 中**已验证存在**的脚本。
 Only scripts **verified to exist** in `package.json` are listed.
 
 ```bash
 cd pavilion
 npm install
 
-npm run dev       # 启动 Vite 开发服务器 / start the Vite dev server
-npm run build     # 类型检查 (tsc -b) + 生产构建 / typecheck + production build
-npm run preview   # 本地预览构建产物 / preview the built site
+npm run dev       # start the Vite dev server
+npm run build     # typecheck (tsc -b) + production build
+npm run preview   # preview the built site
 npm run lint      # ESLint
 npm run test      # Vitest (vitest run)
 ```
 
-技术栈 / Stack: React 19 · React Router 7 · Vite 8 · TypeScript 5.9 · Vitest 4（详见 `package.json`）。
+Stack: React 19 · React Router 7 · Vite 8 · TypeScript 5.9 · Vitest 4 (see `package.json` for details).
 
 ---
 
-## 6. THE REST OF THE STACK / 其余模块
+## The Rest of the Stack
 
-Zenith 是一个薄层 monorepo，Pavilion 是其中的对外门面。
 Zenith is a thin monorepo; Pavilion is its public-facing front door.
 
-| 模块 / Module | 角色 / Role |
+| Module | Role |
 |---|---|
-| [**bodhi**](../bodhi) | 桌面 AI 产品外壳（Tauri）/ desktop AI product surface (Tauri shell) |
-| [**lotus**](../lotus) | React + Vite UI 层 / the visible UI layer |
-| [**bamboo**](../bamboo) | 本地优先的 Rust 智能体运行时（执行引擎）/ local-first Rust agent runtime (execution engine) |
-| [**bodhi-server**](../bodhi-server) | Go 后端：认证 / 持久化 / 计费配额 / LLM 代理 / Go backend: auth, persistence, billing+quota, LLM proxy |
-| **pavilion** | 官网与文档（本模块 this module）/ official website & docs |
-| [**Zenith (root)**](../) | monorepo 入口 + 子模块指针 + 发布列车 / monorepo entry + submodule pointers + release train |
+| [**bodhi**](../bodhi) | desktop AI product surface (Tauri shell) |
+| [**lotus**](../lotus) | the visible UI layer (React + Vite) |
+| [**bamboo**](../bamboo) | local-first Rust agent runtime (execution engine) |
+| [**bodhi-server**](../bodhi-server) | Go backend: auth, persistence, billing+quota, LLM proxy |
+| **pavilion** | official website & docs (this module) |
+| [**Zenith (root)**](../) | monorepo entry + submodule pointers + release train |
 
-下载入口 / Download entry: https://github.com/bigduu/Bodhi-AI/releases/latest
+Download entry: https://github.com/bigduu/Bodhi-AI/releases/latest
 
 ---
 
-<sub>Pavilion 只描述真实存在的产品能力，内容随 `src/i18n/` 与 `articles/` 更新。/ Pavilion describes only real product capabilities; its content tracks `src/i18n/` and `articles/`.</sub>
+<sub>Pavilion describes only real product capabilities; its content tracks `src/i18n/` and `articles/`.</sub>
