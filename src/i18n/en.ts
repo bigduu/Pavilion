@@ -31,15 +31,14 @@ export const en: Translation = {
   hero: {
     kicker: 'BODHI AI',
     title: 'Desktop AI that does more than chat',
-    subtitle:
-      'Bodhi combines structured execution, visible processes, and long-term automation into a desktop AI product that actually keeps work moving — it breaks down tasks, calls tools, and compounds successful runs into repeatable systems.',
+    subtitle: 'Not just answers — it breaks down goals, calls tools, keeps work moving, and turns every success into automation.',
     primaryCta: 'Download Bodhi',
     secondaryCta: 'Quick start',
     chips: ['Actually works', 'Visible by default', 'Compounds over time'],
     stats: [
-      { value: 'Rust Runtime', label: 'Structured local execution powered by Bamboo' },
-      { value: 'Visible', label: 'Tasks, tools, and event streams stay legible' },
-      { value: 'Compounds', label: 'Successful runs become workflows and schedules' },
+      { value: '100%', label: 'Local-first execution, powered by Bamboo' },
+      { value: '5', label: 'Modules: Bodhi · Lotus · Bamboo · Server · Pavilion' },
+      { value: 'Rust', label: 'Structured execution core' },
     ],
     liveLabel: 'Live task stream',
     liveTitle: 'AI that moves tasks, not just replies',
@@ -58,18 +57,21 @@ export const en: Translation = {
     title: 'More than another chat AI',
     items: [
       {
+        icon: 'bolt',
         title: 'Actually executes',
-        description: 'Not just generating answers — it breaks tasks into steps, calls tools, and keeps pushing work forward until the goal is met.',
+        description: 'More than answers — it breaks tasks into steps, calls tools, and pushes until the goal is met.',
         points: ['Breaks goals into executable steps', 'Calls built-in tools and MCP extensions', 'Maintains task state through completion'],
       },
       {
+        icon: 'eye',
         title: 'Visible by default',
-        description: 'Task status, tool calls, and event streams are visible in real time. You always know what the AI is doing and where things stand.',
+        description: 'Tasks, tool calls, and event streams stream live, so you always know what the AI is doing.',
         points: ['SSE-driven live event stream', 'Full visibility into tasks and tools', 'State changes stay trackable'],
       },
       {
+        icon: 'trending',
         title: 'Compounds over time',
-        description: 'Successful runs become Workflows and Schedules. The more you use Bodhi, the more it understands your work patterns.',
+        description: 'Successful runs become Workflows and Schedules — the more you use it, the more it fits your rhythm.',
         points: ['Workflows preserve successful patterns', 'Schedules create automation rhythm', 'Long-term use creates lasting leverage'],
       },
     ],
@@ -106,30 +108,34 @@ export const en: Translation = {
     title: 'Four core capabilities',
     items: [
       {
+        icon: 'layout',
         kicker: '01',
         title: 'Desktop workbench',
-        description: 'Install, setup, providers, env vars, skills, and metrics — all in one desktop interface.',
+        description: 'Install, setup, providers, skills, and metrics — all in one desktop app.',
         points: ['Desktop-first entry point', 'Guided first-run setup', 'Complete product experience'],
         featureId: 'desktop',
       },
       {
+        icon: 'cpu',
         kicker: '02',
         title: 'Structured runtime',
-        description: 'Bamboo provides a local Rust runtime that organizes tasks, tools, memory, and scheduling into an execution core.',
+        description: 'Bamboo is a local Rust core that organizes tasks, tools, memory, and scheduling into one engine.',
         points: ['Local Rust execution core', 'Context and memory integrated', 'Full HTTP API coverage'],
         featureId: 'runtime',
       },
       {
+        icon: 'activity',
         kicker: '03',
         title: 'Visible execution',
-        description: 'Tasks, tool calls, event streams, and state changes stay visible — even long-running work stays legible.',
+        description: 'Tasks, tool calls, and event streams stay visible — even long runs stay legible.',
         points: ['SSE live feedback', 'Task progress visualization', 'Transparent tool invocations'],
         featureId: 'visible',
       },
       {
+        icon: 'workflow',
         kicker: '04',
         title: 'Automation system',
-        description: 'MCP extends capability boundaries, Workflows preserve successful runs, Schedules create long-term automation rhythm.',
+        description: 'MCP extends, Workflows reuse, Schedules recur — automation that compounds.',
         points: ['MCP Server extensibility', 'Workflow reuse', 'Schedule recurring execution'],
         featureId: 'automation',
       },
@@ -141,28 +147,23 @@ export const en: Translation = {
     items: [
       {
         question: 'How do Bodhi, Bamboo, and Lotus relate?',
-        answer:
-          'Bodhi is the desktop product, Lotus is the UI interaction layer, and Bamboo is the local Agent runtime. Together they form a complete desktop AI system.',
+        answer: 'Bodhi is the desktop product, Lotus the UI layer, Bamboo the local runtime — together, one system.',
       },
       {
         question: 'Is Bodhi just a chat interface?',
-        answer:
-          'No. It executes tasks, shows live progress, calls tools, connects MCP servers, saves workflows, and automates repeatable work with schedules.',
+        answer: 'No. It executes tasks, shows live progress, calls tools, connects MCP, saves Workflows, and runs on schedules.',
       },
       {
         question: 'Where should I start?',
-        answer:
-          'Start with the Bodhi desktop app. Or read the First run section in docs to understand setup before installing.',
+        answer: 'Start with the Bodhi desktop app; to learn setup first, read First run in the docs.',
       },
       {
         question: 'Where should developers begin?',
-        answer:
-          'Desktop shell → Bodhi, frontend interactions → Lotus, execution engine → Bamboo. The docs page is organized around these three layers.',
+        answer: 'Bodhi for the shell, Lotus for frontend, Bamboo for the engine — the docs are organized by these three layers.',
       },
       {
         question: 'What makes Bodhi different from other agent products?',
-        answer:
-          'Bodhi is not just a UI layer around a model. It is built on Bamboo, a local Rust runtime with its own execution path, context memory, tool system, and automation capabilities — all wrapped in a real desktop product.',
+        answer: 'Not a UI wrapper around a model — a full desktop product on the Bamboo local Rust runtime, with its own execution path and memory.',
       },
     ],
   },

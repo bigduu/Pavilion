@@ -13,6 +13,7 @@ export type TimelineEvent = {
 }
 
 export type HighlightItem = {
+  icon: string
   title: string
   description: string
   points: string[]
@@ -27,6 +28,7 @@ export type ShowcasePanel = {
 }
 
 export type Capability = {
+  icon: string
   kicker: string
   title: string
   description: string

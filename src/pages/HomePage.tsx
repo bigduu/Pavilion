@@ -1,10 +1,12 @@
 import type { Locale, Translation } from '../types'
-import { BODHI_GITHUB_URL } from '../constants'
+import { BODHI_GITHUB_URL, techStack } from '../constants'
 import { buildUrl } from '../utils/locale'
 import { LanguageSwitch } from '../components/LanguageSwitch'
 import { SectionIntro } from '../components/SectionIntro'
 import { RevealSection } from '../components/RevealSection'
 import { SmartLink } from '../components/SmartLink'
+import { Icon } from '../components/Icon'
+import { CountUp } from '../components/CountUp'
 
 export function HomePage({
   locale,
@@ -83,8 +85,10 @@ export function HomePage({
 
             <dl className="hero-stats">
               {content.hero.stats.map((stat) => (
-                <div className="panel-subtle stat-card" key={stat.value}>
-                  <dd>{stat.value}</dd>
+                <div className="panel-subtle stat-card" key={stat.label}>
+                  <dd>
+                    <CountUp value={stat.value} />
+                  </dd>
                   <dt>{stat.label}</dt>
                 </div>
               ))}
@@ -149,6 +153,18 @@ export function HomePage({
           </aside>
         </RevealSection>
 
+        <section className="panel marquee-panel" aria-hidden="true">
+          <div className="marquee">
+            <div className="marquee-track">
+              {[...techStack, ...techStack].map((token, index) => (
+                <span className="marquee-chip" key={`${token}-${index}`}>
+                  {token}
+                </span>
+              ))}
+            </div>
+          </div>
+        </section>
+
         <RevealSection id="why-bodhi" className="panel section-card highlights-section">
           <SectionIntro
             kicker={content.highlights.kicker}
@@ -158,13 +174,11 @@ export function HomePage({
           <div className="highlights-grid">
             {content.highlights.items.map((item) => (
               <article className="panel-subtle highlight-card" key={item.title}>
+                <span className="card-icon">
+                  <Icon name={item.icon} />
+                </span>
                 <h3>{item.title}</h3>
                 <p>{item.description}</p>
-                <ul>
-                  {item.points.map((point) => (
-                    <li key={point}>{point}</li>
-                  ))}
-                </ul>
               </article>
             ))}
           </div>
@@ -205,14 +219,14 @@ export function HomePage({
                 : featuresUrl
               return (
                 <article className="panel-subtle capability-card" key={item.title}>
-                  <p className="card-kicker">{item.kicker}</p>
+                  <div className="capability-head">
+                    <span className="card-icon">
+                      <Icon name={item.icon} />
+                    </span>
+                    <p className="card-kicker">{item.kicker}</p>
+                  </div>
                   <h3>{item.title}</h3>
                   <p>{item.description}</p>
-                  <ul>
-                    {item.points.map((point) => (
-                      <li key={point}>{point}</li>
-                    ))}
-                  </ul>
                   <SmartLink className="link-inline" href={link}>
                     {locale === 'zh' ? '了解更多' : 'Learn more'}
                   </SmartLink>

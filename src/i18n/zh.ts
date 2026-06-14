@@ -31,15 +31,14 @@ export const zh: Translation = {
   hero: {
     kicker: 'BODHI AI',
     title: '不只会聊天的桌面 AI',
-    subtitle:
-      'Bodhi 把结构化执行、可见过程和长期自动化收敛成一套真正可用的桌面 AI 产品——它不只会回答，会拆解任务、调用工具、持续推进执行，并把成功经验沉淀成自动化。',
+    subtitle: '不只是回答——它拆解目标、调用工具、持续推进，并把每次成功沉淀成自动化。',
     primaryCta: '下载 Bodhi',
     secondaryCta: '快速开始',
     chips: ['会执行', '过程可见', '可持续自动化'],
     stats: [
-      { value: 'Rust Runtime', label: 'Bamboo 提供本地结构化执行内核' },
-      { value: '实时可见', label: '任务、工具和事件流持续可见' },
-      { value: '越用越强', label: '成功执行沉淀为 Workflow 和 Schedule' },
+      { value: '100%', label: '本地优先执行，由 Bamboo 驱动' },
+      { value: '5', label: '协同模块：Bodhi · Lotus · Bamboo · Server · Pavilion' },
+      { value: 'Rust', label: '结构化执行内核' },
     ],
     liveLabel: '实时任务流',
     liveTitle: 'AI 在替你推进任务，而不只是在回消息',
@@ -58,18 +57,21 @@ export const zh: Translation = {
     title: '不只是另一个聊天 AI',
     items: [
       {
+        icon: 'bolt',
         title: '会执行',
-        description: '不只是生成回答，而是拆解任务、调用工具、持续推进执行，直到目标达成。',
+        description: '不止于回答——拆解任务、调用工具、持续推进，直到目标达成。',
         points: ['拆解目标为可执行步骤', '调用内置工具和 MCP 扩展', '持续保持任务状态直到完成'],
       },
       {
+        icon: 'eye',
         title: '过程可见',
-        description: '任务状态、工具调用、事件流实时可见，让你始终知道 AI 在做什么、进展如何。',
+        description: '任务、工具调用、事件流实时可见，你始终知道 AI 在做什么。',
         points: ['SSE 驱动的实时事件流', '任务和工具过程全程可见', '状态变化持续可追踪'],
       },
       {
+        icon: 'trending',
         title: '可持续',
-        description: '把成功执行沉淀为 Workflow 和 Schedule，让 AI 越用越懂你的工作节奏。',
+        description: '把成功执行沉淀成 Workflow 与 Schedule，越用越懂你的节奏。',
         points: ['Workflow 复用成功模式', 'Schedule 建立自动化节奏', '长期使用越用越强'],
       },
     ],
@@ -106,30 +108,34 @@ export const zh: Translation = {
     title: '四大核心能力',
     items: [
       {
+        icon: 'layout',
         kicker: '01',
         title: '桌面工作台',
-        description: '安装、设置、Provider、环境变量、技能、指标——全部在一个桌面界面里完成。',
+        description: '安装、设置、Provider、技能、指标，全部在一个桌面应用里。',
         points: ['桌面优先入口', '引导式首次设置', '完整产品体验'],
         featureId: 'desktop',
       },
       {
+        icon: 'cpu',
         kicker: '02',
         title: '结构化运行时',
-        description: 'Bamboo 提供本地 Rust runtime，把任务、工具、记忆、调度组织成可演进的执行内核。',
+        description: 'Bamboo 本地 Rust 内核，把任务、工具、记忆、调度组织成执行核心。',
         points: ['本地 Rust 执行内核', '上下文与记忆一体化', 'HTTP API 全覆盖'],
         featureId: 'runtime',
       },
       {
+        icon: 'activity',
         kicker: '03',
         title: '可见执行',
-        description: '任务、工具调用、事件流、状态变化全程可见，长任务也更可理解。',
+        description: '任务、工具调用、事件流全程可见，长任务也清晰可懂。',
         points: ['SSE 实时反馈', '任务进度可视化', '工具调用透明化'],
         featureId: 'visible',
       },
       {
+        icon: 'workflow',
         kicker: '04',
         title: '自动化系统',
-        description: 'MCP 扩展能力边界，Workflow 复用成功执行，Schedule 建立长期自动化节奏。',
+        description: 'MCP 扩能力、Workflow 复用、Schedule 定时，自动化越跑越省。',
         points: ['MCP Server 扩展', 'Workflow 复用', 'Schedule 定时执行'],
         featureId: 'automation',
       },
@@ -141,28 +147,23 @@ export const zh: Translation = {
     items: [
       {
         question: 'Bodhi 和 Bamboo、Lotus 分别是什么关系？',
-        answer:
-          'Bodhi 是桌面产品，Lotus 是 UI 交互层，Bamboo 是本地 Agent runtime。三者协作构成完整的桌面 AI 系统。',
+        answer: 'Bodhi 是桌面产品，Lotus 是 UI 层，Bamboo 是本地 Agent runtime，三者协作成完整系统。',
       },
       {
         question: 'Bodhi 是不是只是一个聊天界面？',
-        answer:
-          '不是。它可以执行任务、展示实时进度、调用工具、接入 MCP、保存 Workflow，并通过 Schedule 做自动化。',
+        answer: '不是。它能执行任务、实时展示进度、调用工具、接入 MCP、保存 Workflow 并定时自动化。',
       },
       {
         question: '我应该从哪里开始？',
-        answer:
-          '推荐从桌面端 Bodhi 开始。也可以先看文档里的 First run 章节，了解设置路径后再下载。',
+        answer: '推荐直接从桌面端 Bodhi 开始；想先了解设置，可看文档的 First run。',
       },
       {
         question: '开发者应该从哪个模块开始？',
-        answer:
-          '桌面壳看 Bodhi，前端交互看 Lotus，执行引擎看 Bamboo。文档页已按这三层整理了入口。',
+        answer: '桌面壳看 Bodhi，前端看 Lotus，引擎看 Bamboo——文档已按三层整理。',
       },
       {
         question: 'Bodhi 和其他 Agent 产品有什么不同？',
-        answer:
-          'Bodhi 不只是 UI 层套模型，而是建立在 Bamboo（本地 Rust runtime）之上的完整桌面产品，拥有自己的执行路径、上下文记忆、工具系统和自动化能力。',
+        answer: '它不是 UI 套模型，而是建立在 Bamboo 本地 Rust runtime 上、有自己执行路径与记忆的完整桌面产品。',
       },
     ],
   },

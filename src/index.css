@@ -1270,3 +1270,292 @@ summary {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ============================================================
+   Motion layer — bold animation pass
+   Every infinite / decorative animation below is neutralized
+   by the prefers-reduced-motion block above (it uses
+   !important, so source order does not matter).
+   ============================================================ */
+
+@keyframes riseIn {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes floatBlob {
+  0% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(22px, -26px) scale(1.08);
+  }
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+}
+
+@keyframes textFlow {
+  to {
+    background-position: 200% center;
+  }
+}
+
+@keyframes pulseDot {
+  0% {
+    box-shadow: 0 0 0 0 rgba(124, 140, 255, 0.55);
+  }
+  70% {
+    box-shadow: 0 0 0 12px rgba(124, 140, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(124, 140, 255, 0);
+  }
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Ambient blobs drift slowly instead of sitting static */
+.ambient {
+  will-change: transform;
+}
+.ambient-a {
+  animation: floatBlob 19s ease-in-out infinite;
+}
+.ambient-b {
+  animation: floatBlob 23s ease-in-out infinite reverse;
+}
+.ambient-c {
+  animation: floatBlob 27s ease-in-out infinite;
+}
+
+/* Flowing gradient sweep across the hero headline */
+.hero-copy h1 {
+  background: linear-gradient(100deg, #ffffff 0%, #c3caff 28%, #7c8cff 50%, #c3caff 72%, #ffffff 100%);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: textFlow 8s linear infinite;
+}
+
+/* Hero entrance: staggered rise */
+.hero-panel .hero-copy > * {
+  animation: riseIn 720ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.hero-panel .hero-copy > *:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.hero-panel .hero-copy > *:nth-child(2) {
+  animation-delay: 0.12s;
+}
+.hero-panel .hero-copy > *:nth-child(3) {
+  animation-delay: 0.19s;
+}
+.hero-panel .hero-copy > *:nth-child(4) {
+  animation-delay: 0.26s;
+}
+.hero-panel .hero-copy > *:nth-child(5) {
+  animation-delay: 0.33s;
+}
+.hero-panel .hero-copy > *:nth-child(6) {
+  animation-delay: 0.4s;
+}
+.hero-panel .live-panel {
+  animation: riseIn 820ms cubic-bezier(0.16, 1, 0.3, 1) 0.18s both;
+}
+
+/* Live timeline draws itself in step by step; active dot pulses */
+.timeline .timeline-item {
+  animation: riseIn 560ms ease both;
+}
+.timeline .timeline-item:nth-child(1) {
+  animation-delay: 0.55s;
+}
+.timeline .timeline-item:nth-child(2) {
+  animation-delay: 0.7s;
+}
+.timeline .timeline-item:nth-child(3) {
+  animation-delay: 0.85s;
+}
+.timeline .timeline-item:nth-child(4) {
+  animation-delay: 1s;
+}
+.status-live {
+  animation: pulseDot 2.1s ease-out infinite;
+}
+
+/* Scroll-reveal stagger for the card grids */
+.section-shell.is-visible .highlights-grid > *,
+.section-shell.is-visible .capability-grid > *,
+.section-shell.is-visible .showcase-grid > * {
+  animation: riseIn 600ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.highlights-grid > *:nth-child(2) {
+  animation-delay: 0.09s;
+}
+.highlights-grid > *:nth-child(3) {
+  animation-delay: 0.18s;
+}
+.capability-grid > *:nth-child(2) {
+  animation-delay: 0.09s;
+}
+.capability-grid > *:nth-child(3) {
+  animation-delay: 0.18s;
+}
+.capability-grid > *:nth-child(4) {
+  animation-delay: 0.27s;
+}
+.showcase-grid > *:nth-child(2) {
+  animation-delay: 0.09s;
+}
+.showcase-grid > *:nth-child(3) {
+  animation-delay: 0.18s;
+}
+
+/* Card hover: lift + sheen sweep + border glow */
+.highlight-card,
+.capability-card,
+.showcase-card {
+  position: relative;
+  overflow: hidden;
+  transition: transform 280ms ease, border-color 280ms ease, box-shadow 280ms ease;
+}
+.highlight-card::before,
+.capability-card::before,
+.showcase-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, 0.08) 50%, transparent 70%);
+  transform: translateX(-130%);
+  transition: transform 750ms ease;
+  pointer-events: none;
+  z-index: 1;
+}
+.highlight-card:hover,
+.capability-card:hover,
+.showcase-card:hover {
+  transform: translateY(-6px);
+  border-color: rgba(124, 140, 255, 0.45);
+  box-shadow: 0 26px 70px rgba(8, 14, 30, 0.5), 0 0 0 1px rgba(124, 140, 255, 0.2);
+}
+.highlight-card:hover::before,
+.capability-card:hover::before,
+.showcase-card:hover::before {
+  transform: translateX(130%);
+}
+.highlight-card > *,
+.capability-card > *,
+.showcase-card > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Card icon chip (compact visual cards) */
+.card-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 2.8rem;
+  height: 2.8rem;
+  border-radius: 16px;
+  color: #c3caff;
+  background: rgba(124, 140, 255, 0.12);
+  border: 1px solid rgba(124, 140, 255, 0.24);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+}
+.card-icon svg {
+  width: 1.45rem;
+  height: 1.45rem;
+}
+.highlight-card h3 {
+  margin-top: 0.9rem;
+}
+.capability-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+.capability-head .card-kicker {
+  margin: 0;
+}
+
+/* Primary button: light sweep on hover */
+.button-primary {
+  position: relative;
+  overflow: hidden;
+}
+.button-primary::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -130%;
+  width: 60%;
+  height: 100%;
+  background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  transform: skewX(-20deg);
+  transition: left 650ms ease;
+  pointer-events: none;
+}
+.button-primary:hover::after {
+  left: 150%;
+}
+
+/* Tech-stack marquee ticker */
+.marquee-panel {
+  padding: 0.85rem 0;
+  overflow: hidden;
+}
+.marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 10%, #000 90%, transparent);
+}
+.marquee-track {
+  display: inline-flex;
+  gap: 0.7rem;
+  width: max-content;
+  white-space: nowrap;
+  animation: marquee 30s linear infinite;
+  will-change: transform;
+}
+.marquee-panel:hover .marquee-track {
+  animation-play-state: paused;
+}
+.marquee-chip {
+  padding: 0.5rem 0.95rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(12, 21, 37, 0.74);
+  color: var(--text-soft);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+/* Keep stagger from leaving content hidden when motion is reduced */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-delay: 0ms !important;
+  }
+  .hero-copy h1 {
+    animation: none;
+  }
+}

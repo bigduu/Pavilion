@@ -1,13 +1,20 @@
 export const LANGUAGE_STORAGE_KEY = 'pavilion-locale'
-export const BODHI_GITHUB_URL = 'https://github.com/bigduu/Bodhi'
-export const BODHI_RELEASES_URL = 'https://github.com/bigduu/Bodhi/releases'
-export const BODHI_LATEST_RELEASE_URL = 'https://github.com/bigduu/Bodhi/releases/latest'
+export const BODHI_GITHUB_URL = 'https://github.com/bigduu/Bodhi-AI'
+export const BODHI_RELEASES_URL = 'https://github.com/bigduu/Bodhi-AI/releases'
+export const BODHI_LATEST_RELEASE_URL = 'https://github.com/bigduu/Bodhi-AI/releases/latest'
+
+// Language-neutral tech tokens for the home-page marquee ticker (all real: bamboo=Rust,
+// lotus=React/Vite, bodhi=Tauri, bodhi-server=Go/PostgreSQL, plus SSE/MCP/workflow features).
+export const techStack = [
+  'Rust', 'React', 'Vite', 'Tauri', 'SSE', 'MCP',
+  'Workflow', 'Schedule', 'Local-first', 'TypeScript', 'Go', 'PostgreSQL',
+]
 
 export const quickstartCode = String.raw`# clone the public stack side-by-side
 mkdir bodhi-stack && cd bodhi-stack
 git clone https://github.com/bigduu/Bamboo-agent.git bamboo
 git clone https://github.com/bigduu/Lotus.git lotus
-git clone https://github.com/bigduu/Bodhi.git bodhi
+git clone https://github.com/bigduu/Bodhi-AI.git bodhi
 
 # terminal 1: bamboo runtime
 cd bamboo
@@ -23,7 +30,7 @@ cd ../bodhi
 npm install
 npm run tauri:dev`
 
-export const repoGuideCode = String.raw`Bodhi   https://github.com/bigduu/Bodhi
+export const repoGuideCode = String.raw`Bodhi   https://github.com/bigduu/Bodhi-AI
 Lotus   https://github.com/bigduu/Lotus
 Bamboo  https://github.com/bigduu/Bamboo-agent`
 
