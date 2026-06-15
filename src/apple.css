@@ -306,3 +306,128 @@ body:has(.apple-page) {
     gap: 1rem;
   }
 }
+
+/* ============================================================
+   SVG illustration motion — subtle looping animations.
+   All disabled under prefers-reduced-motion (end-state kept).
+   ============================================================ */
+.apple-page .a-glow {
+  animation: a-glow 5s ease-in-out infinite;
+}
+.apple-page .a-float {
+  animation: a-float 4s ease-in-out infinite;
+}
+.apple-page .a-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: a-pulse 2s ease-in-out infinite;
+}
+.apple-page .a-ring {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: a-ring 2.2s ease-out infinite;
+}
+.apple-page .a-tick {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: a-tick 4s ease-in-out infinite;
+}
+.apple-page .a-float {
+  transform-box: fill-box;
+}
+.apple-page .a-prog {
+  transform-box: fill-box;
+  transform-origin: left center;
+  animation: a-prog 5s ease-in-out infinite;
+}
+.apple-page .a-spin {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: a-spin 9s linear infinite;
+}
+.apple-page .a-stream {
+  transform-box: fill-box;
+  animation: a-stream 6s ease-in-out infinite;
+}
+.apple-page .a-draw {
+  stroke-dasharray: 1;
+  animation: a-draw 5s ease-in-out infinite;
+}
+.apple-page .a-area {
+  animation: a-area 5s ease-in-out infinite;
+}
+
+@keyframes a-glow {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+@keyframes a-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+@keyframes a-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.18); }
+}
+@keyframes a-ring {
+  0% { transform: scale(0.6); opacity: 0.6; }
+  70%, 100% { transform: scale(1.7); opacity: 0; }
+}
+@keyframes a-tick {
+  0%, 70%, 100% { transform: scale(1); }
+  80% { transform: scale(1.18); }
+  90% { transform: scale(0.98); }
+}
+@keyframes a-prog {
+  0% { transform: scaleX(0); opacity: 1; }
+  50%, 82% { transform: scaleX(1); opacity: 1; }
+  92% { transform: scaleX(1); opacity: 0; }
+  100% { transform: scaleX(0); opacity: 0; }
+}
+@keyframes a-spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes a-stream {
+  0% { opacity: 0; transform: translateY(12px); }
+  14%, 84% { opacity: 1; transform: translateY(0); }
+  100% { opacity: 0; transform: translateY(-10px); }
+}
+@keyframes a-draw {
+  0% { stroke-dashoffset: 1; opacity: 1; }
+  45%, 82% { stroke-dashoffset: 0; opacity: 1; }
+  93% { stroke-dashoffset: 0; opacity: 0; }
+  100% { stroke-dashoffset: 1; opacity: 0; }
+}
+@keyframes a-area {
+  0% { opacity: 0; }
+  45%, 82% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .apple-page svg * {
+    animation: none !important;
+  }
+  .apple-page .a-draw {
+    stroke-dashoffset: 0 !important;
+    opacity: 1 !important;
+  }
+  .apple-page .a-area {
+    opacity: 1 !important;
+  }
+  .apple-page .a-prog {
+    transform: scaleX(1) !important;
+    opacity: 1 !important;
+  }
+  .apple-page .a-stream,
+  .apple-page .a-tick,
+  .apple-page .a-pulse,
+  .apple-page .a-float,
+  .apple-page .a-glow {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .apple-page .a-ring {
+    opacity: 0 !important;
+  }
+}

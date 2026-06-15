@@ -1,8 +1,9 @@
 /**
  * Hand-built SVG illustrations for the Apple-style home page.
  * Light-gray + Apple-blue palette, soft shadows, rounded geometry.
- * Each SVG namespaces its gradient/filter ids (h-, ex-, vi-, co-) so the
- * inline copies don't collide in the document.
+ * Subtle looping motion is driven by the `a-*` animation classes in apple.css
+ * (all disabled under prefers-reduced-motion). Each SVG namespaces its
+ * gradient/filter ids (h-, ex-, vi-, co-) so inline copies don't collide.
  */
 
 const FONT =
@@ -46,7 +47,7 @@ export function HeroArt() {
         </filter>
       </defs>
 
-      <ellipse cx="560" cy="180" rx="540" ry="250" fill="url(#h-glow)" />
+      <ellipse className="a-glow" cx="560" cy="180" rx="540" ry="250" fill="url(#h-glow)" />
 
       {/* app window */}
       <g filter="url(#h-shadow)">
@@ -71,19 +72,25 @@ export function HeroArt() {
 
       {/* main: task checklist */}
       <rect x="410" y="170" width="120" height="14" rx="7" fill="#d9dbe1" />
-      <circle cx="420" cy="214" r="11" fill="#34c759" />
-      <Check cx={420} cy={214} />
+      <g className="a-tick" style={{ animationDelay: '0.1s' }}>
+        <circle cx="420" cy="214" r="11" fill="#34c759" />
+        <Check cx={420} cy={214} />
+      </g>
       <rect x="442" y="208" width="230" height="12" rx="6" fill="#e7e8ee" />
-      <circle cx="420" cy="252" r="11" fill="#34c759" />
-      <Check cx={420} cy={252} />
+      <g className="a-tick" style={{ animationDelay: '0.7s' }}>
+        <circle cx="420" cy="252" r="11" fill="#34c759" />
+        <Check cx={420} cy={252} />
+      </g>
       <rect x="442" y="246" width="188" height="12" rx="6" fill="#e7e8ee" />
-      <circle cx="420" cy="290" r="11" fill="url(#h-blue)" />
-      <circle cx="420" cy="290" r="4" fill="#fff" />
+      <g className="a-pulse">
+        <circle cx="420" cy="290" r="11" fill="url(#h-blue)" />
+        <circle cx="420" cy="290" r="4" fill="#fff" />
+      </g>
       <rect x="442" y="284" width="210" height="12" rx="6" fill="#e7e8ee" />
 
       {/* progress */}
       <rect x="410" y="332" width="300" height="10" rx="5" fill="#ececf1" />
-      <rect x="410" y="332" width="186" height="10" rx="5" fill="url(#h-blue)" />
+      <rect className="a-prog" x="410" y="332" width="300" height="10" rx="5" fill="url(#h-blue)" />
 
       {/* input */}
       <rect x="410" y="378" width="248" height="36" rx="18" fill="#f3f4f7" stroke="#e7e8ee" />
@@ -93,8 +100,8 @@ export function HeroArt() {
       {/* right panel: diffs */}
       <line x1="724" y1="160" x2="724" y2="436" stroke="#eef0f3" />
       <rect x="742" y="170" width="90" height="14" rx="7" fill="#d9dbe1" />
-      {[196, 234, 272, 310].map((y) => (
-        <g key={y}>
+      {[196, 234, 272, 310].map((y, i) => (
+        <g className="a-stream" style={{ animationDelay: `${i * 0.5}s` }} key={y}>
           <rect x="742" y={y} width="150" height="28" rx="8" fill="#f6f7f9" stroke="#edeef2" />
           <rect x="754" y={y + 10} width="72" height="8" rx="4" fill="#dfe1e7" />
           <rect x="836" y={y + 8} width="44" height="12" rx="6" fill="#d8f3e0" />
@@ -102,17 +109,21 @@ export function HeroArt() {
       ))}
 
       {/* floating chips */}
-      <g filter="url(#h-shadow-sm)">
-        <rect x="826" y="54" width="106" height="44" rx="22" fill="#fff" stroke="#edeef2" />
+      <g className="a-float" style={{ animationDelay: '0.2s' }}>
+        <g filter="url(#h-shadow-sm)">
+          <rect x="826" y="54" width="106" height="44" rx="22" fill="#fff" stroke="#edeef2" />
+        </g>
+        <circle cx="852" cy="76" r="6" fill="url(#h-blue)" />
+        <text x="868" y="81" fontFamily={FONT} fontSize="15" fontWeight="600" fill="#1d1d1f">MCP</text>
       </g>
-      <circle cx="852" cy="76" r="6" fill="url(#h-blue)" />
-      <text x="868" y="81" fontFamily={FONT} fontSize="15" fontWeight="600" fill="#1d1d1f">MCP</text>
 
-      <g filter="url(#h-shadow-sm)">
-        <rect x="150" y="436" width="116" height="44" rx="22" fill="#fff" stroke="#edeef2" />
+      <g className="a-float" style={{ animationDelay: '1.3s' }}>
+        <g filter="url(#h-shadow-sm)">
+          <rect x="150" y="436" width="116" height="44" rx="22" fill="#fff" stroke="#edeef2" />
+        </g>
+        <circle cx="174" cy="458" r="6" fill="#34c759" />
+        <text x="190" y="463" fontFamily={FONT} fontSize="15" fontWeight="600" fill="#1d1d1f">SSE</text>
       </g>
-      <circle cx="174" cy="458" r="6" fill="#34c759" />
-      <text x="190" y="463" fontFamily={FONT} fontSize="15" fontWeight="600" fill="#1d1d1f">SSE</text>
     </svg>
   )
 }
@@ -138,16 +149,18 @@ export function ExecutesArt() {
         <rect x="60" y="44" width="520" height="332" rx="26" fill="url(#ex-card)" stroke="#e7e8ee" />
       </g>
       <rect x="96" y="80" width="160" height="16" rx="8" fill="#d9dbe1" />
-      <line x1="118" y1="150" x2="118" y2="318" stroke="#e3e5eb" strokeWidth="2" />
+      <line className="a-draw" x1="118" y1="150" x2="118" y2="318" pathLength={1} stroke="#cdd0d8" strokeWidth="2" />
       {[
         { y: 150, w: 360, sw: 220, done: true },
         { y: 206, w: 320, sw: 180, done: true },
         { y: 262, w: 340, sw: 200, done: true },
         { y: 318, w: 280, sw: 150, done: false },
-      ].map((s) => (
+      ].map((s, i) => (
         <g key={s.y}>
-          <circle cx="118" cy={s.y} r="15" fill={s.done ? '#34c759' : 'url(#ex-blue)'} />
-          {s.done ? <Check cx={118} cy={s.y} /> : <circle cx="118" cy={s.y} r="5" fill="#fff" />}
+          <g className={s.done ? 'a-tick' : 'a-pulse'} style={{ animationDelay: `${i * 0.4}s` }}>
+            <circle cx="118" cy={s.y} r="15" fill={s.done ? '#34c759' : 'url(#ex-blue)'} />
+            {s.done ? <Check cx={118} cy={s.y} /> : <circle cx="118" cy={s.y} r="5" fill="#fff" />}
+          </g>
           <rect x="152" y={s.y - 7} width={s.w} height="14" rx="7" fill="#e9ebf0" />
           <rect x="152" y={s.y + 13} width={s.sw} height="8" rx="4" fill="#f0f1f5" />
         </g>
@@ -184,13 +197,13 @@ export function VisibleArt() {
       </g>
       {/* LIVE pill */}
       <rect x="96" y="80" width="96" height="26" rx="13" fill="#eaf3fd" stroke="#cfe6fb" />
-      <circle cx="114" cy="93" r="5" fill="#34c759" />
+      <circle className="a-pulse" cx="114" cy="93" r="5" fill="#34c759" />
       <text x="128" y="98" fontFamily={FONT} fontSize="13" fontWeight="700" fill="#0071e3">LIVE</text>
 
       <line x1="118" y1="150" x2="118" y2="300" stroke="#e3e5eb" strokeWidth="2" />
-      {rows.map((r) => (
-        <g key={r.y}>
-          {r.active && <circle cx="118" cy={r.y} r="13" fill="none" stroke="url(#vi-blue)" strokeWidth="2" opacity="0.4" />}
+      {rows.map((r, i) => (
+        <g className="a-stream" style={{ animationDelay: `${i * 0.6}s` }} key={r.y}>
+          {r.active && <circle className="a-ring" cx="118" cy={r.y} r="13" fill="none" stroke="url(#vi-blue)" strokeWidth="2" />}
           <rect x="142" y={r.y - 18} width="392" height="36" rx="11" fill="#f6f7f9" stroke="#eef0f3" />
           <circle cx="118" cy={r.y} r="7" fill={r.c} />
           <rect x="160" y={r.y - 8} width="240" height="10" rx="5" fill="#e4e6ec" />
@@ -233,11 +246,14 @@ export function CompoundsArt() {
 
       {/* area + curve */}
       <path
+        className="a-area"
         d="M110 300 C170 286 200 250 250 244 C300 238 320 214 370 198 C420 182 450 156 528 138 L528 312 L110 312 Z"
         fill="url(#co-area)"
       />
       <path
+        className="a-draw"
         d="M110 300 C170 286 200 250 250 244 C300 238 320 214 370 198 C420 182 450 156 528 138"
+        pathLength={1}
         fill="none"
         stroke="url(#co-blue)"
         strokeWidth="4"
@@ -247,15 +263,17 @@ export function CompoundsArt() {
         [250, 244],
         [370, 198],
         [528, 138],
-      ].map(([x, y]) => (
-        <circle key={x} cx={x} cy={y} r="6" fill="#fff" stroke="url(#co-blue)" strokeWidth="3.5" />
+      ].map(([x, y], i) => (
+        <circle className="a-pulse" style={{ animationDelay: `${i * 0.4}s` }} key={x} cx={x} cy={y} r="6" fill="#fff" stroke="url(#co-blue)" strokeWidth="3.5" />
       ))}
 
       {/* recurring loop badge */}
       <g transform="translate(470 96)">
         <circle cx="0" cy="0" r="26" fill="#eaf3fd" stroke="#cfe6fb" />
-        <path d="M-9 -3 a9 9 0 1 1 2 8" fill="none" stroke="url(#co-blue)" strokeWidth="3" strokeLinecap="round" />
-        <path d="M-9 -10 v7 h7" fill="none" stroke="url(#co-blue)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        <g className="a-spin">
+          <path d="M-9 -3 a9 9 0 1 1 2 8" fill="none" stroke="url(#co-blue)" strokeWidth="3" strokeLinecap="round" />
+          <path d="M-9 -10 v7 h7" fill="none" stroke="url(#co-blue)" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+        </g>
       </g>
     </svg>
   )
