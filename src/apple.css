@@ -1,11 +1,12 @@
 /* ============================================================
    Apple.com-inspired theme — soft light-gray dominant, white
-   cards/bands floating on top. Scoped to .apple-page so it does
-   not affect the other (dark) pages while we evaluate it.
+   sections. Full-screen panels (one screen per section) showing
+   the real Bodhi UI in mac-window frames, with SVG accents.
+   Scoped to .apple-page so other (dark) pages are unaffected.
    ============================================================ */
 
 .apple-page {
-  --a-bg: #f5f5f7; /* soft gray — the dominant canvas */
+  --a-bg: #f5f5f7;
   --a-white: #ffffff;
   --a-text: #1d1d1f;
   --a-text-2: #6e6e73;
@@ -105,8 +106,6 @@ body:has(.apple-page) {
 .apple-nav-links a:hover {
   opacity: 1;
 }
-
-/* locale switch restyled for light nav */
 .apple-page .locale-switch {
   background: rgba(0, 0, 0, 0.05);
   border: 1px solid var(--a-line);
@@ -133,7 +132,7 @@ body:has(.apple-page) {
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
-  margin-top: 1.5rem;
+  margin-top: 1.4rem;
 }
 .apple-btn {
   display: inline-flex;
@@ -167,70 +166,130 @@ body:has(.apple-page) {
   text-decoration: underline;
 }
 
-/* ---------- SVG art sizing (illustrations carry their own shadow) ---------- */
-.apple-hero-art {
-  width: min(1040px, 94%);
-  margin: 2.4rem auto 0;
+/* ---------- mac-window frame around real product UI ---------- */
+.apple-frame {
+  position: relative;
+  z-index: 1;
+  width: min(1040px, 92%);
+  margin: 0 auto;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #1d1d1f;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 30px 80px rgba(11, 18, 32, 0.22);
 }
-.apple-art {
-  width: min(660px, 84%);
-  margin: 2.4rem auto 0;
+.apple-frame .bar {
+  height: 34px;
+  background: #2a2a2e;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
 }
-.apple-hero-art svg,
-.apple-art svg {
+.apple-frame .bar i {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.apple-frame .bar i:nth-child(1) { background: #ff5f57; }
+.apple-frame .bar i:nth-child(2) { background: #febc2e; }
+.apple-frame .bar i:nth-child(3) { background: #28c840; }
+.apple-frame img {
   width: 100%;
-  height: auto;
+  display: block;
+  max-height: 56vh;
+  object-fit: cover;
+  object-position: top;
 }
 
-/* ---------- hero ---------- */
-.apple-hero {
+/* floating accent chips (SVG + real UI combined) */
+.apple-chip {
+  position: absolute;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #fff;
+  border: 1px solid #e6e6eb;
+  border-radius: 999px;
+  padding: 0.5rem 0.95rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--a-text);
+  box-shadow: 0 10px 28px rgba(11, 18, 32, 0.16);
+}
+.apple-chip .dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* ---------- full-screen panels ---------- */
+.apple-hero,
+.apple-statement,
+.apple-band,
+.apple-caps,
+.apple-final {
+  min-height: 100vh;
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: 4.5rem 1rem 1rem;
+  padding: 9vh 1rem 6vh;
+  gap: 2rem;
+}
+
+/* hero */
+.apple-hero {
   animation: appleRise 0.9s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 @keyframes appleRise {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
 }
 .apple-hero h1 {
-  font-size: clamp(2.6rem, 6.4vw, 4.8rem);
+  font-size: clamp(2.5rem, 5.6vw, 4.4rem);
   max-width: 16ch;
   margin: 0 auto;
 }
 .apple-hero .sub {
-  font-size: clamp(1.15rem, 2.4vw, 1.7rem);
+  font-size: clamp(1.1rem, 2.2vw, 1.55rem);
   color: var(--a-text-2);
   max-width: 32ch;
-  margin: 1.1rem auto 0;
+  margin: 1rem auto 0;
   font-weight: 400;
   line-height: 1.35;
 }
-
-/* ---------- section head ---------- */
-.apple-section-head {
-  text-align: center;
-  padding: clamp(3.5rem, 8vw, 6rem) 1rem 0;
+.apple-hero-stage {
+  position: relative;
+  width: min(1040px, 94%);
+  margin-top: 0.5rem;
 }
-.apple-section-head h2 {
-  font-size: clamp(2rem, 4.4vw, 3.2rem);
-  max-width: 18ch;
+.apple-hero-glow {
+  position: absolute;
+  inset: -12% -8% 10%;
+  background: radial-gradient(60% 60% at 50% 35%, rgba(0, 113, 227, 0.22), transparent 70%);
+  filter: blur(30px);
+  z-index: 0;
+}
+
+/* statement screen */
+.apple-statement h2 {
+  font-size: clamp(2.4rem, 6vw, 4.2rem);
+  max-width: 15ch;
   margin: 0 auto;
 }
 
-/* ---------- feature bands ---------- */
+/* feature bands */
 .apple-band {
-  padding: clamp(4rem, 9vw, 7rem) 1rem;
-  text-align: center;
-  background: var(--a-bg); /* gray (dominant) */
+  background: var(--a-bg);
 }
 .apple-band.alt {
-  background: var(--a-white); /* white sections punctuate the gray */
+  background: var(--a-white);
 }
 .apple-band h2 {
   font-size: clamp(1.9rem, 4.2vw, 3.1rem);
@@ -246,11 +305,14 @@ body:has(.apple-page) {
   line-height: 1.4;
 }
 
-/* ---------- capability tiles ---------- */
+/* capabilities */
+.apple-caps h2 {
+  font-size: clamp(2rem, 4.4vw, 3.2rem);
+  max-width: 18ch;
+  margin: 0 auto;
+}
 .apple-tiles {
   width: min(1024px, 92%);
-  margin: 2.6rem auto 0;
-  padding-bottom: 1rem;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1.2rem;
@@ -259,36 +321,36 @@ body:has(.apple-page) {
   background: var(--a-white);
   border: 1px solid #ececf0;
   border-radius: var(--a-radius);
-  padding: 2.2rem;
+  padding: 2.1rem;
   text-align: left;
 }
 .apple-tile .ic {
   width: 2.6rem;
   height: 2.6rem;
   color: var(--a-blue);
-  margin-bottom: 1.1rem;
+  margin-bottom: 1rem;
 }
 .apple-tile h3 {
-  font-size: 1.55rem;
+  font-size: 1.5rem;
 }
 .apple-tile p {
   color: var(--a-text-2);
-  margin-top: 0.55rem;
-  font-size: 1.05rem;
+  margin-top: 0.5rem;
+  font-size: 1.02rem;
   line-height: 1.45;
 }
 
-/* ---------- final CTA + footer ---------- */
+/* final */
 .apple-final {
-  text-align: center;
-  padding: clamp(4rem, 9vw, 7rem) 1rem;
   background: var(--a-white);
 }
 .apple-final h2 {
-  font-size: clamp(2rem, 4.4vw, 3.2rem);
+  font-size: clamp(2.2rem, 4.6vw, 3.4rem);
   max-width: 18ch;
   margin: 0 auto;
 }
+
+/* footer */
 .apple-footer {
   background: var(--a-bg);
   border-top: 1px solid var(--a-line);
@@ -298,6 +360,41 @@ body:has(.apple-page) {
   text-align: center;
 }
 
+/* ---------- scroll reveal (float up into the viewport on scroll) ---------- */
+.apple-reveal {
+  opacity: 0;
+  transform: translateY(52px) scale(0.965);
+  transition: opacity 0.85s ease, transform 0.95s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
+}
+.apple-reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---------- looping micro-motion for accents ---------- */
+.apple-page .a-float {
+  animation: a-float 4s ease-in-out infinite;
+}
+.apple-page .a-glow {
+  animation: a-glow 5s ease-in-out infinite;
+}
+.apple-page .a-pulse {
+  animation: a-pulse 2s ease-in-out infinite;
+}
+@keyframes a-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+@keyframes a-glow {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+@keyframes a-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.25); }
+}
+
 @media (max-width: 720px) {
   .apple-tiles {
     grid-template-columns: 1fr;
@@ -305,129 +402,20 @@ body:has(.apple-page) {
   .apple-nav-links {
     gap: 1rem;
   }
-}
-
-/* ============================================================
-   SVG illustration motion — subtle looping animations.
-   All disabled under prefers-reduced-motion (end-state kept).
-   ============================================================ */
-.apple-page .a-glow {
-  animation: a-glow 5s ease-in-out infinite;
-}
-.apple-page .a-float {
-  animation: a-float 4s ease-in-out infinite;
-}
-.apple-page .a-pulse {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: a-pulse 2s ease-in-out infinite;
-}
-.apple-page .a-ring {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: a-ring 2.2s ease-out infinite;
-}
-.apple-page .a-tick {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: a-tick 4s ease-in-out infinite;
-}
-.apple-page .a-float {
-  transform-box: fill-box;
-}
-.apple-page .a-prog {
-  transform-box: fill-box;
-  transform-origin: left center;
-  animation: a-prog 5s ease-in-out infinite;
-}
-.apple-page .a-spin {
-  transform-box: fill-box;
-  transform-origin: center;
-  animation: a-spin 9s linear infinite;
-}
-.apple-page .a-stream {
-  transform-box: fill-box;
-  animation: a-stream 6s ease-in-out infinite;
-}
-.apple-page .a-draw {
-  stroke-dasharray: 1;
-  animation: a-draw 5s ease-in-out infinite;
-}
-.apple-page .a-area {
-  animation: a-area 5s ease-in-out infinite;
-}
-
-@keyframes a-glow {
-  0%, 100% { opacity: 0.55; }
-  50% { opacity: 1; }
-}
-@keyframes a-float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-@keyframes a-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.18); }
-}
-@keyframes a-ring {
-  0% { transform: scale(0.6); opacity: 0.6; }
-  70%, 100% { transform: scale(1.7); opacity: 0; }
-}
-@keyframes a-tick {
-  0%, 70%, 100% { transform: scale(1); }
-  80% { transform: scale(1.18); }
-  90% { transform: scale(0.98); }
-}
-@keyframes a-prog {
-  0% { transform: scaleX(0); opacity: 1; }
-  50%, 82% { transform: scaleX(1); opacity: 1; }
-  92% { transform: scaleX(1); opacity: 0; }
-  100% { transform: scaleX(0); opacity: 0; }
-}
-@keyframes a-spin {
-  to { transform: rotate(360deg); }
-}
-@keyframes a-stream {
-  0% { opacity: 0; transform: translateY(12px); }
-  14%, 84% { opacity: 1; transform: translateY(0); }
-  100% { opacity: 0; transform: translateY(-10px); }
-}
-@keyframes a-draw {
-  0% { stroke-dashoffset: 1; opacity: 1; }
-  45%, 82% { stroke-dashoffset: 0; opacity: 1; }
-  93% { stroke-dashoffset: 0; opacity: 0; }
-  100% { stroke-dashoffset: 1; opacity: 0; }
-}
-@keyframes a-area {
-  0% { opacity: 0; }
-  45%, 82% { opacity: 1; }
-  100% { opacity: 0; }
+  .apple-frame img {
+    max-height: 48vh;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .apple-page svg * {
-    animation: none !important;
-  }
-  .apple-page .a-draw {
-    stroke-dashoffset: 0 !important;
-    opacity: 1 !important;
-  }
-  .apple-page .a-area {
-    opacity: 1 !important;
-  }
-  .apple-page .a-prog {
-    transform: scaleX(1) !important;
-    opacity: 1 !important;
-  }
-  .apple-page .a-stream,
-  .apple-page .a-tick,
-  .apple-page .a-pulse,
-  .apple-page .a-float,
-  .apple-page .a-glow {
+  .apple-reveal {
     opacity: 1 !important;
     transform: none !important;
+    transition: none !important;
   }
-  .apple-page .a-ring {
-    opacity: 0 !important;
+  .apple-page .a-float,
+  .apple-page .a-glow,
+  .apple-page .a-pulse {
+    animation: none !important;
   }
 }
