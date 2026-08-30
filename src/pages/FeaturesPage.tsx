@@ -13,12 +13,6 @@ export function FeaturesPage({
   setLocale: (locale: Locale) => void
   content: Translation
 }) {
-  const updatedAt = new Intl.DateTimeFormat(locale === 'zh' ? 'zh-CN' : 'en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(new Date())
-
   return (
     <div className="page-shell docs-shell">
       <div className="ambient ambient-a" aria-hidden="true" />
@@ -51,9 +45,6 @@ export function FeaturesPage({
           <p className="section-kicker">{content.features.kicker}</p>
           <h1>{content.features.title}</h1>
           <p className="docs-description">{content.features.description}</p>
-          <small>
-            {content.features.updatedLabel}: {updatedAt}
-          </small>
         </section>
 
         <div className="docs-layout">

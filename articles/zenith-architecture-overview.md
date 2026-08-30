@@ -1,411 +1,150 @@
 # Zenith 架构总览
 
-Zenith 是一个围绕 AI Agent 技术栈构建的薄层 monorepo，包含五个核心子模块和一个 Go 后端服务。每个模块有明确的职责边界，共同构成一个完整的桌面 AI 产品体系。
+Zenith 是一个薄层 monorepo。根仓库负责固定九个 submodule 的提交指针、协作规则和发布列车；产品能力由各 submodule 按清晰边界独立实现。
 
----
+本文只描述当前已经存在的边界和通信路径，不把规划中的集成写成已交付功能。
 
-## 模块架构图
+## 九个 submodule
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                      Pavilion (官网/文档)                      │
-│                    React + Vite 静态站点                       │
-└─────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────┐
-│                      Bodhi (桌面产品)                          │
-│                   Tauri + React 桌面应用                       │
-│  ┌─────────────────────────────────────────────────────────┐│
-│  │                   Lotus (UI 交互层)                        ││
-│  │              React + Vite + TypeScript                    ││
-│  │  - 实时事件流渲染 (SSE)                                    ││
-│  │  - 多窗格交互界面                                          ││
-│  │  - 设置中心                                                 ││
-│  └─────────────────────────────────────────────────────────┘│
-└─────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────┐
-│                  Bamboo (Agent Runtime)                      │
-│                     Rust 执行引擎                            │
-│  - 任务调度与管理                                             │
-│  - 内置工具系统 (20+)                                         │
-│  - MCP 扩展协议                                               │
-│  - 上下文压缩与管理                                            │
-│  - Workflow / Schedule 自动化                                 │
-│  - HTTP API + SSE 事件流                                      │
-└─────────────────────────────────────────────────────────────┘
-                              ↓
-┌─────────────────────────────────────────────────────────────┐
-│                  Bodhi Server (后端服务)                      │
-│                      Go + PostgreSQL                         │
-│  - 用户认证 (JWT)                                             │
-│  - 数据持久化                                                 │
-│  - RESTful API                                               │
-│  - Docker 容器化部署                                          │
-└─────────────────────────────────────────────────────────────┘
-```
+| Submodule | 当前职责 |
+| --- | --- |
+| [bamboo](https://github.com/bigduu/Bamboo-agent) | 本地优先的 Rust Agent runtime：执行、工具、会话、上下文编排、HTTP API、Workflow 与 Schedule |
+| [bodhi](https://github.com/bigduu/Bodhi-AI) | Tauri 桌面外壳：启动画面、托管 Bamboo 生命周期、原生集成、打包与发布 |
+| [lotus](https://github.com/bigduu/Lotus) | 当前 React + Vite UI：对话、任务与工具可视化、设置、默认 WebSocket 实时流 |
+| [pavilion](https://github.com/bigduu/Pavilion) | 官方网站与文档入口；不运行 Agent，也不代理运行时请求 |
+| [bodhi-server](https://github.com/bigduu/bodhi-server) | 可选的托管服务：账号、API key、加密 Provider 凭据、模型路由、计费、配额与 LLM 代理 |
+| [jiandu](https://github.com/bigduu/Jiandu) | 独立的小型共享记忆边界：Rust library + stdio MCP server，使用文件系统保存与检索记忆 |
+| [nova](https://github.com/bigduu/Nova) | 原生 computer-use MCP server：Accessibility/UI Automation 优先，并提供截图与输入能力 |
+| [lotus-next](https://github.com/bigduu/lotus-next) | 与 Lotus 并行开发的下一代响应式前端路线；不是当前 Bodhi 默认装配的 UI |
+| [magpie](https://github.com/bigduu/Magpie) | Telegram 与飞书/Lark IM 连接器，通过 Bamboo 公开 HTTP/WS API 工作，并可作为 Bamboo service plugin 运行 |
 
----
+Zenith 根仓库本身不是第十个 submodule，也不承载运行时代码。
 
-## 模块详解
+## 桌面启动链路
 
-### 1. Pavilion - 官网与文档
+Bodhi、Bamboo 和 Lotus 的启动顺序与请求方向是两件不同的事。
 
-**技术栈**：React + Vite + TypeScript
-
-**职责**：
-- 产品介绍和转化入口
-- 文档中心（上手、进阶、开发者路径）
-- 下载页面
-- 功能详解
-
-**文件结构**：
-```
-pavilion/
-├── src/
-│   ├── App.tsx              # 主应用（单页应用路由）
-│   ├── main.tsx             # 入口
-│   └── index.css            # 样式
-├── articles/                # 长篇文章
-│   ├── why-i-built-my-own-agent.md
-│   ├── ci-cd-and-release-system.md
-│   ├── multi-agent-collaboration.md
-│   └── bodhi-server-deep-dive.md
-├── public/                  # 静态资源
-│   └── screenshots/         # 产品截图
-└── package.json
-```
-
-**关键特性**：
-- 双语支持（中文/英文）
-- 响应式设计
-- 深色/浅色主题
-- 基于 URL hash 的文档导航
-
----
-
-### 2. Bodhi - 桌面壳
-
-**技术栈**：Tauri + React + TypeScript + Rust
-
-**职责**：
-- 桌面应用窗口管理
-- 原生系统集成（通知、快捷键、文件系统）
-- 自动更新
-- 安装包构建
-
-**文件结构**：
-```
-bodhi/
-├── src/                     # 前端源码
-│   └── ...
-├── src-tauri/               # Tauri 后端（Rust）
-│   ├── src/
-│   ├── Cargo.toml
-│   └── tauri.conf.json
-├── package.json
-└── Cargo.lock
-```
-
-**平台支持**：
-- macOS (Apple Silicon + Intel)
-- Windows
-- Linux
-
----
-
-### 3. Lotus - UI 交互层
-
-**技术栈**：React + Vite + TypeScript
-
-**职责**：
-- 聊天界面
-- 实时事件流渲染
-- 任务状态可视化
-- 工具调用透明化
-- 设置中心
-
-**关键特性**：
-- SSE（Server-Sent Events）实时事件流
-- 多窗格布局
-- 历史会话管理
-- Markdown 渲染
-- 代码高亮
-
-**与 Bamboo 通信**：
-```typescript
-// SSE 事件流
-const eventSource = new EventSource(`/api/v1/events/${sessionId}`);
-eventSource.onmessage = (event) => {
-  const data = JSON.parse(event.data);
-  updateUI(data);
-};
-
-// API 调用
-const response = await fetch('/api/v1/chat', {
-  method: 'POST',
-  body: JSON.stringify({ message, session_id: sessionId })
-});
-```
-
----
-
-### 4. Bamboo - Agent Runtime
-
-**技术栈**：Rust
-
-**职责**：
-- 本地 AI Agent 执行引擎
-- 任务管理和调度
-- 工具系统（内置 + MCP）
-- 上下文压缩和记忆
-- HTTP API 服务
-
-**核心组件**：
-
-| 组件 | 说明 |
-|------|------|
-| **Agent Loop** | 带边界的行动闭环 |
-| **Context Manager** | 分层上下文管理 |
-| **Tool System** | 20+ 内置工具 + MCP 扩展 |
-| **Memory** | 持久化记忆系统 |
-| **Workflow** | 多步骤执行模式复用 |
-| **Schedule** | 定时自动化执行 |
-| **SSE** | 实时事件流推送 |
-
-**API 端点**：
-```
-POST /api/v1/chat
-POST /api/v1/execute/{session_id}
-GET  /api/v1/events/{session_id}
-POST /api/v1/stop/{session_id}
-GET  /api/v1/history/{session_id}
-
-GET|POST     /api/v1/sessions
-PATCH|DELETE /api/v1/sessions/{session_id}
-
-GET|POST     /api/v1/schedules
-PATCH|DELETE /api/v1/schedules/{schedule_id}
-POST         /api/v1/schedules/{schedule_id}/run
-
-GET|POST     /api/v1/mcp/servers
-POST         /api/v1/mcp/servers/import
-POST         /api/v1/mcp/servers/{id}/connect
-```
-
-**Provider 兼容接口**：
-```
-POST /openai/v1/chat/completions
-POST /openai/v1/responses
-POST /anthropic/v1/messages
-POST /gemini/v1beta/models/{model}:generateContent
-```
-
----
-
-### 5. Bodhi Server - 后端服务
-
-**技术栈**：Go + PostgreSQL + JWT
-
-**职责**：
-- 用户认证和授权
-- 数据持久化
-- 跨设备同步
-- 服务端业务逻辑
-
-**API 设计**：
-```
-POST   /api/v1/auth/register
-POST   /api/v1/auth/login
-DELETE /api/v1/auth/logout
-
-GET    /api/v1/user/profile
-PUT    /api/v1/user/profile
-
-GET    /api/v1/sessions
-POST   /api/v1/sessions
-GET    /api/v1/sessions/:id
-```
-
-**部署方式**：
-- Docker 容器化
-- docker-compose 一键启动
-- 支持独立部署
-
----
-
-## 数据流
-
-### 典型任务执行流
-
-```
-用户输入
+```text
+Bodhi 启动画面
   ↓
-Lotus (UI 层) → 显示输入、发送请求
+启动或复用本机 bamboo serve
   ↓
-Bamboo (Runtime) → 解析意图、创建任务
+等待 GET /api/v1/health 成功
   ↓
-工具调用（内置 / MCP）→ 执行操作
-  ↓
-SSE 事件流 → 实时推送进度
-  ↓
-Lotus (UI 层) → 实时更新界面
-  ↓
-结果展示
+加载构建时装配好的 Lotus UI
 ```
 
-### 持久化数据流
+Bodhi 管理桌面窗口和 Bamboo sidecar 生命周期。它不把 Bamboo 作为 Rust crate 链入进程，也不维护一份独立的前端实现；Lotus 资产在构建或开发阶段装配进桌面应用。
 
+## 运行时请求链路
+
+Lotus 加载后直接使用 Bamboo 的本地公开接口：
+
+```text
+Lotus ── HTTP /api/v1/* ──> Bamboo
+Lotus <── shared WebSocket /v2/stream ──> Bamboo
 ```
-Bamboo (本地) → 会话缓存、短期记忆
-  ↓
-Bodhi Server (后端) → 用户数据、历史记录、配置
-  ↓
-PostgreSQL → 长期持久化
+
+- 普通命令、查询和变更使用本地 HTTP API。
+- 实时事件默认复用一条共享的 `/v2/stream` WebSocket；默认承载 JSON 文本，也可显式协商 MessagePack。
+- legacy `/api/v1/stream` 与 `/api/v1/events/{session_id}` SSE 只在首次 WebSocket 建连失败或客户端显式关闭 WebSocket 路径时使用。
+- WebSocket 曾经成功建立后的普通断线由 WebSocket 客户端重连，不会立即创建第二套 SSE 流。
+
+这条本地链路不依赖 Bodhi Server。
+
+## 执行上下文与共享记忆
+
+Bamboo 负责一次 Agent 执行中的上下文组织、工具调用、任务状态和 prompt assembly。Jiandu 是独立的共享记忆 library 与 stdio MCP server，供获得相应权限的 MCP host 使用。
+
+两者的边界是：
+
+- Bamboo 管理当前执行需要什么上下文。
+- Jiandu 保存和检索可跨会话共享的记忆。
+- 其它 Agent 可以把 Jiandu 当作 MCP memory 使用，无需依赖 Bamboo 内部实现。
+- 不直接编辑 Jiandu 数据文件；通过 Jiandu API 或 MCP tool 操作。
+
+Jiandu 已经存在并可独立使用，但本文不声称某个 Bamboo release 已经把内部 memory facade 全部切换到 Jiandu。具体集成状态应以对应 Bamboo release 为准。
+
+## MCP 与外部交互边界
+
+### Jiandu
+
+Jiandu 暴露一个统一的 `memory` MCP tool，覆盖 Session 连续性笔记和 Project/Global 持久记忆。它不提供 daemon、HTTP 服务或版本兼容层。
+
+### Nova
+
+Nova 通过 MCP 暴露原生桌面读取与操作能力。它优先使用 macOS Accessibility 或 Windows UI Automation 获取语义结构，在真正需要视觉信息时再使用截图，并通过原生输入 API 完成操作。
+
+### Magpie
+
+Magpie 把 Telegram 与飞书/Lark 消息桥接到 Bamboo。它只依赖 Bamboo 的公开 HTTP 与 `/v2/stream` WebSocket 接口，不调用 Bamboo 进程内实现；作为 service plugin 安装时由 Bamboo 负责启动与监督。
+
+## Bodhi Server 是可选服务
+
+Bodhi Server 适合需要中心化托管能力的部署：
+
+- JWT 用户与 hash-only machine API key；
+- AES-256-GCM Provider 凭据保险库；
+- 模型注册与多实例路由；
+- 计费、配额、审计与 Provider proxy；
+- PostgreSQL 与 Docker 部署。
+
+它不是：
+
+- Lotus 的静态资源宿主；
+- Bamboo 的本地 `/api/v1/*` 服务；
+- Bamboo 会话存储；
+- Jiandu 记忆存储；
+- 本地 Bodhi → Bamboo → Lotus 启动链路的必需组件。
+
+需要托管 LLM 网关时，Bamboo 或其它客户端可以使用 Bodhi Server 的 `/proxy/*` 路径；不需要时，本地桌面链路可以完全独立运行。
+
+## Pavilion 与 Lotus Next
+
+Pavilion 是静态官网和文档表面。它解释产品、提供下载入口并链接各仓库，但不连接本地 Bamboo 或 Bodhi Server。
+
+Lotus Next 是独立的下一代响应式前端路线。它与当前 Lotus 共享 Bamboo 公开 API 这一边界，但应按自身 README 理解功能和传输策略；它不应被描述成已经替换当前 Bodhi 中的 Lotus。
+
+## 发布链路
+
+Zenith 的 Release Train 按依赖顺序发布：
+
+```text
+Lotus → Bamboo → Bodhi
 ```
 
----
+Lotus 先发布 npm 包，Bamboo 随后可装配对应前端版本并发布 Rust crate，Bodhi 最后组合已发布的 Bamboo 与 Lotus 版本生成桌面 release。Pavilion、Jiandu、Nova、Lotus Next、Magpie 与 Bodhi Server 保持各自仓库的独立验证和发布边界。
 
-## 技术选型对比
+## 开发入口
 
-| 维度 | Bodhi | Lotus | Bamboo | Bodhi Server | Pavilion |
-|------|-------|-------|--------|--------------|----------|
-| **语言** | TS/Rust | TS | Rust | Go | TS |
-| **框架** | Tauri | React+Vite | Axum | Stdlib | React+Vite |
-| **职责** | 桌面壳 | UI 层 | 执行引擎 | 后端服务 | 官网 |
-| **通信** | IPC | HTTP/SSE | HTTP/SSE | HTTP | 静态 |
-| **部署** | 桌面安装 | Web/桌面 | 本地服务 | Docker | CDN |
-
----
-
-## 开发工作流
-
-### 本地开发启动
+从 Zenith 根仓库初始化全部 submodule：
 
 ```bash
-# 1. 初始化子模块
 git submodule update --init --recursive
-
-# 2. 启动 Bamboo runtime
-cd bamboo
-cargo run --bin bamboo -- serve --port 9562
-
-# 3. 启动 Lotus UI
-cd lotus
-npm install
-npm run dev
-
-# 4. 启动 Bodhi 桌面（可选）
-cd bodhi
-npm install
-npm run tauri:dev
-
-# 5. 启动 Bodhi Server（可选）
-cd bodhi-server
-docker-compose up -d postgres
-go run ./cmd/server
-
-# 6. 启动 Pavilion 官网（可选）
-cd pavilion
-npm install
-npm run dev
 ```
 
-### 测试
+然后进入目标边界工作：
 
-```bash
-# Bamboo
-cd bamboo && cargo test
+- 桌面壳与 sidecar 生命周期：`bodhi/`
+- 当前 UI：`lotus/`
+- 本地 Agent runtime：`bamboo/`
+- 共享记忆：`jiandu/`
+- 原生 computer use：`nova/`
+- 响应式前端路线：`lotus-next/`
+- IM connector/plugin：`magpie/`
+- 托管服务端：`bodhi-server/`
+- 官网与文档：`pavilion/`
 
-# Lotus
-cd lotus && npm run test:run
-
-# Bodhi Server
-cd bodhi-server && go test ./...
-
-# E2E
-cd lotus && npm run test:e2e
-```
-
----
-
-## 发布流程
-
-```
-代码提交 → 测试通过 → 版本更新 → Release Train → 自动发布
-                                       ↓
-                              Bamboo → Lotus → Bodhi
-                                       ↓
-                                   验证可用性
-```
-
-详见 [CI/CD 与发布系统](./ci-cd-and-release-system.md)
-
----
-
-## 安全架构
-
-| 层级 | 措施 |
-|------|------|
-| **通信安全** | HTTPS/TLS、rustls-webpki |
-| **认证安全** | JWT、bcrypt 密码哈希 |
-| **输入安全** | 参数化查询、输入验证 |
-| **依赖安全** | 定期更新、漏洞扫描 |
-| **发布安全** | 代码审查、测试门禁 |
-
----
-
-## 扩展性
-
-### MCP（Model Context Protocol）
-
-Bodhi 通过 MCP 协议连接外部工具和服务：
-
-```
-内置工具（Bamboo）
-  ↓
-MCP Server（外部扩展）
-  ↓
-第三方服务（Jira、Confluence、GitHub 等）
-```
-
-### Workflow 和 Schedule
-
-```
-单次任务成功
-  ↓
-保存为 Workflow（可复用模式）
-  ↓
-加入 Schedule（定时自动执行）
-  ↓
-持续自动化
-```
-
----
-
-## 监控和可观测性
-
-### 指标收集
-
-| 来源 | 指标 |
-|------|------|
-| Bamboo | 任务执行时间、工具调用次数、错误率 |
-| Lotus | 页面加载时间、交互延迟 |
-| Bodhi Server | API 延迟、数据库查询时间、认证成功率 |
-
-### 日志
-
-- 结构化日志（JSON 格式）
-- 分级日志（DEBUG/INFO/WARN/ERROR）
-- 请求追踪 ID
-
----
+跨组件开发优先遵守公开 HTTP、WebSocket 和 MCP 边界，不把一个模块的内部类型复制成另一个模块的兼容层。
 
 ## 相关链接
 
-- [Bodhi 源码](https://github.com/bigduu/Bodhi)
-- [Lotus 源码](https://github.com/bigduu/Lotus)
-- [Bamboo 源码](https://github.com/bigduu/Bamboo-agent)
-- [CI/CD 文档](./ci-cd-and-release-system.md)
-- [多 Agent 协作](./multi-agent-collaboration.md)
-- [Bodhi Server 详解](./bodhi-server-deep-dive.md)
+- [Zenith 根仓库](https://github.com/bigduu/Zenith)
+- [Bodhi](https://github.com/bigduu/Bodhi-AI)
+- [Lotus](https://github.com/bigduu/Lotus)
+- [Bamboo](https://github.com/bigduu/Bamboo-agent)
+- [Jiandu](https://github.com/bigduu/Jiandu)
+- [Nova](https://github.com/bigduu/Nova)
+- [Lotus Next](https://github.com/bigduu/lotus-next)
+- [Magpie](https://github.com/bigduu/Magpie)
+- [Bodhi Server](https://github.com/bigduu/bodhi-server)

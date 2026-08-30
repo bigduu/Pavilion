@@ -73,6 +73,21 @@ describe('Pavilion app', () => {
     ).toBeInTheDocument()
   })
 
+  it('renders the current WebSocket-first architecture and supporting modules in English features', () => {
+    renderAt('/features?lang=en')
+
+    expect(screen.getAllByText(/\/v2\/stream/).length).toBeGreaterThan(0)
+    for (const responsibility of [
+      'Jiandu: independent filesystem-backed shared memory library and stdio MCP server',
+      'Nova: native computer-use capabilities exposed through MCP',
+      'Lotus Next: responsive next-generation frontend track developed alongside Lotus',
+      'Magpie: Telegram and Feishu/Lark connector shipped as a Bamboo service plugin',
+    ]) {
+      expect(screen.getByText(responsibility)).toBeInTheDocument()
+    }
+    expect(screen.queryByText(/Built on SSE/)).not.toBeInTheDocument()
+  })
+
   it('renders the docs page from its URL with the stored locale', () => {
     // getInitialLocale resolves the locale from the persisted preference;
     // seed it to Chinese to assert localized docs content renders.
@@ -81,5 +96,21 @@ describe('Pavilion app', () => {
     expect(
       screen.getByRole('heading', { level: 1, name: zh.docs.title }),
     ).toBeInTheDocument()
+  })
+
+  it('renders the current WebSocket-first architecture and supporting modules in Chinese docs', () => {
+    window.localStorage.setItem('pavilion-locale', 'zh')
+    renderAt('/docs')
+
+    expect(screen.getAllByText(/\/v2\/stream/).length).toBeGreaterThan(0)
+    for (const responsibility of [
+      'Jiandu：独立的共享记忆 Rust 库与 stdio MCP server',
+      'Nova：原生 computer-use MCP server',
+      'Lotus Next：与 Lotus 并行的响应式前端路线',
+      'Magpie：IM 连接器与 Bamboo service plugin',
+    ]) {
+      expect(screen.getByText(responsibility)).toBeInTheDocument()
+    }
+    expect(screen.queryByText(/基于 SSE/)).not.toBeInTheDocument()
   })
 })

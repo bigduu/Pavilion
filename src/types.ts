@@ -158,7 +158,6 @@ export type Translation = {
     kicker: string
     title: string
     description: string
-    updatedLabel: string
     tocTitle: string
     sections: FeatureSection[]
   }
@@ -166,7 +165,6 @@ export type Translation = {
     kicker: string
     title: string
     description: string
-    updatedLabel: string
     tocTitle: string
     sections: DocSection[]
   }

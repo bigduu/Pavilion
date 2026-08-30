@@ -12,12 +12,6 @@ export function DocsPage({
   setLocale: (locale: Locale) => void
   content: Translation
 }) {
-  const updatedAt = new Intl.DateTimeFormat(locale === 'zh' ? 'zh-CN' : 'en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  }).format(new Date())
-
   return (
     <div className="page-shell docs-shell">
       <div className="ambient ambient-a" aria-hidden="true" />
@@ -55,9 +49,6 @@ export function DocsPage({
           <p className="section-kicker">{content.docs.kicker}</p>
           <h1>{content.docs.title}</h1>
           <p className="docs-description">{content.docs.description}</p>
-          <small>
-            {content.docs.updatedLabel}: {updatedAt}
-          </small>
         </section>
 
         <div className="docs-layout">

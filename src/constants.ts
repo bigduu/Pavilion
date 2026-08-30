@@ -4,9 +4,10 @@ export const BODHI_RELEASES_URL = 'https://github.com/bigduu/Bodhi-AI/releases'
 export const BODHI_LATEST_RELEASE_URL = 'https://github.com/bigduu/Bodhi-AI/releases/latest'
 
 // Language-neutral tech tokens for the home-page marquee ticker (all real: bamboo=Rust,
-// lotus=React/Vite, bodhi=Tauri, bodhi-server=Go/PostgreSQL, plus SSE/MCP/workflow features).
+// lotus=React/Vite, bodhi=Tauri, bodhi-server=Go/PostgreSQL, plus WebSocket,
+// legacy SSE fallback, MCP, and workflow features).
 export const techStack = [
-  'Rust', 'React', 'Vite', 'Tauri', 'SSE', 'MCP',
+  'Rust', 'React', 'Vite', 'Tauri', 'WebSocket', 'SSE fallback', 'MCP',
   'Workflow', 'Schedule', 'Local-first', 'TypeScript', 'Go', 'PostgreSQL',
 ]
 
@@ -32,14 +33,26 @@ npm run tauri:dev`
 
 export const repoGuideCode = String.raw`Bodhi   https://github.com/bigduu/Bodhi-AI
 Lotus   https://github.com/bigduu/Lotus
-Bamboo  https://github.com/bigduu/Bamboo-agent`
+Bamboo  https://github.com/bigduu/Bamboo-agent
+Pavilion  https://github.com/bigduu/Pavilion
+Bodhi Server  https://github.com/bigduu/bodhi-server
+Jiandu  https://github.com/bigduu/Jiandu
+Nova  https://github.com/bigduu/Nova
+Lotus Next  https://github.com/bigduu/lotus-next
+Magpie  https://github.com/bigduu/Magpie`
 
 export const apiCode = String.raw`# core runtime
 POST /api/v1/chat
 POST /api/v1/execute/{session_id}
-GET  /api/v1/events/{session_id}
 POST /api/v1/stop/{session_id}
 GET  /api/v1/history/{session_id}
+
+# realtime: one shared WebSocket is the default
+GET  /v2/stream
+
+# legacy realtime: initial-connect fallback or explicit opt-out only
+GET  /api/v1/stream
+GET  /api/v1/events/{session_id}
 
 # sessions and schedules
 GET|POST          /api/v1/sessions
@@ -47,7 +60,7 @@ PATCH|DELETE      /api/v1/sessions/{session_id}
 GET|POST          /api/v1/schedules
 PATCH|DELETE      /api/v1/schedules/{schedule_id}
 POST              /api/v1/schedules/{schedule_id}/run
-GET               /api/v1/schedules/{session_id}/sessions
+GET               /api/v1/schedules/{schedule_id}/sessions
 
 # mcp
 GET|POST          /api/v1/mcp/servers
