@@ -86,7 +86,7 @@ flowchart LR
 |---|---|
 | [`why-i-built-my-own-agent.md`](./articles/why-i-built-my-own-agent.md) | 创始人为什么决定自己写一个 Agent — 产品起源叙事 |
 | [`zenith-architecture-overview.md`](./articles/zenith-architecture-overview.md) | Zenith 产品层次与职责边界的长文叙事 |
-| [`bodhi-server-deep-dive.md`](./articles/bodhi-server-deep-dive.md) | Go 后端 Bodhi Server 的服务端能力（认证、持久化、跨设备同步）深解 |
+| [`bodhi-server-deep-dive.md`](./articles/bodhi-server-deep-dive.md) | 可选 Go 托管服务的账号认证、凭据保险箱、计费配额、模型路由与 provider 代理能力 |
 | [`ci-cd-and-release-system.md`](./articles/ci-cd-and-release-system.md) | 基于 GitHub Actions 的 Bamboo / Lotus / Bodhi 协同发布流程 |
 | [`multi-agent-collaboration.md`](./articles/multi-agent-collaboration.md) | 用 GitHub Projects「Zenith Roadmap」协调多个 agent 并行工作 |
 
