@@ -54,12 +54,14 @@ The core product path that Pavilion explains:
 flowchart LR
   Visitor((Visitor)) --> Pavilion[Pavilion\nwebsite + docs]
   Pavilion -. routes to download .-> Bodhi[bodhi\nTauri shell]
-  Bodhi --> Lotus[lotus\nUI layer]
-  Lotus -- HTTP APIs + WebSocket / SSE fallback --> Bamboo[bamboo\nlocal agent runtime]
-  Bamboo -. auth / quota / LLM proxy .-> BodhiServer[bodhi-server\nGo backend]
+  Bodhi -- starts / reuses + health-checks --> Bamboo[bamboo\nmanaged local runtime]
+  Bamboo -- serves packaged Lotus UI --> Lotus[lotus\nUI layer]
+  Lotus -- HTTP requests + shared /v2/stream WebSocket --> Bamboo
+  Lotus -. legacy SSE fallback .-> Bamboo
+  Bamboo -. optional hosted capabilities .-> BodhiServer[bodhi-server\nGo service]
 ```
 
-> This is the product/request path, not a complete submodule diagram. Lotus uses the shared `/v2/stream` WebSocket by default (JSON text by default, optional negotiated MessagePack) and falls back to SSE when the initial WebSocket connection cannot be established. Pavilion itself only links to the other repositories; it does not call the runtime or backend.
+> This is the product/request path, not a complete submodule diagram. Bodhi starts or reuses `bamboo serve` and checks its health. In packaged builds, Bodhi loads the Lotus frontend served by Bamboo. Lotus sends requests over HTTP and receives live events through one shared `/v2/stream` WebSocket by default (JSON text by default, optional negotiated MessagePack). The legacy SSE endpoints are used only when WebSocket is explicitly disabled or its initial connection cannot be established. bodhi-server is an optional hosted service for account/auth, credential storage, model routing, billing/quota, and provider proxy capabilities; local Bodhi + Bamboo operation does not require it. Pavilion itself only links to the other repositories; it does not call the runtime or backend.
 
 ---
 
@@ -112,10 +114,10 @@ Zenith is a thin monorepo that currently pins nine submodules; Pavilion is its p
 
 | Module | Role |
 |---|---|
-| [**bodhi**](https://github.com/bigduu/Bodhi-AI) | desktop AI product surface (Tauri shell) |
+| [**bodhi**](https://github.com/bigduu/Bodhi-AI) | Tauri desktop shell that starts or reuses and health-checks Bamboo; packaged builds load the Lotus UI served by Bamboo |
 | [**lotus**](https://github.com/bigduu/Lotus) | the visible UI layer (React + Vite) |
 | [**bamboo**](https://github.com/bigduu/Bamboo-agent) | local-first Rust agent runtime (execution engine) |
-| [**bodhi-server**](https://github.com/bigduu/bodhi-server) | Go backend: auth, persistence, quota, and LLM proxy concerns |
+| [**bodhi-server**](https://github.com/bigduu/bodhi-server) | optional hosted service for account/auth, credential storage, model routing, billing/quota, and provider proxy capabilities; not required for local Bodhi + Bamboo operation |
 | **pavilion** | official website & docs (this module) |
 | [**jiandu**](https://github.com/bigduu/Jiandu) | small filesystem-backed shared memory: Rust crate + stdio MCP server |
 | [**nova**](https://github.com/bigduu/Nova) | native computer-use capabilities exposed through MCP |

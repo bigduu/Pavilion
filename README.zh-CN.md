@@ -54,12 +54,14 @@ Pavilion 所解释的核心产品链路：
 flowchart LR
   Visitor((访客 / Visitor)) --> Pavilion[Pavilion\n官网 + 文档 / website + docs]
   Pavilion -. 引导下载 / routes to download .-> Bodhi[bodhi\n桌面外壳 / Tauri shell]
-  Bodhi --> Lotus[lotus\nReact UI 层 / UI layer]
-  Lotus -- HTTP API + WebSocket / SSE fallback --> Bamboo[bamboo\nRust 本地运行时 / local agent runtime]
-  Bamboo -. auth / 配额 / LLM 代理 .-> BodhiServer[bodhi-server\nGo 后端 / backend]
+  Bodhi -- 启动或复用 + 健康检查 / starts or reuses + health-checks --> Bamboo[bamboo\n受管本地运行时 / managed local runtime]
+  Bamboo -- 在打包版本中提供 Lotus UI / serves packaged Lotus UI --> Lotus[lotus\nReact UI 层 / UI layer]
+  Lotus -- HTTP 请求 + 共享 /v2/stream WebSocket --> Bamboo
+  Lotus -. legacy SSE 回退 / fallback .-> Bamboo
+  Bamboo -. 可选托管能力 / optional hosted capabilities .-> BodhiServer[bodhi-server\nGo 服务 / service]
 ```
 
-> 这张图只表示产品与请求链路，不是完整的 submodule 图。Lotus 默认使用共享的 `/v2/stream` WebSocket（默认 JSON 文本，也可显式协商 MessagePack）；首次 WebSocket 建连失败时回退到 SSE。Pavilion 本身只链接到其它仓库，不调用运行时或后端。
+> 这张图只表示产品与请求链路，不是完整的 submodule 图。Bodhi 会启动或复用 `bamboo serve` 并检查其健康状态。在打包版本中，Bodhi 加载由 Bamboo 提供的 Lotus 前端。Lotus 通过 HTTP 发送请求，实时事件默认走一个共享的 `/v2/stream` WebSocket（默认 JSON 文本，也可显式协商 MessagePack）；只有显式禁用 WebSocket 或首次连接无法建立时才使用 legacy SSE 端点。bodhi-server 是可选托管服务，提供账号与认证、凭据存储、模型路由、计费与配额以及 provider 代理能力；本地 Bodhi + Bamboo 运行不依赖它。Pavilion 本身只链接到其它仓库，不调用运行时或后端。
 
 ---
 
@@ -117,10 +119,10 @@ Zenith 是一个当前固定九个 submodule 的薄层 monorepo，Pavilion 是�
 
 | 模块 | 角色 |
 |---|---|
-| [**bodhi**](https://github.com/bigduu/Bodhi-AI) | 桌面 AI 产品外壳（Tauri） |
+| [**bodhi**](https://github.com/bigduu/Bodhi-AI) | Tauri 桌面外壳，负责启动或复用 Bamboo 并执行健康检查；打包版本加载由 Bamboo 提供的 Lotus UI |
 | [**lotus**](https://github.com/bigduu/Lotus) | React + Vite UI 层 |
 | [**bamboo**](https://github.com/bigduu/Bamboo-agent) | 本地优先的 Rust 智能体运行时（执行引擎） |
-| [**bodhi-server**](https://github.com/bigduu/bodhi-server) | Go 后端：认证、持久化、配额与 LLM 代理等服务端能力 |
+| [**bodhi-server**](https://github.com/bigduu/bodhi-server) | 可选托管服务：账号与认证、凭据存储、模型路由、计费与配额以及 provider 代理；本地 Bodhi + Bamboo 运行不需要它 |
 | **pavilion** | 官网与文档（本模块） |
 | [**jiandu**](https://github.com/bigduu/Jiandu) | 小型文件系统共享记忆：Rust crate + stdio MCP server |
 | [**nova**](https://github.com/bigduu/Nova) | 通过 MCP 暴露原生电脑操作能力 |
