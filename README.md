@@ -23,13 +23,13 @@ Pavilion itself is **not** the runtime and **not** the desktop app — it is the
 | Real screenshots | Actual UI in `public/screenshots/` (chat, MCP, metrics, settings, etc.), not concept art |
 | Article layer | Founder story, architecture overview, backend deep-dive, CI/CD, multi-agent collaboration |
 | Static & shippable | Built by Vite into a pure static site, ready to host out of the box |
-| Honest API examples | API paths in the docs map directly to the real endpoints of the Bamboo runtime |
+| Source-visible examples | Quickstart and API snippets are kept in `src/constants.ts` instead of being hidden in page components |
 
 ---
 
 ## Architecture
 
-Pavilion is a plain React 19 + Vite 8 single-page app written in TypeScript. It has no backend of its own: all copy lives in bilingual content dictionaries under `src/i18n/`, and the pages simply render it. Within the Zenith stack, it owns exactly one layer — external communication.
+Pavilion is a plain React 19 + Vite 8 single-page app written in TypeScript. It has no backend of its own: the site copy lives in bilingual content dictionaries under `src/i18n/`, and the pages simply render it. Within Zenith's nine pinned submodules, Pavilion owns one boundary — the public website and documentation surface.
 
 ```
 pavilion/
@@ -48,18 +48,18 @@ pavilion/
 └── public/                 # favicon, og-cover, screenshots/
 ```
 
-Where Pavilion sits in the wider stack:
+The core product path that Pavilion explains:
 
 ```mermaid
 flowchart LR
   Visitor((Visitor)) --> Pavilion[Pavilion\nwebsite + docs]
   Pavilion -. routes to download .-> Bodhi[bodhi\nTauri shell]
   Bodhi --> Lotus[lotus\nUI layer]
-  Lotus -- HTTP / SSE --> Bamboo[bamboo\nlocal agent runtime]
+  Lotus -- HTTP APIs + WebSocket / SSE fallback --> Bamboo[bamboo\nlocal agent runtime]
   Bamboo -. auth / quota / LLM proxy .-> BodhiServer[bodhi-server\nGo backend]
 ```
 
-> Pavilion only *points to* the other modules (download + doc links); it does not call the runtime or backend.
+> This is the product/request path, not a complete submodule diagram. Lotus uses the shared `/v2/stream` WebSocket by default (JSON text by default, optional negotiated MessagePack) and falls back to SSE when the initial WebSocket connection cannot be established. Pavilion itself only links to the other repositories; it does not call the runtime or backend.
 
 ---
 
@@ -80,7 +80,7 @@ Language is built into the architecture, not bolted on. `locale.ts` resolves the
 | Article | What it covers |
 |---|---|
 | [`why-i-built-my-own-agent.md`](./articles/why-i-built-my-own-agent.md) | Why the founder decided to build an agent from scratch — the product's origin story |
-| [`zenith-architecture-overview.md`](./articles/zenith-architecture-overview.md) | Zenith architecture overview: the responsibility boundaries of the five submodules (including the Go backend bodhi-server) |
+| [`zenith-architecture-overview.md`](./articles/zenith-architecture-overview.md) | Long-form narrative about Zenith's product layers and responsibility boundaries |
 | [`bodhi-server-deep-dive.md`](./articles/bodhi-server-deep-dive.md) | A deep dive into the server-side capabilities of the Go backend Bodhi Server (auth, persistence, cross-device sync) |
 | [`ci-cd-and-release-system.md`](./articles/ci-cd-and-release-system.md) | The coordinated Bamboo / Lotus / Bodhi release pipeline built on GitHub Actions |
 | [`multi-agent-collaboration.md`](./articles/multi-agent-collaboration.md) | Coordinating multiple agents working in parallel via the "Zenith Roadmap" GitHub Project |
@@ -108,19 +108,23 @@ Stack: React 19 · React Router 7 · Vite 8 · TypeScript 5.9 · Vitest 4 (see `
 
 ## The Rest of the Stack
 
-Zenith is a thin monorepo; Pavilion is its public-facing front door.
+Zenith is a thin monorepo that currently pins nine submodules; Pavilion is its public-facing front door.
 
 | Module | Role |
 |---|---|
-| [**bodhi**](../bodhi) | desktop AI product surface (Tauri shell) |
-| [**lotus**](../lotus) | the visible UI layer (React + Vite) |
-| [**bamboo**](../bamboo) | local-first Rust agent runtime (execution engine) |
-| [**bodhi-server**](../bodhi-server) | Go backend: auth, persistence, billing+quota, LLM proxy |
+| [**bodhi**](https://github.com/bigduu/Bodhi-AI) | desktop AI product surface (Tauri shell) |
+| [**lotus**](https://github.com/bigduu/Lotus) | the visible UI layer (React + Vite) |
+| [**bamboo**](https://github.com/bigduu/Bamboo-agent) | local-first Rust agent runtime (execution engine) |
+| [**bodhi-server**](https://github.com/bigduu/bodhi-server) | Go backend: auth, persistence, quota, and LLM proxy concerns |
 | **pavilion** | official website & docs (this module) |
-| [**Zenith (root)**](../) | monorepo entry + submodule pointers + release train |
+| [**jiandu**](https://github.com/bigduu/Jiandu) | small filesystem-backed shared memory: Rust crate + stdio MCP server |
+| [**nova**](https://github.com/bigduu/Nova) | native computer-use capabilities exposed through MCP |
+| [**lotus-next**](https://github.com/bigduu/lotus-next) | responsive frontend track developed alongside Lotus |
+| [**magpie**](https://github.com/bigduu/Magpie) | IM connector and Bamboo service plugin |
+| [**Zenith (root)**](https://github.com/bigduu/Zenith) | monorepo entry + submodule pointers + release train |
 
 Download entry: https://github.com/bigduu/Bodhi-AI/releases/latest
 
 ---
 
-<sub>Pavilion describes only real product capabilities; its content tracks `src/i18n/` and `articles/`.</sub>
+<sub>This root guide describes the repository; public site copy lives in `src/i18n/` and `articles/`.</sub>
