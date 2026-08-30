@@ -10,17 +10,19 @@ Zenith 采用全自动化的 CI/CD 流程来管理 Bamboo、Lotus、Bodhi 三个
 
 **触发方式**：手动触发 (`workflow_dispatch`)
 
-**发布顺序**：Bamboo → Lotus → Bodhi
+**发布顺序**：Lotus → Bamboo → Bodhi
 
 **设计原理**：
-- Bamboo 是底层运行时，必须先发布到 crates.io
-- Lotus 依赖 Bamboo 的版本，随后发布到 npm
-- Bodhi 同时依赖 Bamboo 和 Lotus，最后打包桌面应用
+- Lotus 先发布 `@bigduu/lotus` 到 npm，供 Bamboo 嵌入精确版本
+- Bamboo 随后发布到 crates.io
+- Bodhi 使用已发布的 Lotus 和 Bamboo 版本，最后打包桌面应用
 
 **输入参数**：
 
 | 参数 | 说明 | 默认值 |
 |------|------|--------|
+| `targets` | 按固定依赖顺序发布 `lotus,bamboo,bodhi` 的逗号分隔子集 | `lotus,bamboo,bodhi` |
+| `resume` | 同版本部分发布已完成时，跳过已经发布的目标并继续 | `false` |
 | `bamboo_ref` | Bamboo 仓库的发布分支 | `from_manifest` (读取配置) |
 | `lotus_ref` | Lotus 仓库的发布分支 | `from_manifest` |
 | `bodhi_ref` | Bodhi 仓库的发布分支 | `from_manifest` |
@@ -31,9 +33,9 @@ Zenith 采用全自动化的 CI/CD 流程来管理 Bamboo、Lotus、Bodhi 三个
 | `lotus_skip_tests` | 是否跳过 Lotus 测试 | `from_manifest` |
 
 **发布验证**：
-- Bamboo 发布后，自动轮询 crates.io 验证包可用性（最多 30 次，间隔 10 秒）
-- Lotus 发布后，自动轮询 npm registry 验证包可用性
-- 只有上游依赖确认可用后，才会触发下游发布
+- Lotus 发布后，自动轮询 npm registry 验证包可用性（最多 30 次，间隔 10 秒）
+- 确认 Lotus 可用后触发 Bamboo；Bamboo 发布后，自动轮询 crates.io 验证包可用性（最多 30 次，间隔 10 秒）
+- 确认 Bamboo 可用后触发 Bodhi 发布
 
 ### 2. Nightly Release（夜间自动发布）
 
@@ -139,12 +141,12 @@ git status -sb
 npm view @bigduu/lotus@<version> version
 
 # 仅重试失败的任务
-gh run rerun <bodhi_run_id> -R bigduu/Bodhi --failed
+gh run rerun <bodhi_run_id> -R bigduu/Bodhi-AI --failed
 ```
 
 ### Release Train 因 GitHub API 问题失败
 
-**解决**：按 Bamboo → Lotus → Bodhi 顺序手动恢复链式发布
+**解决**：按 Lotus → Bamboo → Bodhi 顺序手动恢复链式发布
 
 ---
 
@@ -190,7 +192,7 @@ gh run rerun <bodhi_run_id> -R bigduu/Bodhi --failed
 
 ## 相关链接
 
-- [发布列车配置](../.github/release-train.config.json)
-- [Release Train 工作流](../.github/workflows/release-train.yml)
-- [Nightly Release 工作流](../.github/workflows/nightly-release.yml)
-- [AGENTS.md 发布手册](../AGENTS.md)
+- [发布列车配置](https://github.com/bigduu/Zenith/blob/main/.github/release-train.config.json)
+- [Release Train 工作流](https://github.com/bigduu/Zenith/blob/main/.github/workflows/release-train.yml)
+- [Nightly Release 工作流](https://github.com/bigduu/Zenith/blob/main/.github/workflows/nightly-release.yml)
+- [AGENTS.md 发布手册](https://github.com/bigduu/Zenith/blob/main/AGENTS.md)
