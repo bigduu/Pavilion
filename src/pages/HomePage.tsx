@@ -90,7 +90,7 @@ export function HomePage({
             </span>
             <span className="apple-chip a-float" style={{ bottom: '-14px', left: '5%', animationDelay: '1.2s' }}>
               <span className="dot a-pulse" style={{ background: '#34c759' }} />
-              SSE
+              WebSocket
             </span>
           </div>
         </section>
