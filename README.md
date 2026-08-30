@@ -81,7 +81,7 @@ Language is built into the architecture, not bolted on. `locale.ts` resolves the
 |---|---|
 | [`why-i-built-my-own-agent.md`](./articles/why-i-built-my-own-agent.md) | Why the founder decided to build an agent from scratch — the product's origin story |
 | [`zenith-architecture-overview.md`](./articles/zenith-architecture-overview.md) | Long-form narrative about Zenith's product layers and responsibility boundaries |
-| [`bodhi-server-deep-dive.md`](./articles/bodhi-server-deep-dive.md) | A deep dive into the server-side capabilities of the Go backend Bodhi Server (auth, persistence, cross-device sync) |
+| [`bodhi-server-deep-dive.md`](./articles/bodhi-server-deep-dive.md) | Optional hosted accounts, credential vault, billing/quota, model routing, and provider proxy capabilities in the Go backend |
 | [`ci-cd-and-release-system.md`](./articles/ci-cd-and-release-system.md) | The coordinated Bamboo / Lotus / Bodhi release pipeline built on GitHub Actions |
 | [`multi-agent-collaboration.md`](./articles/multi-agent-collaboration.md) | Coordinating multiple agents working in parallel via the "Zenith Roadmap" GitHub Project |
 

@@ -1,327 +1,171 @@
-# Bodhi Server 深度解析
+# Bodhi Server：可选的托管账号与模型网关
 
-Bodhi Server 是 Zenith 技术栈中的后端服务层组件，采用 Go 语言实现。它为 Bamboo 本地 runtime 提供补充性的服务端能力，特别是在需要中心化数据管理、用户认证和跨设备同步的场景下发挥关键作用。
+Bodhi Server 是 Zenith 生态中的独立 Go 服务。它为需要中心化账号、凭据、配额、计费和模型代理的部署提供托管能力，但不是本地桌面产品的必经组件。
 
----
-
-## 定位与职责
-
-### 在 Zenith 栈中的位置
-
-```
-┌─────────────────────────────────────────┐
-│              Pavilion (官网)              │
-├─────────────────────────────────────────┤
-│              Bodhi (桌面壳)               │
-│                 Lotus (UI)               │
-├─────────────────────────────────────────┤
-│           Bamboo (本地 Runtime)           │
-│         - 任务执行                         │
-│         - 工具调用                         │
-│         - 上下文管理                        │
-├─────────────────────────────────────────┤
-│         Bodhi Server (后端服务)            │
-│         - 用户认证                         │
-│         - 数据持久化                        │
-│         - 跨设备同步                        │
-└─────────────────────────────────────────┘
-```
-
-### 核心职责
-
-| 职责 | 说明 |
-|------|------|
-| **用户认证** | JWT-based 身份验证和会话管理 |
-| **数据持久化** | PostgreSQL 数据库存储用户数据、配置和历史记录 |
-| **API 服务** | RESTful API 供客户端调用 |
-| **跨平台支持** | Docker 容器化部署，支持多平台运行 |
+> **先看边界：** 本地桌面核心链路是 Bodhi 启动或复用 Bamboo，再由 Bamboo 托管 Lotus。没有配置 Bodhi Server 时，这条链路仍然成立。
 
 ---
 
-## 技术栈
+## 在 Zenith 中的位置
 
-### 依赖库
+```mermaid
+flowchart LR
+  Pavilion[Pavilion\n官网与文档] -. 下载入口 .-> Bodhi[Bodhi\n桌面壳]
 
-```go
-module github.com/bigduu/bodhi-server
+  subgraph Local[本地桌面核心链路]
+    Bodhi -->|启动或复用| Bamboo[Bamboo\n本地 agent runtime]
+    Bamboo -->|托管| Lotus[Lotus\n产品 UI]
+  end
 
-go 1.25.0
-
-require (
-    github.com/golang-jwt/jwt/v5 v5.3.1      // JWT 认证
-    github.com/jackc/pgx/v5 v5.9.2           // PostgreSQL 驱动
-    golang.org/x/crypto v0.50.0              // 加密工具
-)
+  Bamboo -. 配置后使用 API Key .-> Server[Bodhi Server\n可选托管服务]
+  Server --> Providers[OpenAI / Anthropic / Gemini\nAzure / OpenAI-compatible]
+  Server --> Postgres[(PostgreSQL)]
 ```
 
-### 技术选型理由
+| 组件 | 当前职责 |
+| --- | --- |
+| Bodhi | 桌面壳；启动或复用 Bamboo，并打开 Bamboo 托管的 Lotus |
+| Lotus | 面向用户的 UI，通过 HTTP 与 WebSocket（首次连接失败时回退 SSE）访问 Bamboo |
+| Bamboo | 本地 agent runtime、工具执行与 Lotus 宿主 |
+| Bodhi Server | 可选的账号、凭据、配额、计费、模型路由和 provider 代理服务 |
+| Jiandu | 独立的共享 memory crate 与 stdio MCP server；不属于 Bodhi Server |
 
-| 技术 | 版本 | 选型理由 |
-|------|------|----------|
-| Go | 1.25.0 | 高性能、编译型、低内存占用、优秀的并发支持 |
-| PostgreSQL | 15+ | 可靠的关系型数据库，支持复杂查询和事务 |
-| JWT | v5 | 行业标准认证方案，无状态、可扩展 |
-| pgx | v5 | Go 语言最优秀的 PostgreSQL 驱动，支持连接池和高级特性 |
+Bodhi Server **不是** Bamboo 的本地 API、Lotus 的宿主、Jiandu 的存储层，
+也不是通用聊天历史或跨设备同步后端。当前 bodhi-server 路由和数据库
+schema 没有定义这类产品职责。
 
 ---
 
-## 项目结构
+## 代码已经实现的能力
 
+### 1. 账号与访问凭据
+
+- `/api/v1/auth/*` 提供注册、登录、刷新令牌和当前用户查询。
+- 人类用户通过 JWT 访问用户或管理员 API。
+- 程序调用使用 `bhi_sk_` API Key；数据库只保存 Key 哈希，明文只在创建或轮换时返回。
+- API Key 可限制允许的模型、provider 和来源 IP。
+
+### 2. Provider 凭据保险箱
+
+- OpenAI、Anthropic、Gemini 等 provider 密钥按用户或用户组保存。
+- 密钥使用 AES-256-GCM 加密后写入 PostgreSQL。
+- 代理请求在转发前按需读取并解密凭据；列表接口不会返回密钥明文。
+
+### 3. 模型路由与 provider 代理
+
+Bodhi Server 提供四类代理入口：
+
+```text
+/proxy/openai/
+/proxy/anthropic/
+/proxy/gemini/
+/proxy/v1/{path...}
 ```
-bodhi-server/
-├── api/                    # API 路由和处理函数
-├── cmd/                    # 应用入口
-│   └── server/             # 主服务入口
-├── internal/               # 内部包
-│   ├── config/             # 配置管理（已覆盖单元测试）
-│   ├── auth/               # 认证逻辑
-│   ├── database/           # 数据库访问层
-│   └── middleware/         # HTTP 中间件
-├── docker-compose.yml      # Docker Compose 配置
-├── Dockerfile              # 容器镜像构建
-├── go.mod                  # Go 模块定义
-└── go.sum                  # 依赖校验
-```
+
+通用 `/proxy/v1/` 入口可以根据模型注册表选择 provider 与实例。多个实例按
+优先级排序，近期失败的实例会被跳过。代理支持 OpenAI、Anthropic、Gemini、
+Azure OpenAI 和 OpenAI-compatible 上游，并转发流式与非流式响应。
+
+### 4. 配额、用量与计费
+
+- 请求前检查模型白名单，以及 RPM、RPD、每日/月度 token 和花费上限。
+- 请求后记录 provider、模型、token、状态码、耗时和估算成本。
+- 用户可查询当月用量、账期报告并导出 CSV；管理员可配置定价、配额和余额。
+- 用户组可以共享 provider 凭据与配额。
+
+### 5. 管理与可观测性
+
+- 管理员 API 覆盖用户、模型、provider 实例、配额、定价、组、审计、Webhook、内容规则和数据保留策略。
+- `GET /health` 是公开健康检查。
+- `GET /metrics` 输出 Prometheus 指标，但受管理员认证保护。
+- React 管理面板构建后嵌入 Go 二进制；它是 Bodhi Server 自己的管理 UI，不是 Lotus。
 
 ---
 
-## 核心功能
+## 三条请求路径
 
-### 1. JWT 认证系统
+### 本地 agent 工作
 
-基于 `golang-jwt/jwt/v5` 实现：
-
-- **Token 签发**：用户登录后签发 JWT
-- **Token 验证**：每个受保护端点验证 Token 有效性
-- **Token 刷新**：支持 Token 自动刷新机制
-- **会话管理**：跟踪活跃会话和登出状态
-
-### 2. PostgreSQL 持久化
-
-基于 `jackc/pgx/v5` 实现：
-
-- **连接池管理**：高效管理数据库连接
-- **事务支持**：保证数据一致性
-- **查询构建**：安全的参数化查询防止 SQL 注入
-- **迁移系统**：数据库 schema 版本管理
-
-### 3. RESTful API 设计
-
-```
-POST   /api/v1/auth/register     # 用户注册
-POST   /api/v1/auth/login        # 用户登录
-POST   /api/v1/auth/refresh      # 刷新 Token
-DELETE /api/v1/auth/logout       # 用户登出
-
-GET    /api/v1/user/profile      # 获取用户信息
-PUT    /api/v1/user/profile      # 更新用户信息
-
-GET    /api/v1/sessions          # 获取会话列表
-GET    /api/v1/sessions/:id      # 获取会话详情
-POST   /api/v1/sessions          # 创建会话
+```text
+Bodhi → Bamboo → Lotus
 ```
 
-### 4. Docker 部署
+这是桌面产品的核心路径。Bamboo 在本地执行 agent 工作并托管 Lotus，不需要经过 Bodhi Server。
 
-**Dockerfile**：
-- 多阶段构建，减小镜像体积
-- 基于 Alpine Linux，轻量安全
-- 非 root 用户运行
+### 账号与管理控制面
 
-**docker-compose.yml**：
-- 一键启动 Bodhi Server + PostgreSQL
-- 环境变量配置
-- 数据卷持久化
+```text
+用户或管理员 → /api/v1/* → JWT 鉴权 → PostgreSQL
+```
+
+这条路径处理账号、API Key、加密凭据、模型目录、配额和账单等服务控制数据。
+
+### 托管模型调用
+
+```text
+Bamboo 或其他客户端
+  → /proxy/*（bhi_sk_ API Key）
+  → Key / IP / 模型 / provider / 配额检查
+  → 选择实例并注入解密后的 provider 凭据
+  → 上游模型
+  → 记录用量与成本
+```
+
+这条路径只有在客户端明确配置 Bodhi Server 代理时才参与请求。
 
 ---
 
-## 测试覆盖
+## API 边界速查
 
-### 已覆盖模块
+| 路由 | 鉴权 | 用途 |
+| --- | --- | --- |
+| `GET /health` | 无 | 服务健康检查 |
+| `GET /metrics` | 管理员 JWT | Prometheus 指标 |
+| `/api/v1/auth/*` | 公开或用户 JWT | 注册、登录、刷新、当前用户 |
+| `/api/v1/keys*` | 用户 JWT | 创建、列出、删除与轮换程序 API Key |
+| `/api/v1/credentials*` | 用户 JWT | 管理加密 provider 凭据 |
+| `GET /api/v1/models` | 用户 JWT | 查询可用模型 |
+| `/api/v1/billing/*` | 用户 JWT | 当前用量、月度报告与 CSV |
+| `/api/v1/admin/*` | 管理员 JWT | 用户、模型、实例、配额、定价与治理 |
+| `/proxy/*` | `bhi_sk_` API Key | 路由并代理模型请求 |
 
-| 模块 | 测试类型 | 覆盖率 |
-|------|----------|--------|
-| `internal/config` | 单元测试 | 完整覆盖 |
+PostgreSQL 在这里保存的是服务控制面与网关运行数据，例如账号、Key 哈希、
+加密凭据、模型配置、用量、配额、账单和审计记录。把这些数据持久化并不等于
+保存 Bamboo 会话、Lotus 历史或 Jiandu memory。
 
-### 测试示例
+---
 
-```go
-package config
+## 部署与验证
 
-import (
-    "testing"
-)
-
-func TestLoadConfig(t *testing.T) {
-    cfg, err := Load("../../testdata/config.yaml")
-    if err != nil {
-        t.Fatalf("failed to load config: %v", err)
-    }
-    
-    if cfg.Database.Host == "" {
-        t.Error("database host should not be empty")
-    }
-    
-    if cfg.Server.Port == 0 {
-        t.Error("server port should not be zero")
-    }
-}
-```
-
-### 运行测试
+仓库的 Docker Compose 会启动 PostgreSQL 16 和 Bodhi Server。容器构建先生成管理面板，再把它嵌入 Go 可执行文件。
 
 ```bash
-cd bodhi-server
-go test ./...
-go test -v ./internal/config
-go test -cover ./...
+export BODHI_ENCRYPTION_KEY=$(openssl rand -hex 32)
+export BODHI_JWT_SECRET=$(openssl rand -hex 32)
+export BODHI_DB_PASSWORD=change-me
+
+docker compose up --build
+curl http://localhost:8080/health
 ```
 
----
+`BODHI_ENCRYPTION_KEY` 必须是 32 字节密钥对应的 64 位十六进制字符串。
+服务默认监听 `0.0.0.0:8080`；生产环境的公网暴露、TLS 终止和访问策略由
+部署层负责。
 
-## 部署指南
-
-### 本地开发
-
-```bash
-cd bodhi-server
-
-# 启动 PostgreSQL
-docker-compose up -d postgres
-
-# 运行服务
-go run ./cmd/server
-```
-
-### Docker 部署
-
-```bash
-cd bodhi-server
-
-# 构建镜像
-docker build -t bodhi-server:latest .
-
-# 启动服务
-docker-compose up -d
-```
-
-### 环境变量
-
-| 变量 | 说明 | 默认值 |
-|------|------|--------|
-| `DATABASE_URL` | PostgreSQL 连接字符串 | `postgres://user:pass@localhost/bodhi` |
-| `JWT_SECRET` | JWT 签名密钥 | 必填 |
-| `SERVER_PORT` | HTTP 服务端口 | `8080` |
-| `LOG_LEVEL` | 日志级别 | `info` |
+本地开发所需的完整环境变量和命令以
+[bodhi-server README](https://github.com/bigduu/bodhi-server/blob/main/README.md)
+为准。
 
 ---
 
-## 与 Bamboo 的协作
+## 代码入口
 
-### 数据流
-
-```
-Bodhi (Desktop) → Bamboo (Local Runtime) → Bodhi Server (Backend)
-     ↓                                              ↓
-   UI 交互                                    数据持久化
-   任务触发                                   用户认证
-   结果展示                                   跨设备同步
-```
-
-### 使用场景
-
-| 场景 | Bamboo | Bodhi Server |
-|------|--------|--------------|
-| 本地快速任务 | 直接使用 | 可选 |
-| 多设备同步 | 执行 | 存储和同步 |
-| 团队协作 | 执行 | 权限管理和共享 |
-| 历史查询 | 缓存 | 完整历史存储 |
-
----
-
-## 安全特性
-
-### 1. TLS 连接
-
-- 所有 API 通信强制 HTTPS
-- 支持自定义 TLS 证书
-
-### 2. 密码安全
-
-- 使用 bcrypt 进行密码哈希
-- 盐值随机生成
-
-### 3. JWT 安全
-
-- 短期 Token（默认 15 分钟）
-- 长期 Refresh Token（默认 7 天）
-- Token 黑名单支持登出
-
-### 4. 输入验证
-
-- 所有输入参数经过验证
-- SQL 注入防护（参数化查询）
-- XSS 防护（输出编码）
-
----
-
-## 性能优化
-
-### 1. 连接池
-
-```go
-// pgx 连接池配置
-config, _ := pgxpool.ParseConfig(databaseURL)
-config.MaxConns = 20
-config.MinConns = 5
-config.MaxConnLifetime = time.Hour
-```
-
-### 2. 请求限流
-
-- 基于 IP 的请求限流
-- 基于用户的并发限制
-
-### 3. 缓存策略
-
-- JWT 公钥缓存
-- 用户配置缓存
-- 数据库查询缓存
-
----
-
-## 监控和日志
-
-### 日志级别
-
-- `debug` - 调试信息
-- `info` - 常规操作
-- `warn` - 警告
-- `error` - 错误
-
-### 关键指标
-
-- 请求延迟 (P50, P95, P99)
-- 数据库连接池使用率
-- JWT 验证成功率
-- 错误率
-
----
-
-## 未来规划
-
-- [ ] 完整的 API 文档（OpenAPI/Swagger）
-- [ ] gRPC 支持高性能内部通信
-- [ ] 分布式追踪（OpenTelemetry）
-- [ ] 健康检查和就绪探针
-- [ ] 配置热重载
-- [ ] 更多数据库后端支持（MySQL, SQLite）
-
----
-
-## 相关链接
-
-- [Bodhi Server 源码](../../bodhi-server/)
-- [Docker Compose 配置](../../bodhi-server/docker-compose.yml)
-- [API 文档](../docs/#bodhi-server)
-- [CI/CD 系统](./ci-cd-and-release-system.md)
+- [HTTP 路由与鉴权边界](https://github.com/bigduu/bodhi-server/blob/main/api/router/router.go)
+- [LLM 代理处理](https://github.com/bigduu/bodhi-server/blob/main/internal/proxy/handler.go)
+- [模型实例路由](https://github.com/bigduu/bodhi-server/blob/main/internal/proxy/router.go)
+- [凭据加密](https://github.com/bigduu/bodhi-server/blob/main/internal/crypto/encryption.go)
+- [配额检查](https://github.com/bigduu/bodhi-server/blob/main/internal/quota/checker.go)
+- [数据库 schema](https://github.com/bigduu/bodhi-server/blob/main/internal/database/schema.go)
+- [Docker Compose](https://github.com/bigduu/bodhi-server/blob/main/docker-compose.yml)
+- [Zenith 架构概览](./zenith-architecture-overview.md)
+- [CI/CD 与发布系统](./ci-cd-and-release-system.md)
