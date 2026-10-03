@@ -12,6 +12,8 @@
 
 下面描述已核对的源码页面与构建方式，不代表网站示例已完成真实任务，也不证明线上部署或各产品最新发布版本包含所有功能。首页执行时间线是说明性界面，不能当作实时任务录屏。
 
+下方 Zenith 架构描述当前产品源码。Pavilion 的 `src/constants.ts` 上手示例和 `src/i18n/` 双语页面仍引用旧版 Lotus，并将 Lotus Next 描述为并行开发方向。这次 README 更新没有迁移这些网站页面。当前源码的安装与启动请遵循 [Lotus Next](https://github.com/bigduu/lotus-next)、[Bamboo](https://github.com/bigduu/Bamboo-agent) 和 [Bodhi](https://github.com/bigduu/Bodhi-AI) 仓库指南。
+
 ---
 
 ## 核心能力一览
@@ -48,7 +50,7 @@ pavilion/
 └── public/                 # favicon, og-cover, screenshots/
 ```
 
-Pavilion 所解释的核心产品链路：
+当前 Zenith 产品架构：
 
 ```mermaid
 flowchart LR
