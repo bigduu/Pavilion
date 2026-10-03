@@ -6,11 +6,11 @@
 
 ---
 
-## HOOK
+## Start here
 
-Imagine an assistant that lives on your own computer: you hand it a goal, it breaks the work down, gets it done, shows you every step as it happens, and turns repeated chores into automation that runs itself next time. Pavilion is the website that explains all of this to a first-time visitor — no jargon, just "here's what it can do for you."
+Pavilion brings product explanations, downloads, and getting-started docs into one place for people exploring a local AI agent harness. To run an agent, start with [Bodhi downloads](https://github.com/bigduu/Bodhi-AI/releases/latest) or [Bamboo](https://github.com/bigduu/Bamboo-agent). This repository is for editing the website, checking bilingual copy, and previewing documentation locally.
 
-Pavilion itself is **not** the runtime and **not** the desktop app — it is the product's front door: home, download, docs, and long-form articles.
+The guide describes the inspected source and build workflow. It does not establish what is deployed online or which features are in every product release. The homepage execution timeline is an illustrative interface, not a recording of a live agent completing a task.
 
 ---
 
@@ -29,7 +29,7 @@ Pavilion itself is **not** the runtime and **not** the desktop app — it is the
 
 ## Architecture
 
-Pavilion is a plain React 19 + Vite 8 single-page app written in TypeScript. It has no backend of its own: the site copy lives in bilingual content dictionaries under `src/i18n/`, and the pages simply render it. Within Zenith's nine pinned submodules, Pavilion owns one boundary — the public website and documentation surface.
+Pavilion is a plain React 19 + Vite 8 single-page app written in TypeScript. It has no backend of its own: the site copy lives in bilingual content dictionaries under `src/i18n/`, and the pages simply render it. Within Zenith's eight pinned submodules, Pavilion owns one boundary — the public website and documentation surface.
 
 ```
 pavilion/
@@ -54,14 +54,14 @@ The core product path that Pavilion explains:
 flowchart LR
   Visitor((Visitor)) --> Pavilion[Pavilion\nwebsite + docs]
   Pavilion -. routes to download .-> Bodhi[bodhi\nTauri shell]
-  Bodhi -- starts / reuses + health-checks --> Bamboo[bamboo\nmanaged local runtime]
-  Bamboo -- serves packaged Lotus UI --> Lotus[lotus\nUI layer]
+  Bodhi -- starts owned sidecar + health-checks --> Bamboo[bamboo\nmanaged local runtime]
+  Bamboo -- serves packaged Lotus Next UI --> Lotus[lotus-next\nUI layer]
   Lotus -- HTTP requests + shared /v2/stream WebSocket --> Bamboo
   Lotus -. legacy SSE fallback .-> Bamboo
   Bamboo -. optional hosted capabilities .-> BodhiServer[bodhi-server\nGo service]
 ```
 
-> This is the product/request path, not a complete submodule diagram. Bodhi starts or reuses `bamboo serve` and checks its health. In packaged builds, Bodhi loads the Lotus frontend served by Bamboo. Lotus sends requests over HTTP and receives live events through one shared `/v2/stream` WebSocket by default (JSON text by default, optional negotiated MessagePack). The legacy SSE endpoints are used only when WebSocket is explicitly disabled or its initial connection cannot be established. bodhi-server is an optional hosted service for account/auth, credential storage, model routing, billing/quota, and provider proxy capabilities; local Bodhi + Bamboo operation does not require it. Pavilion itself only links to the other repositories; it does not call the runtime or backend.
+> This is the product/request path, not a complete submodule diagram. Bodhi starts and health-checks its owned `bamboo serve` sidecar. External-server reuse is limited to the explicitly selected legacy rollback path. In packaged builds, Bodhi loads the Lotus Next frontend served by Bamboo. Lotus Next sends requests over HTTP and receives live events through one shared `/v2/stream` WebSocket by default (JSON text by default, optional negotiated MessagePack). The legacy SSE endpoints are used only when WebSocket is explicitly disabled or its initial connection cannot be established. bodhi-server is an optional hosted service for account/auth, credential storage, model routing, billing/quota, and provider proxy capabilities; local Bodhi + Bamboo operation does not require it. Pavilion itself only links to the other repositories; it does not call the runtime or backend.
 
 ---
 
@@ -69,7 +69,7 @@ flowchart LR
 
 ### The external narrative across four pages
 
-Every surface reinforces one message: *Bodhi AI is a desktop agent that actually does the work.* The Home hero pairs a tagline with a live execution timeline; Features expands each capability with a table of contents; Download routes visitors straight to Bodhi's GitHub Releases; Docs carries first-run, power-user, architecture, API, and contributor tracks. All four are rendered from the bilingual dictionaries in `src/i18n/` — copy is data, not hard-coded JSX. Unknown routes fall back to Home.
+Every surface reinforces one message: *Bodhi AI is a desktop agent that actually does the work.* The Home hero pairs a tagline with an illustrative execution timeline; Features expands each capability with a table of contents; Download routes visitors straight to Bodhi's GitHub Releases; Docs carries first-run, power-user, architecture, API, and contributor tracks. All four are rendered from the bilingual dictionaries in `src/i18n/` — copy is data, not hard-coded JSX. Unknown routes fall back to Home.
 
 ### Bilingual-first
 
@@ -91,11 +91,12 @@ Language is built into the architecture, not bolted on. `locale.ts` resolves the
 
 ## Quick Start / Development
 
-Only scripts **verified to exist** in `package.json` are listed.
+Use Node.js 22.12+ (or a supported newer release) and npm. These scripts are defined in `package.json`.
 
 ```bash
-cd pavilion
-npm install
+git clone https://github.com/bigduu/Pavilion.git
+cd Pavilion
+npm ci
 
 npm run dev       # start the Vite dev server
 npm run build     # typecheck (tsc -b) + production build
@@ -110,18 +111,17 @@ Stack: React 19 · React Router 7 · Vite 8 · TypeScript 5.9 · Vitest 4 (see `
 
 ## The Rest of the Stack
 
-Zenith is a thin monorepo that currently pins nine submodules; Pavilion is its public-facing front door.
+Zenith is a thin monorepo that currently pins eight submodules; Pavilion is its public-facing front door.
 
 | Module | Role |
 |---|---|
-| [**bodhi**](https://github.com/bigduu/Bodhi-AI) | Tauri desktop shell that starts or reuses and health-checks Bamboo; packaged builds load the Lotus UI served by Bamboo |
-| [**lotus**](https://github.com/bigduu/Lotus) | the visible UI layer (React + Vite) |
+| [**bodhi**](https://github.com/bigduu/Bodhi-AI) | Tauri desktop shell that starts and health-checks its owned Bamboo sidecar; packaged builds load the Lotus Next UI served by Bamboo |
 | [**bamboo**](https://github.com/bigduu/Bamboo-agent) | local-first Rust agent runtime (execution engine) |
 | [**bodhi-server**](https://github.com/bigduu/bodhi-server) | optional hosted service for account/auth, credential storage, model routing, billing/quota, and provider proxy capabilities; not required for local Bodhi + Bamboo operation |
 | **pavilion** | official website & docs (this module) |
 | [**jiandu**](https://github.com/bigduu/Jiandu) | small filesystem-backed shared memory: Rust crate + stdio MCP server |
 | [**nova**](https://github.com/bigduu/Nova) | native computer-use capabilities exposed through MCP |
-| [**lotus-next**](https://github.com/bigduu/lotus-next) | responsive frontend track developed alongside Lotus |
+| [**lotus-next**](https://github.com/bigduu/lotus-next) | canonical responsive React frontend; the old Lotus package is retained only as a release rollback option |
 | [**magpie**](https://github.com/bigduu/Magpie) | IM connector and Bamboo service plugin |
 | [**Zenith (root)**](https://github.com/bigduu/Zenith) | monorepo entry + submodule pointers + release train |
 
@@ -130,3 +130,7 @@ Download entry: https://github.com/bigduu/Bodhi-AI/releases/latest
 ---
 
 <sub>This root guide describes the repository; public site copy lives in `src/i18n/` and `articles/`.</sub>
+
+Static hosts must fall back to `index.html` for client routes such as `/features`, `/download`, and `/docs`. Historical articles and screenshots provide context; use each product’s release notes for version-specific installation and behavior.
+
+Source and version evidence: [audit notes](./docs/readme-audit.md).
