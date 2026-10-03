@@ -12,7 +12,7 @@
 
 下面描述已核对的源码页面与构建方式，不代表网站示例已完成真实任务，也不证明线上部署或各产品最新发布版本包含所有功能。首页执行时间线是说明性界面，不能当作实时任务录屏。
 
-下方 Zenith 架构描述当前产品源码。Pavilion 的 `src/constants.ts` 上手示例和 `src/i18n/` 双语页面仍引用旧版 Lotus，并将 Lotus Next 描述为并行开发方向。这次 README 更新没有迁移这些网站页面。当前源码的安装与启动请遵循 [Lotus Next](https://github.com/bigduu/lotus-next)、[Bamboo](https://github.com/bigduu/Bamboo-agent) 和 [Bodhi](https://github.com/bigduu/Bodhi-AI) 仓库指南。
+下方 Zenith 架构描述当前产品源码。Pavilion 的 `src/constants.ts` 上手示例和 `src/i18n/` 双语页面仍引用旧版 Lotus，并将 Lotus Next 描述为并行开发方向。所链接的[架构长文](./articles/zenith-architecture-overview.md)也已明确标注为历史笔记，其中九模块计数及 Lotus/Next 并行描述属于旧时期。这次 README 更新没有迁移网站页面。当前源码的安装与启动请遵循 [Lotus Next](https://github.com/bigduu/lotus-next)、[Bamboo](https://github.com/bigduu/Bamboo-agent) 和 [Bodhi](https://github.com/bigduu/Bodhi-AI) 仓库指南。
 
 ---
 
@@ -89,7 +89,7 @@ flowchart LR
 | 文章 | 内容 |
 |---|---|
 | [`why-i-built-my-own-agent.md`](./articles/why-i-built-my-own-agent.md) | 创始人为什么决定自己写一个 Agent — 产品起源叙事 |
-| [`zenith-architecture-overview.md`](./articles/zenith-architecture-overview.md) | Zenith 产品层次与职责边界的长文叙事 |
+| [`zenith-architecture-overview.md`](./articles/zenith-architecture-overview.md) | 旧版 Lotus / Lotus Next 并行时期的产品层次与职责边界，属于历史笔记 |
 | [`bodhi-server-deep-dive.md`](./articles/bodhi-server-deep-dive.md) | 可选 Go 托管服务的账号认证、凭据保险箱、计费配额、模型路由与 provider 代理能力 |
 | [`ci-cd-and-release-system.md`](./articles/ci-cd-and-release-system.md) | 基于 GitHub Actions 的 Bamboo / Lotus / Bodhi 协同发布流程 |
 | [`multi-agent-collaboration.md`](./articles/multi-agent-collaboration.md) | 用 GitHub Projects「Zenith Roadmap」协调多个 agent 并行工作 |

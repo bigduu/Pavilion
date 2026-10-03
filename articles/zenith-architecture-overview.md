@@ -1,4 +1,6 @@
-# Zenith 架构总览
+# Zenith 架构总览（历史笔记）
+
+> 本文保留旧版 Lotus 与 Lotus Next 并行开发时期的架构叙述。下文的「当前」与「九个 submodule」指写作时的状态，不代表现在的装配与 pin。2026-10-03 核对的 Zenith 固定八个 submodule，打包的 Bamboo/Bodhi 消费锁定的 Lotus Next 制品；旧 Lotus 仅保留固定版本回滚入口。当前源码边界见 [Pavilion README](../README.zh-CN.md) 和各产品仓库，已发布行为仍需核对对应版本的发布记录。
 
 Zenith 是一个薄层 monorepo。根仓库负责固定九个 submodule 的提交指针、协作规则和发布列车；产品能力由各 submodule 按清晰边界独立实现。
 

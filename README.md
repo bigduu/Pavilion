@@ -12,7 +12,7 @@ Pavilion brings product explanations, downloads, and getting-started docs into o
 
 The guide describes the inspected source and build workflow. It does not establish what is deployed online or which features are in every product release. The homepage execution timeline is an illustrative interface, not a recording of a live agent completing a task.
 
-The Zenith architecture below describes current product source. Pavilion's checked-in quickstart in `src/constants.ts` and bilingual pages in `src/i18n/` still refer to legacy Lotus and describe Lotus Next as a parallel track. This README refresh does not migrate those website pages. For current source setup, follow the [Lotus Next](https://github.com/bigduu/lotus-next), [Bamboo](https://github.com/bigduu/Bamboo-agent), and [Bodhi](https://github.com/bigduu/Bodhi-AI) repository guides.
+The Zenith architecture below describes current product source. Pavilion's checked-in quickstart in `src/constants.ts` and bilingual pages in `src/i18n/` still refer to legacy Lotus and describe Lotus Next as a parallel track. The linked [architecture deep-dive](./articles/zenith-architecture-overview.md) is also explicitly historical: its nine-module count and Lotus/Next parallel-track description belong to that earlier period. This README refresh does not migrate the website pages. For current source setup, follow the [Lotus Next](https://github.com/bigduu/lotus-next), [Bamboo](https://github.com/bigduu/Bamboo-agent), and [Bodhi](https://github.com/bigduu/Bodhi-AI) repository guides.
 
 ---
 
@@ -84,7 +84,7 @@ Language is built into the architecture, not bolted on. `locale.ts` resolves the
 | Article | What it covers |
 |---|---|
 | [`why-i-built-my-own-agent.md`](./articles/why-i-built-my-own-agent.md) | Why the founder decided to build an agent from scratch — the product's origin story |
-| [`zenith-architecture-overview.md`](./articles/zenith-architecture-overview.md) | Long-form narrative about Zenith's product layers and responsibility boundaries |
+| [`zenith-architecture-overview.md`](./articles/zenith-architecture-overview.md) | Historical product layers and responsibility boundaries from the legacy Lotus / parallel Lotus Next period |
 | [`bodhi-server-deep-dive.md`](./articles/bodhi-server-deep-dive.md) | Optional hosted accounts, credential vault, billing/quota, model routing, and provider proxy capabilities in the Go backend |
 | [`ci-cd-and-release-system.md`](./articles/ci-cd-and-release-system.md) | The coordinated Bamboo / Lotus / Bodhi release pipeline built on GitHub Actions |
 | [`multi-agent-collaboration.md`](./articles/multi-agent-collaboration.md) | Coordinating multiple agents working in parallel via the "Zenith Roadmap" GitHub Project |
