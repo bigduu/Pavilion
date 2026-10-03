@@ -93,7 +93,7 @@ Language is built into the architecture, not bolted on. `locale.ts` resolves the
 
 ## Quick Start / Development
 
-Use Node.js 22.12+ (or a supported newer release) and npm. These scripts are defined in `package.json`.
+Use Node.js 22.13+ within the 22.x line, or Node.js 24+, and npm. This satisfies the locked jsdom dependency's engine range. These scripts are defined in `package.json`.
 
 ```bash
 git clone https://github.com/bigduu/Pavilion.git

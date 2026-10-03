@@ -98,7 +98,7 @@ flowchart LR
 
 ## 快速开始 / 开发
 
-需要 Node.js 22.12+（或受支持的更新版本）与 npm。以下脚本在 `package.json` 中定义。
+需要 Node.js 22.13 及以上的 22.x 版本，或 Node.js 24 及以上版本，以及 npm；该范围满足已锁定 jsdom 依赖的引擎要求。以下脚本在 `package.json` 中定义。
 
 ```bash
 git clone https://github.com/bigduu/Pavilion.git
