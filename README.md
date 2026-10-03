@@ -79,14 +79,14 @@ Language is built into the architecture, not bolted on. `locale.ts` resolves the
 
 ### The article layer
 
-`articles/` holds the long-form narrative and technical deep-dives (Markdown, primarily Chinese):
+`articles/` holds long-form narratives and historical technical context (Markdown, primarily Chinese). References to “current” behavior in those articles describe their original writing period; use the product repository guides for current source and release-specific instructions. The architecture and release-system articles explicitly mark the legacy Lotus period.
 
 | Article | What it covers |
 |---|---|
 | [`why-i-built-my-own-agent.md`](./articles/why-i-built-my-own-agent.md) | Why the founder decided to build an agent from scratch — the product's origin story |
 | [`zenith-architecture-overview.md`](./articles/zenith-architecture-overview.md) | Historical product layers and responsibility boundaries from the legacy Lotus / parallel Lotus Next period |
 | [`bodhi-server-deep-dive.md`](./articles/bodhi-server-deep-dive.md) | Optional hosted accounts, credential vault, billing/quota, model routing, and provider proxy capabilities in the Go backend |
-| [`ci-cd-and-release-system.md`](./articles/ci-cd-and-release-system.md) | The coordinated Bamboo / Lotus / Bodhi release pipeline built on GitHub Actions |
+| [`ci-cd-and-release-system.md`](./articles/ci-cd-and-release-system.md) | Historical legacy Lotus → Bamboo → Bodhi pipeline; links the current Zenith release playbook |
 | [`multi-agent-collaboration.md`](./articles/multi-agent-collaboration.md) | Coordinating multiple agents working in parallel via the "Zenith Roadmap" GitHub Project |
 
 ---

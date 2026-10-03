@@ -1,4 +1,6 @@
-# CI/CD 与发布系统
+# CI/CD 与发布系统（历史笔记）
+
+> 本文保留旧版 Lotus → Bamboo → Bodhi 发布体系的历史说明；下文的流程、参数与恢复示例描述写作时的系统，不是当前发布操作手册。2026-10-03 核对的当前流程先独立生产并接受精确 Lotus Next 制品，再由 Zenith 按锁定输入发布 Bamboo 与 Bodhi；旧 Lotus 是固定版本回滚入口。执行发布前请使用 [Zenith 当前发布手册](https://github.com/bigduu/Zenith/blob/main/AGENTS.md#release-playbook)，核对配置、候选提交与实际检查结果。
 
 Zenith 采用全自动化的 CI/CD 流程来管理 Bamboo、Lotus、Bodhi 三个核心仓库的协同发布。这套系统由 GitHub Actions 驱动，确保每次发布都经过验证、有序且可追踪。
 

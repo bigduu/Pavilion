@@ -84,14 +84,14 @@ flowchart LR
 
 ### 文章层：把「为什么」讲透
 
-`articles/` 下是更长的叙事与技术深解（Markdown，以中文为主）：
+`articles/` 保存长篇叙事与历史技术背景（Markdown，以中文为主）。文章中的「当前」描述写作时的状态；当前源码及具体发布版本的操作以产品仓库指南为准。架构和发布体系文章已明确标注旧 Lotus 时期的历史边界。
 
 | 文章 | 内容 |
 |---|---|
 | [`why-i-built-my-own-agent.md`](./articles/why-i-built-my-own-agent.md) | 创始人为什么决定自己写一个 Agent — 产品起源叙事 |
 | [`zenith-architecture-overview.md`](./articles/zenith-architecture-overview.md) | 旧版 Lotus / Lotus Next 并行时期的产品层次与职责边界，属于历史笔记 |
 | [`bodhi-server-deep-dive.md`](./articles/bodhi-server-deep-dive.md) | 可选 Go 托管服务的账号认证、凭据保险箱、计费配额、模型路由与 provider 代理能力 |
-| [`ci-cd-and-release-system.md`](./articles/ci-cd-and-release-system.md) | 基于 GitHub Actions 的 Bamboo / Lotus / Bodhi 协同发布流程 |
+| [`ci-cd-and-release-system.md`](./articles/ci-cd-and-release-system.md) | 旧 Lotus → Bamboo → Bodhi 发布链路的历史说明，并链接 Zenith 当前发布手册 |
 | [`multi-agent-collaboration.md`](./articles/multi-agent-collaboration.md) | 用 GitHub Projects「Zenith Roadmap」协调多个 agent 并行工作 |
 
 ---
