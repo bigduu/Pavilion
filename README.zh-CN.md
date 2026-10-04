@@ -6,11 +6,13 @@
 
 ---
 
-## HOOK
+## 从哪里开始
 
-想象一个住在你电脑里的助手：你交给它一个目标，它会自己拆解任务、动手执行、把每一步实时展示给你看，并且能把重复的工作变成下次自动运行的流程。Pavilion 就是把这件事讲给第一次听说的人的网站——没有术语，只有「它能帮你做什么」。
+想了解本地 AI agent harness 如何使用？Pavilion 把产品介绍、下载入口和上手文档放在一起。想运行智能体，请从 [Bodhi 下载页](https://github.com/bigduu/Bodhi-AI/releases/latest) 或 [Bamboo](https://github.com/bigduu/Bamboo-agent) 开始；本仓库适合维护网站文案、检查双语内容和本地预览文档。
 
-Pavilion 本身**不是**运行时，也不是桌面应用——它是产品的门面：首页、下载页、文档与文章。
+下面描述已核对的源码页面与构建方式，不代表网站示例已完成真实任务，也不证明线上部署或各产品最新发布版本包含所有功能。首页执行时间线是说明性界面，不能当作实时任务录屏。
+
+下方 Zenith 架构描述当前产品源码。Pavilion 的 `src/constants.ts` 上手示例和 `src/i18n/` 双语页面仍引用旧版 Lotus，并将 Lotus Next 描述为并行开发方向。所链接的[架构长文](./articles/zenith-architecture-overview.md)也已明确标注为历史笔记，其中九模块计数及 Lotus/Next 并行描述属于旧时期。这次 README 更新没有迁移网站页面。当前源码的安装与启动请遵循 [Lotus Next](https://github.com/bigduu/lotus-next)、[Bamboo](https://github.com/bigduu/Bamboo-agent) 和 [Bodhi](https://github.com/bigduu/Bodhi-AI) 仓库指南。
 
 ---
 
@@ -29,7 +31,7 @@ Pavilion 本身**不是**运行时，也不是桌面应用——它是产品的�
 
 ## 架构
 
-Pavilion 是一个标准的 React 19 + Vite 8 单页应用（SPA），用 TypeScript 编写。它没有自己的后端：网站文案来自 `src/i18n/` 下的双语内容字典，页面负责渲染。Zenith 当前固定了九个 submodule，Pavilion 在其中只承担官网与文档这一条对外边界。
+Pavilion 是一个标准的 React 19 + Vite 8 单页应用（SPA），用 TypeScript 编写。它没有自己的后端：网站文案来自 `src/i18n/` 下的双语内容字典，页面负责渲染。Zenith 当前固定了八个 submodule，Pavilion 在其中只承担官网与文档这一条对外边界。
 
 ```
 pavilion/
@@ -48,20 +50,20 @@ pavilion/
 └── public/                 # favicon, og-cover, screenshots/
 ```
 
-Pavilion 所解释的核心产品链路：
+当前 Zenith 产品架构：
 
 ```mermaid
 flowchart LR
   Visitor((访客 / Visitor)) --> Pavilion[Pavilion\n官网 + 文档 / website + docs]
   Pavilion -. 引导下载 / routes to download .-> Bodhi[bodhi\n桌面外壳 / Tauri shell]
-  Bodhi -- 启动或复用 + 健康检查 / starts or reuses + health-checks --> Bamboo[bamboo\n受管本地运行时 / managed local runtime]
-  Bamboo -- 在打包版本中提供 Lotus UI / serves packaged Lotus UI --> Lotus[lotus\nReact UI 层 / UI layer]
+  Bodhi -- 启动受管 sidecar + 健康检查 / starts owned sidecar + health-checks --> Bamboo[bamboo\n受管本地运行时 / managed local runtime]
+  Bamboo -- 在打包版本中提供 Lotus Next UI / serves packaged Lotus Next UI --> Lotus[lotus-next\nReact UI 层 / UI layer]
   Lotus -- HTTP 请求 + 共享 /v2/stream WebSocket --> Bamboo
   Lotus -. legacy SSE 回退 / fallback .-> Bamboo
   Bamboo -. 可选托管能力 / optional hosted capabilities .-> BodhiServer[bodhi-server\nGo 服务 / service]
 ```
 
-> 这张图只表示产品与请求链路，不是完整的 submodule 图。Bodhi 会启动或复用 `bamboo serve` 并检查其健康状态。在打包版本中，Bodhi 加载由 Bamboo 提供的 Lotus 前端。Lotus 通过 HTTP 发送请求，实时事件默认走一个共享的 `/v2/stream` WebSocket（默认 JSON 文本，也可显式协商 MessagePack）；只有显式禁用 WebSocket 或首次连接无法建立时才使用 legacy SSE 端点。bodhi-server 是可选托管服务，提供账号与认证、凭据存储、模型路由、计费与配额以及 provider 代理能力；本地 Bodhi + Bamboo 运行不依赖它。Pavilion 本身只链接到其它仓库，不调用运行时或后端。
+> 这张图只表示产品与请求链路，不是完整的 submodule 图。Bodhi 启动并健康检查自己管理的 `bamboo serve` sidecar；只有显式选择旧版回滚路径时才复用外部服务。在打包版本中，Bodhi 加载由 Bamboo 提供的 Lotus Next 前端。Lotus Next 通过 HTTP 发送请求，实时事件默认走一个共享的 `/v2/stream` WebSocket（默认 JSON 文本，也可显式协商 MessagePack）；只有显式禁用 WebSocket 或首次连接无法建立时才使用 legacy SSE 端点。bodhi-server 是可选托管服务，提供账号与认证、凭据存储、模型路由、计费与配额以及 provider 代理能力；本地 Bodhi + Bamboo 运行不依赖它。Pavilion 本身只链接到其它仓库，不调用运行时或后端。
 
 ---
 
@@ -71,7 +73,7 @@ flowchart LR
 
 整个网站围绕「Bodhi AI 是会动手的桌面智能体」这条主线展开：
 
-- **首页 Home (`/`)** — Hero 标语「Desktop AI that does more than chat / 不止于聊天的桌面 AI」，配一条实时执行时间线（接收目标 → 生成计划 → MCP 执行 → 交给自动化）、亮点（真正执行、默认可见、随时间复利）、产品截图、能力卡片、FAQ。
+- **首页 Home (`/`)** — Hero 标语「Desktop AI that does more than chat / 不止于聊天的桌面 AI」，配一条说明性执行时间线（接收目标 → 生成计划 → MCP 执行 → 交给自动化）、亮点（真正执行、默认可见、随时间复利）、产品截图、能力卡片、FAQ。
 - **功能页 Features (`/features`)** — 每项能力的细致拆解，带目录导航。
 - **下载页 Download (`/download`)** — 指向 Bodhi 的 GitHub Releases，最新版本入口与首跑引导。
 - **文档页 Docs (`/docs`)** — 首跑、进阶（Provider / MCP / Workflow / Schedule）、架构、API、Bodhi Server 集成、CI/CD、多 Agent、安全等。
@@ -82,25 +84,26 @@ flowchart LR
 
 ### 文章层：把「为什么」讲透
 
-`articles/` 下是更长的叙事与技术深解（Markdown，以中文为主）：
+`articles/` 保存长篇叙事与历史技术背景（Markdown，以中文为主）。文章中的「当前」描述写作时的状态；当前源码及具体发布版本的操作以产品仓库指南为准。架构和发布体系文章已明确标注旧 Lotus 时期的历史边界。
 
 | 文章 | 内容 |
 |---|---|
 | [`why-i-built-my-own-agent.md`](./articles/why-i-built-my-own-agent.md) | 创始人为什么决定自己写一个 Agent — 产品起源叙事 |
-| [`zenith-architecture-overview.md`](./articles/zenith-architecture-overview.md) | Zenith 产品层次与职责边界的长文叙事 |
+| [`zenith-architecture-overview.md`](./articles/zenith-architecture-overview.md) | 旧版 Lotus / Lotus Next 并行时期的产品层次与职责边界，属于历史笔记 |
 | [`bodhi-server-deep-dive.md`](./articles/bodhi-server-deep-dive.md) | 可选 Go 托管服务的账号认证、凭据保险箱、计费配额、模型路由与 provider 代理能力 |
-| [`ci-cd-and-release-system.md`](./articles/ci-cd-and-release-system.md) | 基于 GitHub Actions 的 Bamboo / Lotus / Bodhi 协同发布流程 |
+| [`ci-cd-and-release-system.md`](./articles/ci-cd-and-release-system.md) | 旧 Lotus → Bamboo → Bodhi 发布链路的历史说明，并链接 Zenith 当前发布手册 |
 | [`multi-agent-collaboration.md`](./articles/multi-agent-collaboration.md) | 用 GitHub Projects「Zenith Roadmap」协调多个 agent 并行工作 |
 
 ---
 
 ## 快速开始 / 开发
 
-仅列出在 `package.json` 中**已验证存在**的脚本。
+需要 Node.js 22.13 及以上的 22.x 版本，或 Node.js 24 及以上版本，以及 npm；该范围满足已锁定 jsdom 依赖的引擎要求。以下脚本在 `package.json` 中定义。
 
 ```bash
-cd pavilion
-npm install
+git clone https://github.com/bigduu/Pavilion.git
+cd Pavilion
+npm ci
 
 npm run dev       # 启动 Vite 开发服务器
 npm run build     # 类型检查 (tsc -b) + 生产构建
@@ -115,18 +118,17 @@ npm run test      # Vitest (vitest run)
 
 ## 其余模块
 
-Zenith 是一个当前固定九个 submodule 的薄层 monorepo，Pavilion 是其中的对外门面。
+Zenith 是一个当前固定八个 submodule 的薄层 monorepo，Pavilion 是其中的对外门面。
 
 | 模块 | 角色 |
 |---|---|
-| [**bodhi**](https://github.com/bigduu/Bodhi-AI) | Tauri 桌面外壳，负责启动或复用 Bamboo 并执行健康检查；打包版本加载由 Bamboo 提供的 Lotus UI |
-| [**lotus**](https://github.com/bigduu/Lotus) | React + Vite UI 层 |
+| [**bodhi**](https://github.com/bigduu/Bodhi-AI) | Tauri 桌面外壳，负责启动自己管理的 Bamboo sidecar 并执行健康检查；打包版本加载由 Bamboo 提供的 Lotus Next UI |
 | [**bamboo**](https://github.com/bigduu/Bamboo-agent) | 本地优先的 Rust 智能体运行时（执行引擎） |
 | [**bodhi-server**](https://github.com/bigduu/bodhi-server) | 可选托管服务：账号与认证、凭据存储、模型路由、计费与配额以及 provider 代理；本地 Bodhi + Bamboo 运行不需要它 |
 | **pavilion** | 官网与文档（本模块） |
 | [**jiandu**](https://github.com/bigduu/Jiandu) | 小型文件系统共享记忆：Rust crate + stdio MCP server |
 | [**nova**](https://github.com/bigduu/Nova) | 通过 MCP 暴露原生电脑操作能力 |
-| [**lotus-next**](https://github.com/bigduu/lotus-next) | 与 Lotus 并行开发的响应式前端路线 |
+| [**lotus-next**](https://github.com/bigduu/lotus-next) | 当前响应式 React 前端；旧 Lotus 包仅保留为发布回滚选项 |
 | [**magpie**](https://github.com/bigduu/Magpie) | IM 连接器与 Bamboo service plugin |
 | [**Zenith (root)**](https://github.com/bigduu/Zenith) | monorepo 入口 + submodule 指针 + 发布列车 |
 
@@ -135,3 +137,7 @@ Zenith 是一个当前固定九个 submodule 的薄层 monorepo，Pavilion 是�
 ---
 
 <sub>这份根指南描述 Pavilion 仓库；公开网站文案位于 `src/i18n/` 与 `articles/`。</sub>
+
+静态托管需把 `/features`、`/download`、`/docs` 等客户端路由回退到 `index.html`。历史文章和截图提供背景，产品版本与安装步骤以各仓库的发布说明为准。
+
+源码与版本核对：[审查记录](./docs/readme-audit.md)。
