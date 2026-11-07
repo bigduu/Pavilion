@@ -1,6 +1,7 @@
 import type { Locale, Translation } from '../types'
 import { BODHI_GITHUB_URL } from '../constants'
 import { buildUrl } from '../utils/locale'
+import { publicAsset } from '../utils/publicAsset'
 import { LanguageSwitch } from '../components/LanguageSwitch'
 import { SmartLink } from '../components/SmartLink'
 
@@ -67,7 +68,7 @@ export function FeaturesPage({
                   <div className="feature-image-wrap">
                     <img
                       className="feature-image"
-                      src={section.imageSrc}
+                      src={publicAsset(section.imageSrc)}
                       alt={section.imageAlt || section.title}
                       loading="lazy"
                     />

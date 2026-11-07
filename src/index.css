@@ -915,6 +915,33 @@ summary {
   color: var(--text-soft);
 }
 
+.platform-table {
+  width: 100%;
+  margin-top: 1rem;
+  border-collapse: collapse;
+}
+
+.platform-table th,
+.platform-table td {
+  text-align: left;
+  padding: 0.8rem 0.4rem;
+  border-bottom: 1px solid var(--line);
+  font-weight: 500;
+}
+
+.platform-table th {
+  color: var(--text);
+  width: 42%;
+}
+
+.platform-table a {
+  color: #c7d2fe;
+}
+
+.platform-table a:hover {
+  text-decoration: underline;
+}
+
 .screenshot-grid {
   margin-top: 1.4rem;
   display: grid;

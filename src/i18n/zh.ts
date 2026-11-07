@@ -3,7 +3,7 @@ import { apiCode, quickstartCode, repoGuideCode } from '../constants'
 
 export const zh: Translation = {
   meta: {
-    homeTitle: 'Bodhi AI · 桌面 AI Agent 工作台',
+    homeTitle: 'Bodhi AI · 装在你电脑上的本地 agent',
     docsTitle: 'Bodhi AI 文档 · 上手、自动化与开发者路径',
     featuresTitle: 'Bodhi AI 功能详解 · 桌面工作台、运行时与自动化',
   },
@@ -11,7 +11,8 @@ export const zh: Translation = {
     brand: 'Bodhi AI',
     brandTagline: 'AI that actually works',
     highlights: '为什么是 Bodhi',
-    features: '功能',
+    features: '能做什么',
+    safety: '安全与权限',
     download: '下载',
     faq: 'FAQ',
     docs: '文档',
@@ -29,28 +30,52 @@ export const zh: Translation = {
     language: '语言',
   },
   hero: {
-    kicker: 'BODHI AI',
-    title: '不只会聊天的桌面 AI',
-    subtitle: '不只是回答——它拆解目标、调用工具、持续推进，并把每次成功沉淀成自动化。',
-    primaryCta: '下载 Bodhi',
-    secondaryCta: '快速开始',
-    chips: ['会执行', '过程可见', '可持续自动化'],
-    stats: [
-      { value: '100%', label: '本地优先执行，由 Bamboo 驱动' },
-      { value: '9', label: 'Zenith 固定的九个 submodule，各自边界清晰' },
-      { value: 'Rust', label: '结构化执行内核' },
+    title: '装在你电脑上的本地 agent，不是网页聊天。',
+    subtitle: '会改文件、跑命令，危险操作先问你。',
+    primaryCta: '下载桌面版',
+    besideCta: '不会在浏览器里跑任务。',
+    disclaimer: '与 bodhi-ai.vercel.app 无关 · 官方下载只认 GitHub Releases / Homebrew',
+  },
+  home: {
+    cardsTitle: '它实际在干什么',
+    heroImageAlt: 'Bodhi 工作台：对话和工具步骤都在本机',
+    cards: [
+      {
+        title: '读改项目文件',
+        description: '直接读你的项目、改代码，改动留在本机文件里。',
+        imageSrc: '/screenshots/bodhi-workbench.png',
+        imageAlt: 'Bodhi 会话中的项目文件改动',
+      },
+      {
+        title: '跑命令先问你',
+        description: '危险操作先弹出审批卡片。你可以拒绝、允许一次，或总是允许。',
+        approval: ['拒绝', '允许一次', '总是允许'],
+      },
+      {
+        title: '记忆留在本机',
+        description: '会话、工作流和记忆写在你的电脑上，不是云端会话。',
+        imageSrc: '/shots/workflow.png',
+        imageAlt: '工作流保存在本机目录',
+      },
     ],
-    liveLabel: '实时任务流',
-    liveTitle: 'AI 在替你推进任务，而不只是在回消息',
-    liveSummary:
-      'Bodhi 给 AI 产品表面，Lotus 让过程可见，Bamboo 给执行骨架。你看到的不是聊天，而是一套正在工作的桌面 AI 系统。',
-    liveBadges: ['Bodhi Desktop', 'Lotus UI', 'Bamboo Runtime', 'MCP Tools'],
-    liveTimeline: [
-      { time: '00:00', title: '接收目标：整理本周事项并生成日报', state: 'done' },
-      { time: '00:03', title: '创建任务清单并流式返回执行计划', state: 'done' },
-      { time: '00:08', title: '连接 MCP、读取上下文并继续推进执行', state: 'live' },
-      { time: '00:14', title: '写出结果，并把下一次运行交给自动化', state: 'queued' },
+    contrastTitle: '不是网页聊天',
+    contrast: [
+      {
+        title: '网页聊天 demo',
+        points: ['在浏览器里聊天', '没有审批闸门'],
+      },
+      {
+        title: '云端 agent',
+        points: ['任务跑在云端', '权限不透明'],
+      },
+      {
+        title: 'Bodhi 桌面端',
+        points: ['本机安装包', '危险操作先问你'],
+        highlight: true,
+      },
     ],
+    downloadTitle: '下载最新版',
+    downloadCta: '下载最新版',
   },
   highlights: {
     kicker: 'WHY BODHI',
@@ -146,12 +171,12 @@ export const zh: Translation = {
     title: '常见问题',
     items: [
       {
-        question: 'Bodhi 和 Bamboo、Lotus 分别是什么关系？',
-        answer: 'Bodhi 是桌面产品，Lotus 是 UI 层，Bamboo 是本地 Agent runtime，三者协作成完整系统。',
+        question: 'Bodhi 和 Bamboo、Lotus Next 分别是什么关系？',
+        answer: 'Bodhi 是装在电脑上的桌面产品，Lotus Next 是界面层，Bamboo 是本地 Agent runtime。旧版 Lotus 只保留固定版本回滚，不是第二条产品线。',
       },
       {
-        question: 'Bodhi 是不是只是一个聊天界面？',
-        answer: '不是。它能执行任务、实时展示进度、调用工具、接入 MCP、保存 Workflow 并定时自动化。',
+        question: 'Bodhi 是不是网页聊天？',
+        answer: '不是。它装在你的电脑上，会改文件、跑命令，危险操作先问你。任务不会在浏览器里跑。',
       },
       {
         question: '我应该从哪里开始？',
@@ -159,7 +184,7 @@ export const zh: Translation = {
       },
       {
         question: '开发者应该从哪个模块开始？',
-        answer: '桌面壳看 Bodhi，前端看 Lotus，引擎看 Bamboo——文档已按三层整理。',
+        answer: '桌面壳看 Bodhi，前端看 Lotus Next，引擎看 Bamboo——文档已按这三层整理。',
       },
       {
         question: 'Bodhi 和其他 Agent 产品有什么不同？',
@@ -197,6 +222,14 @@ export const zh: Translation = {
         '这些截图直接来自真实运行中的 Bodhi。真实产品界面比抽象插画更有说服力。',
       screenshotNote:
         '这组官方截图优先展示设置中心、环境变量、指标、MCP 与技能系统等更能体现产品深度的功能面。',
+      platformsTitle: '按平台安装',
+      platformsNote: '每一行都打开 GitHub 上的最新 Release。安装包只认这个页面和 Homebrew。',
+      unrelatedNote: '与 bodhi-ai.vercel.app 无关 · 官方下载只认 GitHub Releases / Homebrew',
+      platforms: [
+        { platform: 'macOS Apple Silicon', method: 'Homebrew cask / .dmg' },
+        { platform: 'Windows x64', method: 'setup.exe' },
+        { platform: 'Linux x64', method: 'AppImage / deb / rpm' },
+      ],
       metaTitle: '下载 Bodhi · 最新版本与真实产品界面',
       screenshots: [
         {
@@ -251,6 +284,21 @@ export const zh: Translation = {
         imageAlt: 'Bodhi 桌面设置中心',
       },
       {
+        id: 'safety',
+        title: '安全与权限',
+        paragraphs: [
+          '三档权限：只看不动、先问我、完全控制。',
+          '删除、联网、安装，无论哪一档都会先问你。审批卡片给出三个选择：拒绝、允许一次、总是允许。',
+          '工作区里的 skill 要先信任，才会在这个项目中启用。细节见文档里的安全说明。',
+        ],
+        bullets: [
+          '只看不动',
+          '先问我',
+          '完全控制',
+          '删除、联网、安装：每一档都要问',
+        ],
+      },
+      {
         id: 'runtime',
         title: '结构化运行时 (Bamboo)',
         paragraphs: [
@@ -269,10 +317,10 @@ export const zh: Translation = {
       },
       {
         id: 'visible',
-        title: '可见执行 (Lotus)',
+        title: '可见执行',
         paragraphs: [
-          'Lotus 是 Bodhi 的 UI 交互层，让 Agent 的执行过程真正可见。你不需要等一个黑箱返回结果——任务进展、工具调用、状态变化都实时呈现在界面上。',
-          'Lotus 默认使用一条共享的 `/v2/stream` WebSocket。legacy Server-Sent Events 仅在首次建连失败或显式关闭该路径时使用。',
+          'Lotus Next 是 Bodhi 的界面层，让 Agent 的执行过程真正可见。你不需要等一个黑箱返回结果——任务进展、工具调用、状态变化都实时呈现在界面上。',
+          'Lotus Next 默认使用一条共享的 `/v2/stream` WebSocket。legacy Server-Sent Events 仅在首次建连失败或显式关闭该路径时使用。',
         ],
         bullets: [
           '实时事件流：WebSocket 优先，任务进度实时可见',
@@ -334,18 +382,17 @@ export const zh: Translation = {
         id: 'architecture',
         title: '技术架构',
         paragraphs: [
-          '桌面启动链路分三步：Bodhi 启动或复用 `bamboo serve`，等待 `/api/v1/health`，再加载已经装配好的 Lotus UI。',
-          '启动后，Lotus 调用 Bamboo 本地 `/api/v1/*` HTTP 端点，并通过共享 `/v2/stream` WebSocket 接收实时事件；legacy SSE 仅用于首次建连失败回退或显式关闭。',
+          '桌面启动链路分三步：Bodhi 启动或复用 `bamboo serve`，等待 `/api/v1/health`，再加载已经装配好的 Lotus Next UI。',
+          '启动后，Lotus Next 调用 Bamboo 本地 `/api/v1/*` HTTP 端点，并通过共享 `/v2/stream` WebSocket 接收实时事件；legacy SSE 仅用于首次建连失败回退或显式关闭。',
         ],
         bullets: [
           'Bamboo：Rust runtime、HTTP API、内置工具、MCP、Workflow、Schedule',
           'Bodhi：桌面外壳、托管 Bamboo 生命周期、原生集成、发布交付',
-          'Lotus：当前 React + Vite 交互层与 WebSocket 优先的实时 UI',
+          'Lotus Next：打包的 React + Vite 界面；旧版 Lotus 只保留固定版本回滚',
           'Pavilion：官网与文档入口',
           'Bodhi Server：可选的托管认证、凭据、计费、配额与 Provider 网关',
           'Jiandu：独立的文件系统共享记忆 Rust 库与 stdio MCP server',
           'Nova：通过 MCP 暴露原生电脑操作能力',
-          'Lotus Next：与 Lotus 并行开发的下一代响应式前端路线',
           'Magpie：Telegram 与飞书/Lark IM 连接器和 Bamboo service plugin',
         ],
         code: repoGuideCode,
@@ -355,7 +402,7 @@ export const zh: Translation = {
         title: 'Bodhi Server 后端服务',
         paragraphs: [
           'Bodhi Server 是一个可选、可独立部署的 Go 服务，负责托管账号、API key、加密 Provider 凭据、计费、配额与 LLM 代理。',
-          '它不是 Lotus 宿主、Bamboo 本地 API、Bamboo 会话存储或 Jiandu 记忆存储。本地 Bodhi → Bamboo → Lotus 链路不依赖它。',
+          '它不是 Lotus Next 宿主、Bamboo 本地 API、Bamboo 会话存储或 Jiandu 记忆存储。本地 Bodhi → Bamboo → Lotus Next 链路不依赖它。',
         ],
         bullets: [
           '托管认证：JWT 用户与只保存哈希的机器 API key',
@@ -368,7 +415,7 @@ export const zh: Translation = {
         id: 'cicd',
         title: '发布与自动化',
         paragraphs: [
-          'Zenith 的发布系统由 GitHub Actions 驱动，核心是两个工作流：Release Train（手动触发）和 Nightly Release（自动调度）。Release Train 按 Lotus → Bamboo → Bodhi 的顺序链式发布，每个步骤验证上游依赖可用后才继续。',
+          '当前桌面发布消费锁定的 Lotus Next 制品，再发布 Bamboo 与 Bodhi。旧版 Lotus 只保留固定版本回滚。早期 Release Train 按 Lotus → Bamboo → Bodhi 链式发布，并在每一步确认上游依赖。',
           '版本管理集中在 release-train.config.json 中，统一控制 Bamboo、Lotus、Bodhi 的版本号。Nightly Release 每天 UTC 04:00 自动计算新版本（格式 YYYY.M.N），更新配置并触发 Release Train。',
         ],
         bullets: [
@@ -385,17 +432,17 @@ export const zh: Translation = {
     kicker: 'BODHI DOCUMENTATION',
     title: 'Bodhi 文档中心',
     description:
-      '先用 Bodhi 理解体验，再沿着 Bamboo / Lotus / workflow / schedule 逐步深入。本文档页聚焦上手路径、能力边界与开发者入口。',
+      '先用 Bodhi 理解体验，再沿着 Bamboo / Lotus Next / workflow / schedule 逐步深入。本文档页聚焦上手路径、能力边界与开发者入口。',
     tocTitle: '文档目录',
     sections: [
       {
         id: 'overview',
         title: '概览',
         paragraphs: [
-          'Bodhi 是主产品形态；Lotus 是它的交互层；Bamboo 是本地 Agent runtime 与执行引擎。这个分工让产品、能力和架构都更容易被用户理解。',
+          'Bodhi 是主产品形态；Lotus Next 是它的交互层；Bamboo 是本地 Agent runtime 与执行引擎。这个分工让产品、能力和架构都更容易被用户理解。',
           '如果你是第一次接触，建议先从"第一次运行"开始；如果你已经把 Bodhi 当成长期工具，再继续阅读进阶玩法和开发者章节。',
         ],
-        bullets: ['首页：价值表达与转化入口', '文档：上手、扩展、集成', 'Bodhi 产品 → Bamboo 引擎 → Lotus 界面'],
+        bullets: ['首页：价值表达与转化入口', '文档：上手、扩展、集成', 'Bodhi 产品 → Bamboo 引擎 → Lotus Next 界面'],
       },
       {
         id: 'first-run',
@@ -420,18 +467,17 @@ export const zh: Translation = {
         id: 'architecture',
         title: '架构与职责边界',
         paragraphs: [
-          'Bodhi 负责桌面打包，启动或复用 `bamboo serve`，等待健康检查完成后再加载已经装配好的 Lotus 界面。',
-          'Lotus 调用 Bamboo 本地 `/api/v1/*` HTTP 端点，默认使用一条共享的 `/v2/stream` WebSocket；legacy SSE 只用于首次建连失败回退或显式关闭。',
+          'Bodhi 负责桌面打包，启动或复用 `bamboo serve`，等待健康检查完成后再加载已经装配好的 Lotus Next 界面。',
+          'Lotus Next 调用 Bamboo 本地 `/api/v1/*` HTTP 端点，默认使用一条共享的 `/v2/stream` WebSocket；legacy SSE 只用于首次建连失败回退或显式关闭。',
         ],
         bullets: [
           'Bamboo：本地 Rust Agent runtime 与上下文编排',
           'Bodhi：桌面外壳与托管 Bamboo 生命周期',
-          'Lotus：当前可见 UI 层',
+          'Lotus Next：当前产品界面；旧版 Lotus 只作固定版本回滚',
           'Pavilion：官网与知识入口',
           'Bodhi Server：可选的托管认证、配额、计费、凭据与 Provider 网关',
           'Jiandu：独立的共享记忆 Rust 库与 stdio MCP server',
           'Nova：原生 computer-use MCP server',
-          'Lotus Next：与 Lotus 并行的响应式前端路线',
           'Magpie：IM 连接器与 Bamboo service plugin',
         ],
       },
@@ -448,10 +494,10 @@ export const zh: Translation = {
         id: 'developers',
         title: '开发者入口',
         paragraphs: [
-          '最重要的是先理解职责边界：Bodhi 是桌面壳，Lotus 是当前 UI 资产源，Bamboo 是运行时、API 与上下文核心。按职责直接进入对应项目。',
-          '前端重点关注 Lotus 的事件订阅与多窗格结构；运行时关注 Bamboo 的路由、工具、调度与上下文；共享记忆属于 Jiandu，电脑操作属于 Nova，桌面发布与原生集成属于 Bodhi。',
+          '最重要的是先理解职责边界：Bodhi 是桌面壳，Lotus Next 是当前 UI，Bamboo 是运行时、API 与上下文核心。按职责直接进入对应项目。',
+          '前端重点关注 Lotus Next 的事件订阅与多窗格结构；运行时关注 Bamboo 的路由、工具、调度与上下文；共享记忆属于 Jiandu，电脑操作属于 Nova，桌面发布与原生集成属于 Bodhi。',
         ],
-        bullets: ['遵循九个仓库的职责边界', '组件之间使用公开 API 与 MCP', '官网只描述已经交付的行为'],
+        bullets: ['遵循八个 submodule 的职责边界', '组件之间使用公开 API 与 MCP', '官网只描述已经交付的行为'],
         code: repoGuideCode,
       },
       {
@@ -467,7 +513,7 @@ export const zh: Translation = {
         title: 'Bodhi Server (后端服务)',
         paragraphs: [
           'Bodhi Server 是一个可选的 Go 托管服务，负责账号、API key、加密 Provider 凭据、模型路由、计费、配额与 LLM 代理。',
-          '它使用 PostgreSQL 与 Docker 独立部署，不托管 Lotus、不替代 Bamboo 本地 API，也不保存 Bamboo 会话或 Jiandu 记忆。',
+          '它使用 PostgreSQL 与 Docker 独立部署，不托管 Lotus Next、不替代 Bamboo 本地 API，也不保存 Bamboo 会话或 Jiandu 记忆。',
         ],
         bullets: [
           'JWT 用户与只保存哈希的机器 API key',
@@ -480,7 +526,7 @@ export const zh: Translation = {
         id: 'cicd',
         title: 'CI/CD 与发布系统',
         paragraphs: [
-          'Zenith 采用全自动化的 CI/CD 流程管理 Lotus、Bamboo、Bodhi 三个仓库的协同发布。Release Train 工作流串联 Lotus → Bamboo → Bodhi 的发布顺序，确保依赖关系正确处理。',
+          '当前发布以 Lotus Next 为前端制品，再发布 Bamboo 与 Bodhi。旧版 Lotus 只作固定版本回滚。早期 Release Train 串联的是 Lotus → Bamboo → Bodhi。',
           'Nightly Release 每天自动计算并发布新版本。版本号遵循 YYYY.M.N 格式（如 2026.4.29），当月份变化时 N 重置为 1。Release Train 会自动验证 crates.io 和 npm 上的包可用性后才继续下一步。',
         ],
         bullets: [
@@ -524,7 +570,7 @@ export const zh: Translation = {
     ],
   },
   footer: {
-    home: 'Bodhi · Local AI agent powered by Bamboo and Lotus',
+    home: 'Bodhi · 装在你电脑上的本地桌面 agent',
     docs: 'Bodhi Docs · Setup, extension paths, and developer entry points',
   },
 }

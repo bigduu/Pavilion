@@ -3,7 +3,7 @@ import { apiCode, quickstartCode, repoGuideCode } from '../constants'
 
 export const en: Translation = {
   meta: {
-    homeTitle: 'Bodhi AI · Desktop AI agent workbench',
+    homeTitle: 'Bodhi AI · A local desktop agent, not a web chat',
     docsTitle: 'Bodhi AI Docs · Setup, automation, and developer paths',
     featuresTitle: 'Bodhi AI Features · Desktop workbench, runtime, and automation',
   },
@@ -11,7 +11,8 @@ export const en: Translation = {
     brand: 'Bodhi AI',
     brandTagline: 'AI that actually works',
     highlights: 'Why Bodhi',
-    features: 'Features',
+    features: 'What it does',
+    safety: 'Safety',
     download: 'Download',
     faq: 'FAQ',
     docs: 'Docs',
@@ -29,28 +30,52 @@ export const en: Translation = {
     language: 'Language',
   },
   hero: {
-    kicker: 'BODHI AI',
-    title: 'Desktop AI that does more than chat',
-    subtitle: 'Not just answers — it breaks down goals, calls tools, keeps work moving, and turns every success into automation.',
-    primaryCta: 'Download Bodhi',
-    secondaryCta: 'Quick start',
-    chips: ['Actually works', 'Visible by default', 'Compounds over time'],
-    stats: [
-      { value: '100%', label: 'Local-first execution, powered by Bamboo' },
-      { value: '9', label: 'Pinned Zenith submodules with clear boundaries' },
-      { value: 'Rust', label: 'Structured execution core' },
+    title: 'A local desktop agent on your machine — not a web chat.',
+    subtitle: 'It edits files, runs commands, and asks before risky actions.',
+    primaryCta: 'Download for desktop',
+    besideCta: "Tasks don't run in the browser.",
+    disclaimer: 'Unrelated to bodhi-ai.vercel.app · Official downloads: GitHub Releases / Homebrew',
+  },
+  home: {
+    cardsTitle: 'What it actually does',
+    heroImageAlt: 'Bodhi workbench: conversation and tool steps on your machine',
+    cards: [
+      {
+        title: 'Edits your project files',
+        description: 'It reads the project and changes code. Those edits stay in local files.',
+        imageSrc: '/screenshots/bodhi-workbench.png',
+        imageAlt: 'Project file changes inside a Bodhi session',
+      },
+      {
+        title: 'Asks before it runs commands',
+        description: 'Risky actions open an approval card. Deny, allow once, or always allow.',
+        approval: ['Deny', 'Allow once', 'Always allow'],
+      },
+      {
+        title: 'Memory stays on this machine',
+        description: 'Sessions, workflows, and memory live on your computer, not in a cloud chat.',
+        imageSrc: '/shots/workflow.png',
+        imageAlt: 'Workflows stored in a local directory',
+      },
     ],
-    liveLabel: 'Live task stream',
-    liveTitle: 'AI that moves tasks, not just replies',
-    liveSummary:
-      'Bodhi gives AI a product surface, Lotus makes the process visible, and Bamboo gives execution a spine. What you see is not chat — it is a working desktop AI system.',
-    liveBadges: ['Bodhi Desktop', 'Lotus UI', 'Bamboo Runtime', 'MCP Tools'],
-    liveTimeline: [
-      { time: '00:00', title: 'Goal received: prepare weekly summary and draft report', state: 'done' },
-      { time: '00:03', title: 'Task plan created and streamed back', state: 'done' },
-      { time: '00:08', title: 'MCP connected and execution keeps moving', state: 'live' },
-      { time: '00:14', title: 'Result prepared, next run handed to automation', state: 'queued' },
+    contrastTitle: 'Not a web chat',
+    contrast: [
+      {
+        title: 'Web chat demo',
+        points: ['Chat in the browser', 'No approval gate'],
+      },
+      {
+        title: 'Cloud agent',
+        points: ['Tasks run in the cloud', 'Permissions stay opaque'],
+      },
+      {
+        title: 'Bodhi desktop',
+        points: ['An installer on your machine', 'Asks before risky actions'],
+        highlight: true,
+      },
     ],
+    downloadTitle: 'Download the latest release',
+    downloadCta: 'Download the latest release',
   },
   highlights: {
     kicker: 'WHY BODHI',
@@ -146,12 +171,12 @@ export const en: Translation = {
     title: 'Common questions',
     items: [
       {
-        question: 'How do Bodhi, Bamboo, and Lotus relate?',
-        answer: 'Bodhi is the desktop product, Lotus the UI layer, Bamboo the local runtime — together, one system.',
+        question: 'How do Bodhi, Bamboo, and Lotus Next relate?',
+        answer: 'Bodhi is the desktop app on your machine, Lotus Next is the UI, and Bamboo is the local runtime. Legacy Lotus is a pinned rollback, not a second product.',
       },
       {
-        question: 'Is Bodhi just a chat interface?',
-        answer: 'No. It executes tasks, shows live progress, calls tools, connects MCP, saves Workflows, and runs on schedules.',
+        question: 'Is Bodhi a web chat?',
+        answer: 'No. It is installed on your computer, edits files, runs commands, and asks before risky actions. Tasks do not run in the browser.',
       },
       {
         question: 'Where should I start?',
@@ -159,7 +184,7 @@ export const en: Translation = {
       },
       {
         question: 'Where should developers begin?',
-        answer: 'Bodhi for the shell, Lotus for frontend, Bamboo for the engine — the docs are organized by these three layers.',
+        answer: 'Bodhi for the shell, Lotus Next for the frontend, Bamboo for the engine — the docs are organized by these three layers.',
       },
       {
         question: 'What makes Bodhi different from other agent products?',
@@ -197,6 +222,14 @@ export const en: Translation = {
         'These images come from a real Bodhi instance. Real product screens prove the product is already working.',
       screenshotNote:
         'This set focuses on deeper surfaces: settings, env vars, metrics, MCP, and skills.',
+      platformsTitle: 'Install by platform',
+      platformsNote: 'Each row opens the latest GitHub Release. Installers are that page and Homebrew only.',
+      unrelatedNote: 'Unrelated to bodhi-ai.vercel.app · Official downloads: GitHub Releases / Homebrew',
+      platforms: [
+        { platform: 'macOS Apple Silicon', method: 'Homebrew cask / .dmg' },
+        { platform: 'Windows x64', method: 'setup.exe' },
+        { platform: 'Linux x64', method: 'AppImage / deb / rpm' },
+      ],
       metaTitle: 'Download Bodhi · Latest release and real product surfaces',
       screenshots: [
         {
@@ -251,6 +284,21 @@ export const en: Translation = {
         imageAlt: 'Bodhi desktop settings center',
       },
       {
+        id: 'safety',
+        title: 'Safety and permissions',
+        paragraphs: [
+          'Three permission levels: read only, ask me first, and full control.',
+          'Deleting files, using the network, and installing things ask you first at every level. The approval card offers deny, allow once, or always allow.',
+          'A workspace skill loads only after you trust it. See the docs for the security notes.',
+        ],
+        bullets: [
+          'Read only',
+          'Ask me first',
+          'Full control',
+          'Delete, network, and install always ask',
+        ],
+      },
+      {
         id: 'runtime',
         title: 'Structured runtime (Bamboo)',
         paragraphs: [
@@ -269,10 +317,10 @@ export const en: Translation = {
       },
       {
         id: 'visible',
-        title: 'Visible execution (Lotus)',
+        title: 'Visible execution',
         paragraphs: [
-          'Lotus is Bodhi\'s UI interaction layer, making the agent\'s execution process truly visible. You do not wait for a black box to return — task progress, tool calls, and state changes are all rendered in real time.',
-          'Lotus uses one shared `/v2/stream` WebSocket by default. Legacy Server-Sent Events remain only as an initial-connect fallback or explicit opt-out.',
+          'Lotus Next is Bodhi\'s interface layer, making the agent\'s execution process truly visible. You do not wait for a black box to return — task progress, tool calls, and state changes are all rendered in real time.',
+          'Lotus Next uses one shared `/v2/stream` WebSocket by default. Legacy Server-Sent Events remain only as an initial-connect fallback or explicit opt-out.',
         ],
         bullets: [
           'Live event stream: WebSocket-first real-time task progress',
@@ -334,18 +382,17 @@ export const en: Translation = {
         id: 'architecture',
         title: 'Technical architecture',
         paragraphs: [
-          'The desktop boot path has three steps: Bodhi starts or reuses `bamboo serve`, waits for `/api/v1/health`, then loads the staged Lotus UI.',
-          'After boot, Lotus calls Bamboo\'s local `/api/v1/*` HTTP endpoints and uses the shared `/v2/stream` WebSocket for live events. Legacy SSE is limited to initial-connect fallback or explicit opt-out.',
+          'The desktop boot path has three steps: Bodhi starts or reuses `bamboo serve`, waits for `/api/v1/health`, then loads the staged Lotus Next UI.',
+          'After boot, Lotus Next calls Bamboo\'s local `/api/v1/*` HTTP endpoints and uses the shared `/v2/stream` WebSocket for live events. Legacy SSE is limited to initial-connect fallback or explicit opt-out.',
         ],
         bullets: [
           'Bamboo: Rust runtime, HTTP API, built-in tools, MCP, workflows, schedules',
           'Bodhi: desktop shell, managed Bamboo lifecycle, native integration, release delivery',
-          'Lotus: current React + Vite interaction layer and WebSocket-first live UI',
+          'Lotus Next: packaged React + Vite UI; legacy Lotus is a pinned rollback only',
           'Pavilion: website and documentation entry point',
           'Bodhi Server: optional hosted auth, credential, billing, quota, and provider gateway',
           'Jiandu: independent filesystem-backed shared memory library and stdio MCP server',
           'Nova: native computer-use capabilities exposed through MCP',
-          'Lotus Next: responsive next-generation frontend track developed alongside Lotus',
           'Magpie: Telegram and Feishu/Lark connector shipped as a Bamboo service plugin',
         ],
         code: repoGuideCode,
@@ -355,7 +402,7 @@ export const en: Translation = {
         title: 'Bodhi Server Backend',
         paragraphs: [
           'Bodhi Server is an optional, independently deployable Go service for hosted accounts, API keys, encrypted provider credentials, billing, quotas, and LLM proxying.',
-          'It is not the Lotus host, Bamboo\'s local API, a Bamboo session store, or Jiandu\'s memory store. The local Bodhi → Bamboo → Lotus path works without it.',
+          'It is not the Lotus Next host, Bamboo\'s local API, a Bamboo session store, or Jiandu\'s memory store. The local Bodhi → Bamboo → Lotus Next path works without it.',
         ],
         bullets: [
           'Hosted auth: JWT users plus hash-only machine API keys',
@@ -368,7 +415,7 @@ export const en: Translation = {
         id: 'cicd',
         title: 'Release & Automation',
         paragraphs: [
-          'Zenith\'s release system is driven by GitHub Actions, centered around two workflows: Release Train (manual trigger) and Nightly Release (automatic scheduling). Release Train chains releases in the order Lotus → Bamboo → Bodhi, verifying upstream dependencies are available before continuing.',
+          'Current desktop releases consume a locked Lotus Next artifact, then publish Bamboo and Bodhi. Legacy Lotus is a pinned rollback only. The earlier Release Train chained Lotus → Bamboo → Bodhi and checked each upstream dependency before continuing.',
           'Version management is centralized in release-train.config.json, uniformly controlling versions for Bamboo, Lotus, and Bodhi. Nightly Release automatically calculates new versions (YYYY.M.N format) daily at UTC 04:00, updates the config, and triggers Release Train.',
         ],
         bullets: [
@@ -385,17 +432,17 @@ export const en: Translation = {
     kicker: 'BODHI DOCUMENTATION',
     title: 'Bodhi documentation hub',
     description:
-      'Start from the Bodhi experience, then move deeper into Bamboo, Lotus, workflows, schedules, and developer boundaries. This page keeps the product story and technical path aligned.',
+      'Start from the Bodhi experience, then move deeper into Bamboo, Lotus Next, workflows, schedules, and developer boundaries. This page keeps the product story and technical path aligned.',
     tocTitle: 'Documentation map',
     sections: [
       {
         id: 'overview',
         title: 'Overview',
         paragraphs: [
-          'Bodhi is the product surface. Lotus is the interaction layer. Bamboo is the local runtime and execution engine. This separation makes the product, its capabilities, and its architecture easier to understand.',
+          'Bodhi is the product surface. Lotus Next is the interaction layer. Bamboo is the local runtime and execution engine. This separation makes the product, its capabilities, and its architecture easier to understand.',
           'If you are new, start with first run. If Bodhi is already part of your workflow, continue into automation and developer sections.',
         ],
-        bullets: ['Home: positioning and conversion', 'Docs: setup, automation, integration', 'Bodhi → Bamboo → Lotus'],
+        bullets: ['Home: positioning and conversion', 'Docs: setup, automation, integration', 'Bodhi → Bamboo → Lotus Next'],
       },
       {
         id: 'first-run',
@@ -420,18 +467,17 @@ export const en: Translation = {
         id: 'architecture',
         title: 'Architecture and boundaries',
         paragraphs: [
-          'Bodhi owns desktop packaging, starts or reuses `bamboo serve`, waits for health, and then loads the staged Lotus interface.',
-          'Lotus calls Bamboo\'s local `/api/v1/*` HTTP endpoints and uses one shared `/v2/stream` WebSocket by default. Legacy SSE is only an initial-connect fallback or explicit opt-out.',
+          'Bodhi owns desktop packaging, starts or reuses `bamboo serve`, waits for health, and then loads the staged Lotus Next interface.',
+          'Lotus Next calls Bamboo\'s local `/api/v1/*` HTTP endpoints and uses one shared `/v2/stream` WebSocket by default. Legacy SSE is only an initial-connect fallback or explicit opt-out.',
         ],
         bullets: [
           'Bamboo: local Rust agent runtime and context orchestration',
           'Bodhi: desktop shell and managed Bamboo lifecycle',
-          'Lotus: current visible UI layer',
+          'Lotus Next: current product UI; legacy Lotus is rollback-only',
           'Pavilion: website and knowledge surface',
           'Bodhi Server: optional hosted auth, quota, billing, credential, and provider gateway',
           'Jiandu: independent shared-memory Rust library and stdio MCP server',
           'Nova: native computer-use MCP server',
-          'Lotus Next: responsive frontend track alongside Lotus',
           'Magpie: IM connector and Bamboo service plugin',
         ],
       },
@@ -447,10 +493,10 @@ export const en: Translation = {
         id: 'developers',
         title: 'Developer entry',
         paragraphs: [
-          'First priority: understand the ownership boundary. Bodhi is the desktop shell, Lotus is the current UI source, and Bamboo is the runtime plus API and context core. Enter the layer you need directly.',
-          'Frontend work centers on Lotus streaming, multi-pane behavior, and settings. Runtime work centers on Bamboo routes, tools, scheduling, and context. Shared-memory work belongs in Jiandu; computer use belongs in Nova; desktop packaging lives in Bodhi.',
+          'First priority: understand the ownership boundary. Bodhi is the desktop shell, Lotus Next is the current UI, and Bamboo is the runtime plus API and context core. Enter the layer you need directly.',
+          'Frontend work centers on Lotus Next streaming, multi-pane behavior, and settings. Runtime work centers on Bamboo routes, tools, scheduling, and context. Shared-memory work belongs in Jiandu; computer use belongs in Nova; desktop packaging lives in Bodhi.',
         ],
-        bullets: ['Follow the nine repository boundaries', 'Use public APIs and MCP between components', 'Keep website messaging aligned with shipped behavior'],
+        bullets: ['Follow the eight submodule boundaries', 'Use public APIs and MCP between components', 'Keep website messaging aligned with shipped behavior'],
         code: repoGuideCode,
       },
       {
@@ -466,7 +512,7 @@ export const en: Translation = {
         title: 'Bodhi Server (Backend Service)',
         paragraphs: [
           'Bodhi Server is an optional hosted service, written in Go, for accounts, API keys, encrypted provider credentials, model routing, billing, quotas, and LLM proxying.',
-          'It deploys independently with PostgreSQL and Docker. It does not host Lotus, replace Bamboo\'s local API, store Bamboo sessions, or store Jiandu memory.',
+          'It deploys independently with PostgreSQL and Docker. It does not host Lotus Next, replace Bamboo\'s local API, store Bamboo sessions, or store Jiandu memory.',
         ],
         bullets: [
           'JWT users and hash-only machine API keys',
@@ -479,7 +525,7 @@ export const en: Translation = {
         id: 'cicd',
         title: 'CI/CD & Release System',
         paragraphs: [
-          'Zenith uses a fully automated CI/CD pipeline to manage coordinated releases across Lotus, Bamboo, and Bodhi repositories. The Release Train workflow orchestrates releases in the order Lotus → Bamboo → Bodhi, ensuring dependency relationships are handled correctly.',
+          'Current releases take Lotus Next as the frontend artifact, then publish Bamboo and Bodhi. Legacy Lotus is a pinned rollback only. The earlier Release Train ordered releases as Lotus → Bamboo → Bodhi.',
           'Nightly Release automatically calculates and publishes new versions daily. Version numbers follow the YYYY.M.N format (e.g., 2026.4.29), with N resetting to 1 when the month changes. The Release Train validates package availability on crates.io and npm before proceeding to the next step.',
         ],
         bullets: [
@@ -523,7 +569,7 @@ export const en: Translation = {
     ],
   },
   footer: {
-    home: 'Bodhi · Local AI agent powered by Bamboo and Lotus',
+    home: 'Bodhi · A local desktop agent on your machine',
     docs: 'Bodhi Docs · Setup, extension paths, and developer entry points',
   },
 }

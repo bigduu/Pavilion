@@ -10,9 +10,9 @@
 
 想了解本地 AI agent harness 如何使用？Pavilion 把产品介绍、下载入口和上手文档放在一起。想运行智能体，请从 [Bodhi 下载页](https://github.com/bigduu/Bodhi-AI/releases/latest) 或 [Bamboo](https://github.com/bigduu/Bamboo-agent) 开始；本仓库适合维护网站文案、检查双语内容和本地预览文档。
 
-下面描述已核对的源码页面与构建方式，不代表网站示例已完成真实任务，也不证明线上部署或各产品最新发布版本包含所有功能。首页执行时间线是说明性界面，不能当作实时任务录屏。
+下面描述已核对的源码页面与构建方式，不代表各产品最新发布版本包含所有功能。首页截图来自桌面端真实界面。
 
-下方 Zenith 架构描述当前产品源码。Pavilion 的 `src/constants.ts` 上手示例和 `src/i18n/` 双语页面仍引用旧版 Lotus，并将 Lotus Next 描述为并行开发方向。所链接的[架构长文](./articles/zenith-architecture-overview.md)也已明确标注为历史笔记，其中九模块计数及 Lotus/Next 并行描述属于旧时期。这次 README 更新没有迁移网站页面。当前源码的安装与启动请遵循 [Lotus Next](https://github.com/bigduu/lotus-next)、[Bamboo](https://github.com/bigduu/Bamboo-agent) 和 [Bodhi](https://github.com/bigduu/Bodhi-AI) 仓库指南。
+下方 Zenith 架构描述当前产品源码。公开页面把 Lotus Next 当作产品界面，并把 Zenith 记为八个固定 submodule。旧版 Lotus 只是固定版本回滚，不是第二条产品线。所链接的[架构长文](./articles/zenith-architecture-overview.md)是历史笔记，其中九模块计数及 Lotus/Next 并行描述属于旧时期。当前源码的安装与启动请遵循 [Lotus Next](https://github.com/bigduu/lotus-next)、[Bamboo](https://github.com/bigduu/Bamboo-agent) 和 [Bodhi](https://github.com/bigduu/Bodhi-AI) 仓库指南。
 
 ---
 
@@ -73,7 +73,7 @@ flowchart LR
 
 整个网站围绕「Bodhi AI 是会动手的桌面智能体」这条主线展开：
 
-- **首页 Home (`/`)** — Hero 标语「Desktop AI that does more than chat / 不止于聊天的桌面 AI」，配一条说明性执行时间线（接收目标 → 生成计划 → MCP 执行 → 交给自动化）、亮点（真正执行、默认可见、随时间复利）、产品截图、能力卡片、FAQ。
+- **首页 Home (`/`)** — 首屏直接写明「装在你电脑上的本地 agent，不是网页聊天」，主按钮指向 GitHub Releases。下面是三张真实界面卡片、和网页聊天的对比，以及再次下载。
 - **功能页 Features (`/features`)** — 每项能力的细致拆解，带目录导航。
 - **下载页 Download (`/download`)** — 指向 Bodhi 的 GitHub Releases，最新版本入口与首跑引导。
 - **文档页 Docs (`/docs`)** — 首跑、进阶（Provider / MCP / Workflow / Schedule）、架构、API、Bodhi Server 集成、CI/CD、多 Agent、安全等。
@@ -136,8 +136,20 @@ Zenith 是一个当前固定八个 submodule 的薄层 monorepo，Pavilion 是�
 
 ---
 
+## GitHub Pages
+
+正式地址是项目站 [https://bigduu.github.io/Pavilion/](https://bigduu.github.io/Pavilion/)。`vite.config.ts` 的 `base` 为 `/Pavilion/`，React Router 的 basename 使用同一前缀。`npm run dev` 和 `npm run preview` 也挂在 `/Pavilion/` 下。
+
+[`.github/workflows/deploy-pages.yml`](./.github/workflows/deploy-pages.yml) 会在 pull request 和推送到 `main` 时运行 `npm ci`、`npm test` 和 `npm run build`。推送到 `main` 时把 `dist/` 上传并交给 GitHub Actions 部署。构建会把 `dist/index.html` 复制为 `dist/404.html`，这样刷新 `/Pavilion/features`、`/Pavilion/download`、`/Pavilion/docs` 仍能进入客户端路由。
+
+### 一次性打开 Pages
+
+如果仓库还没打开 Pages，合并工作流本身不会替你改这个设置。工作流进入 `main` 之后，仓库管理员打开 **Settings → Pages → Build and deployment**，把 **Source** 设为 **GitHub Actions**。之后推送到 `main`，或在 Actions 里手动运行 “Deploy GitHub Pages”，站点才会发布。第一次部署成功前，仓库网站链接保持 [Bodhi Releases](https://github.com/bigduu/Bodhi-AI/releases/latest)；成功后再改为 `https://bigduu.github.io/Pavilion/`。
+
+---
+
 <sub>这份根指南描述 Pavilion 仓库；公开网站文案位于 `src/i18n/` 与 `articles/`。</sub>
 
-静态托管需把 `/features`、`/download`、`/docs` 等客户端路由回退到 `index.html`。历史文章和截图提供背景，产品版本与安装步骤以各仓库的发布说明为准。
+客户端路由是 `/Pavilion/features`、`/Pavilion/download`、`/Pavilion/docs`。GitHub Pages 在这些路径被刷新时返回 `404.html`（`index.html` 的副本）。历史文章提供背景，产品版本与安装步骤以各仓库的发布说明为准。
 
 源码与版本核对：[审查记录](./docs/readme-audit.md)。
