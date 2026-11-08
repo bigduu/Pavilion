@@ -26,8 +26,14 @@ describe('Pavilion app', () => {
     expect(
       screen.getByRole('heading', { level: 1, name: en.hero.title }),
     ).toBeInTheDocument()
-    // The why-bodhi highlights section is present on the home page.
-    expect(screen.getByText(en.highlights.title)).toBeInTheDocument()
+    expect(screen.getByText(en.hero.subtitle)).toBeInTheDocument()
+    expect(screen.getByText(en.hero.besideCta)).toBeInTheDocument()
+    expect(screen.getByText(en.hero.disclaimer)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: en.hero.primaryCta })).toHaveAttribute(
+      'href',
+      'https://github.com/bigduu/Bodhi-AI/releases/latest',
+    )
+    expect(screen.getByText(en.home.contrastTitle)).toBeInTheDocument()
   })
 
   it('toggles all visible copy when the language switch is used', async () => {
@@ -44,6 +50,9 @@ describe('Pavilion app', () => {
     expect(
       screen.getByRole('heading', { level: 1, name: zh.hero.title }),
     ).toBeInTheDocument()
+    expect(screen.getByText(zh.hero.subtitle)).toBeInTheDocument()
+    expect(screen.getByText(zh.hero.besideCta)).toBeInTheDocument()
+    expect(screen.getByText(zh.hero.disclaimer)).toBeInTheDocument()
     expect(
       screen.queryByRole('heading', { level: 1, name: en.hero.title }),
     ).not.toBeInTheDocument()
@@ -80,7 +89,7 @@ describe('Pavilion app', () => {
     for (const responsibility of [
       'Jiandu: independent filesystem-backed shared memory library and stdio MCP server',
       'Nova: native computer-use capabilities exposed through MCP',
-      'Lotus Next: responsive next-generation frontend track developed alongside Lotus',
+      'Lotus Next: packaged React + Vite UI; legacy Lotus is a pinned rollback only',
       'Magpie: Telegram and Feishu/Lark connector shipped as a Bamboo service plugin',
     ]) {
       expect(screen.getByText(responsibility)).toBeInTheDocument()
@@ -106,7 +115,7 @@ describe('Pavilion app', () => {
     for (const responsibility of [
       'Jiandu：独立的共享记忆 Rust 库与 stdio MCP server',
       'Nova：原生 computer-use MCP server',
-      'Lotus Next：与 Lotus 并行的响应式前端路线',
+      'Lotus Next：当前产品界面；旧版 Lotus 只作固定版本回滚',
       'Magpie：IM 连接器与 Bamboo service plugin',
     ]) {
       expect(screen.getByText(responsibility)).toBeInTheDocument()

@@ -5,6 +5,7 @@ import {
   BODHI_RELEASES_URL,
 } from '../constants'
 import { buildUrl } from '../utils/locale'
+import { publicAsset } from '../utils/publicAsset'
 import { LanguageSwitch } from '../components/LanguageSwitch'
 import { SectionIntro } from '../components/SectionIntro'
 import { SmartLink } from '../components/SmartLink'
@@ -100,6 +101,26 @@ export function DownloadPage({
           </div>
         </section>
 
+        <section className="panel section-card" id="platforms">
+          <h2>{copy.platformsTitle}</h2>
+          <p className="download-note">{copy.platformsNote}</p>
+          <table className="platform-table">
+            <tbody>
+              {copy.platforms.map((row) => (
+                <tr key={row.platform}>
+                  <th scope="row">{row.platform}</th>
+                  <td>
+                    <a href={BODHI_LATEST_RELEASE_URL} target="_blank" rel="noopener noreferrer">
+                      {row.method}
+                    </a>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p className="download-note">{copy.unrelatedNote}</p>
+        </section>
+
         <section className="panel section-card screenshot-section">
           <SectionIntro
             kicker={copy.screenshotKicker}
@@ -115,7 +136,7 @@ export function DownloadPage({
                 aria-label={shot.title}
               >
                 <div className="screenshot-image-wrap">
-                  <img className="screenshot-image" src={shot.src} alt={shot.title} loading="lazy" />
+                  <img className="screenshot-image" src={publicAsset(shot.src)} alt={shot.title} loading="lazy" />
                 </div>
                 <span className="placeholder-index">{String(index + 1).padStart(2, '0')}</span>
                 <strong>{shot.title}</strong>

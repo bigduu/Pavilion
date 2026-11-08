@@ -65,6 +65,25 @@ export type DownloadScreenshot = {
   src: string
 }
 
+export type DownloadPlatform = {
+  platform: string
+  method: string
+}
+
+export type HomeCard = {
+  title: string
+  description: string
+  imageSrc?: string
+  imageAlt?: string
+  approval?: string[]
+}
+
+export type HomeContrast = {
+  title: string
+  points: string[]
+  highlight?: boolean
+}
+
 export type DownloadContent = {
   primaryCta: string
   secondaryCta: string
@@ -87,6 +106,10 @@ export type DownloadContent = {
     screenshotTitle: string
     screenshotDescription: string
     screenshotNote: string
+    platformsTitle: string
+    platformsNote: string
+    unrelatedNote: string
+    platforms: DownloadPlatform[]
     metaTitle: string
     screenshots: DownloadScreenshot[]
   }
@@ -103,6 +126,7 @@ export type Translation = {
     brandTagline: string
     highlights: string
     features: string
+    safety: string
     download: string
     faq: string
     docs: string
@@ -120,18 +144,20 @@ export type Translation = {
     language: string
   }
   hero: {
-    kicker: string
     title: string
     subtitle: string
     primaryCta: string
-    secondaryCta: string
-    chips: string[]
-    stats: HeroStat[]
-    liveLabel: string
-    liveTitle: string
-    liveSummary: string
-    liveBadges: string[]
-    liveTimeline: TimelineEvent[]
+    besideCta: string
+    disclaimer: string
+  }
+  home: {
+    cardsTitle: string
+    heroImageAlt: string
+    cards: HomeCard[]
+    contrastTitle: string
+    contrast: HomeContrast[]
+    downloadTitle: string
+    downloadCta: string
   }
   highlights: {
     kicker: string

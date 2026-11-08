@@ -10,9 +10,9 @@
 
 Pavilion brings product explanations, downloads, and getting-started docs into one place for people exploring a local AI agent harness. To run an agent, start with [Bodhi downloads](https://github.com/bigduu/Bodhi-AI/releases/latest) or [Bamboo](https://github.com/bigduu/Bamboo-agent). This repository is for editing the website, checking bilingual copy, and previewing documentation locally.
 
-The guide describes the inspected source and build workflow. It does not establish what is deployed online or which features are in every product release. The homepage execution timeline is an illustrative interface, not a recording of a live agent completing a task.
+The guide describes the inspected source and build workflow. It does not establish which features are in every product release. Homepage screenshots are captured from the desktop app.
 
-The Zenith architecture below describes current product source. Pavilion's checked-in quickstart in `src/constants.ts` and bilingual pages in `src/i18n/` still refer to legacy Lotus and describe Lotus Next as a parallel track. The linked [architecture deep-dive](./articles/zenith-architecture-overview.md) is also explicitly historical: its nine-module count and Lotus/Next parallel-track description belong to that earlier period. This README refresh does not migrate the website pages. For current source setup, follow the [Lotus Next](https://github.com/bigduu/lotus-next), [Bamboo](https://github.com/bigduu/Bamboo-agent), and [Bodhi](https://github.com/bigduu/Bodhi-AI) repository guides.
+The Zenith architecture below describes current product source. Public pages treat Lotus Next as the product UI and Zenith as eight pinned submodules. Legacy Lotus is a pinned rollback, not a second product track. The linked [architecture deep-dive](./articles/zenith-architecture-overview.md) is historical: its nine-module count and Lotus/Next parallel-track description belong to that earlier period. For current source setup, follow the [Lotus Next](https://github.com/bigduu/lotus-next), [Bamboo](https://github.com/bigduu/Bamboo-agent), and [Bodhi](https://github.com/bigduu/Bodhi-AI) repository guides.
 
 ---
 
@@ -71,7 +71,7 @@ flowchart LR
 
 ### The external narrative across four pages
 
-Every surface reinforces one message: *Bodhi AI is a desktop agent that actually does the work.* The Home hero pairs a tagline with an illustrative execution timeline; Features expands each capability with a table of contents; Download routes visitors straight to Bodhi's GitHub Releases; Docs carries first-run, power-user, architecture, API, and contributor tracks. All four are rendered from the bilingual dictionaries in `src/i18n/` — copy is data, not hard-coded JSX. Unknown routes fall back to Home.
+Every surface reinforces one message: *Bodhi is a local desktop agent on your machine — not a web chat.* The home hero says that above the fold and sends the primary button to GitHub Releases. Features expands each capability, including safety and permissions. Download lists macOS, Windows, and Linux installers on the latest release. Docs carries first-run, architecture, API, and contributor tracks. All four are rendered from the bilingual dictionaries in `src/i18n/`. Unknown routes fall back to Home.
 
 ### Bilingual-first
 
@@ -131,8 +131,20 @@ Download entry: https://github.com/bigduu/Bodhi-AI/releases/latest
 
 ---
 
+## GitHub Pages
+
+The production host is the project site [https://bigduu.github.io/Pavilion/](https://bigduu.github.io/Pavilion/). `vite.config.ts` sets `base` to `/Pavilion/`, and the React Router basename follows that prefix. `npm run dev` and `npm run preview` also serve under `/Pavilion/`.
+
+[`.github/workflows/deploy-pages.yml`](./.github/workflows/deploy-pages.yml) runs `npm ci`, `npm test`, and `npm run build` on pull requests and on pushes to `main`. Pushes to `main` upload `dist/` and deploy with GitHub Actions. The build copies `dist/index.html` to `dist/404.html` so a reload of `/Pavilion/features`, `/Pavilion/download`, or `/Pavilion/docs` still boots the client router.
+
+### One-time Pages setting
+
+This repository cannot turn Pages on by itself if the setting is still disabled. After this workflow is on `main`, a repository admin opens **Settings → Pages → Build and deployment** and sets **Source** to **GitHub Actions**. The next push to `main` (or a manual run of "Deploy GitHub Pages") publishes the site. Leave the repository website link on [Bodhi Releases](https://github.com/bigduu/Bodhi-AI/releases/latest) until that first deploy succeeds, then point it at `https://bigduu.github.io/Pavilion/`.
+
+---
+
 <sub>This root guide describes the repository; public site copy lives in `src/i18n/` and `articles/`.</sub>
 
-Static hosts must fall back to `index.html` for client routes such as `/features`, `/download`, and `/docs`. Historical articles and screenshots provide context; use each product’s release notes for version-specific installation and behavior.
+Client routes are `/Pavilion/features`, `/Pavilion/download`, and `/Pavilion/docs`. GitHub Pages serves `404.html` (a copy of `index.html`) when those paths are reloaded. Historical articles provide context; use each product’s release notes for version-specific installation and behavior.
 
 Source and version evidence: [audit notes](./docs/readme-audit.md).
