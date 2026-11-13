@@ -124,7 +124,7 @@ export function DownloadPage({
             <button className="button button-primary" type="button" onClick={copyInstallCommand}>
               {copy.installer.copy}
             </button>
-            <a className="link-inline" href={BODHI_INSTALL_SCRIPT_URL} target="_blank" rel="noopener noreferrer">
+            <a className="link-inline" href={BODHI_INSTALL_SCRIPT_URL} download="install.sh">
               {copy.installer.source}
             </a>
             <span className="download-note" role="status">
