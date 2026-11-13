@@ -30,11 +30,17 @@ jobs:
           node-version: 22
           cache: npm
 
+      - name: Test the Bodhi installer
+        run: |
+          sh -n public/install.sh
+          sh scripts/test-install.sh
+
       - name: Install, test, and build
         run: |
           npm ci
           npm test
           npm run build
+          cmp public/install.sh dist/install.sh
 
       # Project Pages has no rewrite rules. Reloading /Pavilion/features
       # (and /download, /docs) serves this file with the original URL intact.

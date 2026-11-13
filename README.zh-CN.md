@@ -132,7 +132,7 @@ Zenith 是一个当前固定八个 submodule 的薄层 monorepo，Pavilion 是�
 | [**magpie**](https://github.com/bigduu/Magpie) | IM 连接器与 Bamboo service plugin |
 | [**Zenith (root)**](https://github.com/bigduu/Zenith) | monorepo 入口 + submodule 指针 + 发布列车 |
 
-下载入口：https://github.com/bigduu/Bodhi-AI/releases/latest
+Apple Silicon Mac 和使用 APT 的 Linux x64 可以在终端一键安装 Bodhi。下载页提供平台要求和手动安装包。[Bodhi 下载页](https://bigduu.github.io/Pavilion/download?lang=zh#terminal-install)
 
 ---
 

@@ -915,6 +915,35 @@ summary {
   color: var(--text-soft);
 }
 
+.install-card {
+  min-width: 0;
+  scroll-margin-top: 7rem;
+}
+
+.install-card .install-command {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.install-card > p,
+.install-actions {
+  margin-top: 0.75rem;
+}
+
+.install-actions {
+  align-items: center;
+}
+
+.install-actions button {
+  cursor: pointer;
+}
+
+@media (max-width: 720px) {
+  .install-card {
+    scroll-margin-top: 12rem;
+  }
+}
+
 .platform-table {
   width: 100%;
   margin-top: 1rem;
@@ -1110,7 +1139,8 @@ summary {
   color: var(--text-soft);
 }
 
-.doc-section pre {
+.doc-section pre,
+.install-command {
   margin-top: 1rem;
   padding: 1rem;
   border-radius: var(--radius-md);
@@ -1119,7 +1149,8 @@ summary {
   overflow-x: auto;
 }
 
-.doc-section code {
+.doc-section code,
+.install-command code {
   font-family: var(--font-mono);
   color: #dbeafe;
   font-size: 0.84rem;

@@ -1,6 +1,9 @@
+import { useState } from 'react'
 import type { Locale, Translation } from '../types'
 import {
   BODHI_GITHUB_URL,
+  BODHI_INSTALL_COMMAND,
+  BODHI_INSTALL_SCRIPT_URL,
   BODHI_LATEST_RELEASE_URL,
   BODHI_RELEASES_URL,
 } from '../constants'
@@ -25,6 +28,16 @@ export function DownloadPage({
   const docsFirstRunUrl = buildUrl('/docs', locale, 'first-run')
 
   const copy = content.download.page
+  const [copyStatus, setCopyStatus] = useState<'copied' | 'copyFailed' | null>(null)
+
+  async function copyInstallCommand() {
+    try {
+      await navigator.clipboard.writeText(BODHI_INSTALL_COMMAND)
+      setCopyStatus('copied')
+    } catch {
+      setCopyStatus('copyFailed')
+    }
+  }
 
   return (
     <div className="page-shell download-shell">
@@ -101,6 +114,27 @@ export function DownloadPage({
           </div>
         </section>
 
+        <section className="panel section-card install-card" id="terminal-install">
+          <h2>{copy.installer.title}</h2>
+          <p className="download-note">{copy.installer.platforms}</p>
+          <pre className="install-command" tabIndex={0}>
+            <code>{BODHI_INSTALL_COMMAND}</code>
+          </pre>
+          <div className="hero-actions install-actions">
+            <button className="button button-primary" type="button" onClick={copyInstallCommand}>
+              {copy.installer.copy}
+            </button>
+            <a className="link-inline" href={BODHI_INSTALL_SCRIPT_URL} target="_blank" rel="noopener noreferrer">
+              {copy.installer.source}
+            </a>
+            <span className="download-note" role="status">
+              {copyStatus && copy.installer[copyStatus]}
+            </span>
+          </div>
+          <p className="download-note">{copy.installer.macos}</p>
+          <p className="download-note">{copy.installer.linux}</p>
+        </section>
+
         <section className="panel section-card" id="platforms">
           <h2>{copy.platformsTitle}</h2>
           <p className="download-note">{copy.platformsNote}</p>
@@ -118,7 +152,6 @@ export function DownloadPage({
               ))}
             </tbody>
           </table>
-          <p className="download-note">{copy.unrelatedNote}</p>
         </section>
 
         <section className="panel section-card screenshot-section">

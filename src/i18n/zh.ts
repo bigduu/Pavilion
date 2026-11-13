@@ -222,13 +222,22 @@ export const zh: Translation = {
         '这些截图直接来自真实运行中的 Bodhi。真实产品界面比抽象插画更有说服力。',
       screenshotNote:
         '这组官方截图优先展示设置中心、环境变量、指标、MCP 与技能系统等更能体现产品深度的功能面。',
-      platformsTitle: '按平台安装',
-      platformsNote: '每一行都打开 GitHub 上的最新 Release。安装包只认这个页面和 Homebrew。',
-      unrelatedNote: '与 bodhi-ai.vercel.app 无关 · 官方下载只认 GitHub Releases / Homebrew',
+      installer: {
+        title: '终端一键安装',
+        platforms: '适用于 macOS 13.5 及以上的 Apple Silicon Mac，以及使用 APT 的 Linux x64。请以当前桌面用户运行。',
+        copy: '复制命令',
+        copied: '已复制命令',
+        copyFailed: '请选择命令并手动复制。',
+        source: '查看安装脚本',
+        macos: '当前 macOS 应用使用临时签名。如果首次启动被拦截，请前往「系统设置 → 隐私与安全性 → 仍要打开」。',
+        linux: 'Linux 通过 APT 安装官方 .deb 及其依赖。请确保已有 Python 3 或 jq，并按终端提示授权和确认安装。',
+      },
+      platformsTitle: '其他安装方式',
+      platformsNote: '最新 GitHub Release 提供 DMG、Windows 安装程序和 Linux 安装包。',
       platforms: [
         { platform: 'macOS Apple Silicon', method: 'Homebrew cask / .dmg' },
         { platform: 'Windows x64', method: 'setup.exe' },
-        { platform: 'Linux x64', method: 'AppImage / deb / rpm' },
+        { platform: 'Linux x64', method: 'DEB / RPM' },
       ],
       metaTitle: '下载 Bodhi · 最新版本与真实产品界面',
       screenshots: [
