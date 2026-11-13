@@ -228,7 +228,7 @@ export const zh: Translation = {
         copy: '复制命令',
         copied: '已复制命令',
         copyFailed: '请选择命令并手动复制。',
-        source: '查看安装脚本',
+        source: '下载安装脚本',
         macos: '当前 macOS 应用使用临时签名。如果首次启动被拦截，请前往「系统设置 → 隐私与安全性 → 仍要打开」。',
         linux: 'Linux 通过 APT 安装官方 .deb 及其依赖。请确保已有 Python 3 或 jq，并按终端提示授权和确认安装。',
       },

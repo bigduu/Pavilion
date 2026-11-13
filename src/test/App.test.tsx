@@ -76,10 +76,9 @@ describe('Pavilion app', () => {
     renderAt('/download?lang=zh')
     expect(screen.getByRole('heading', { name: zh.download.page.installer.title })).toBeInTheDocument()
     expect(screen.getByText(BODHI_INSTALL_COMMAND)).toBeInTheDocument()
-    expect(screen.getByRole('link', { name: zh.download.page.installer.source })).toHaveAttribute(
-      'href',
-      BODHI_INSTALL_SCRIPT_URL,
-    )
+    const scriptLink = screen.getByRole('link', { name: zh.download.page.installer.source })
+    expect(scriptLink).toHaveAttribute('href', BODHI_INSTALL_SCRIPT_URL)
+    expect(scriptLink).toHaveAttribute('download', 'install.sh')
     await user.click(screen.getByRole('button', { name: zh.download.page.installer.copy }))
     expect(screen.getByRole('status')).toHaveTextContent(zh.download.page.installer.copied)
     expect(await navigator.clipboard.readText()).toBe(BODHI_INSTALL_COMMAND)

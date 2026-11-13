@@ -228,7 +228,7 @@ export const en: Translation = {
         copy: 'Copy command',
         copied: 'Command copied',
         copyFailed: 'Select the command and copy it manually.',
-        source: 'View install script',
+        source: 'Download install script',
         macos: 'The macOS app is currently ad-hoc signed. If macOS blocks the first launch, use System Settings → Privacy & Security → Open Anyway.',
         linux: 'On Linux, APT installs the official .deb and its dependencies. Have Python 3 or jq available, and follow the sudo and APT prompts.',
       },
