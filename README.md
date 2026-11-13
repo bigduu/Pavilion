@@ -127,7 +127,9 @@ Zenith is a thin monorepo that currently pins eight submodules; Pavilion is its 
 | [**magpie**](https://github.com/bigduu/Magpie) | IM connector and Bamboo service plugin |
 | [**Zenith (root)**](https://github.com/bigduu/Zenith) | monorepo entry + submodule pointers + release train |
 
-Download entry: https://github.com/bigduu/Bodhi-AI/releases/latest
+Install Bodhi from the terminal on Apple Silicon macOS or APT-based Linux x64.
+The download page lists platform requirements and manual packages.
+[Bodhi download page](https://bigduu.github.io/Pavilion/download?lang=en#terminal-install)
 
 ---
 

@@ -2,6 +2,8 @@ export const LANGUAGE_STORAGE_KEY = 'pavilion-locale'
 export const BODHI_GITHUB_URL = 'https://github.com/bigduu/Bodhi-AI'
 export const BODHI_RELEASES_URL = 'https://github.com/bigduu/Bodhi-AI/releases'
 export const BODHI_LATEST_RELEASE_URL = 'https://github.com/bigduu/Bodhi-AI/releases/latest'
+export const BODHI_INSTALL_SCRIPT_URL = 'https://bigduu.github.io/Pavilion/install.sh'
+export const BODHI_INSTALL_COMMAND = `curl -q --proto '=https' --proto-redir '=https' --tlsv1.2 -fsSL ${BODHI_INSTALL_SCRIPT_URL} | sh`
 
 // Language-neutral tech tokens (bamboo=Rust, lotus-next=React/Vite, bodhi=Tauri,
 // bodhi-server=Go/PostgreSQL, plus WebSocket, legacy SSE fallback, MCP, and workflows).

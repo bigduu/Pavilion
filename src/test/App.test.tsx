@@ -3,6 +3,7 @@ import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { MemoryRouter } from 'react-router-dom'
 import App from '../App'
+import { BODHI_INSTALL_COMMAND, BODHI_INSTALL_SCRIPT_URL } from '../constants'
 import { en, zh } from './fixtures'
 
 function renderAt(path: string) {
@@ -67,6 +68,21 @@ describe('Pavilion app', () => {
     expect(
       screen.getByRole('link', { name: en.download.page.primaryCta }),
     ).toBeInTheDocument()
+  })
+
+  it('copies the published installer command from the Chinese download page', async () => {
+    const user = userEvent.setup()
+    window.history.replaceState({}, '', '/download?lang=zh')
+    renderAt('/download?lang=zh')
+    expect(screen.getByRole('heading', { name: zh.download.page.installer.title })).toBeInTheDocument()
+    expect(screen.getByText(BODHI_INSTALL_COMMAND)).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: zh.download.page.installer.source })).toHaveAttribute(
+      'href',
+      BODHI_INSTALL_SCRIPT_URL,
+    )
+    await user.click(screen.getByRole('button', { name: zh.download.page.installer.copy }))
+    expect(screen.getByRole('status')).toHaveTextContent(zh.download.page.installer.copied)
+    expect(await navigator.clipboard.readText()).toBe(BODHI_INSTALL_COMMAND)
   })
 
   it('navigates from home to features via a client-side link without a full reload', async () => {

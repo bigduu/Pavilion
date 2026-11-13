@@ -222,13 +222,22 @@ export const en: Translation = {
         'These images come from a real Bodhi instance. Real product screens prove the product is already working.',
       screenshotNote:
         'This set focuses on deeper surfaces: settings, env vars, metrics, MCP, and skills.',
-      platformsTitle: 'Install by platform',
-      platformsNote: 'Each row opens the latest GitHub Release. Installers are that page and Homebrew only.',
-      unrelatedNote: 'Unrelated to bodhi-ai.vercel.app · Official downloads: GitHub Releases / Homebrew',
+      installer: {
+        title: 'Install from your terminal',
+        platforms: 'For Apple Silicon Macs with macOS 13.5 or later and APT-based Linux x64. Run this command as your desktop user.',
+        copy: 'Copy command',
+        copied: 'Command copied',
+        copyFailed: 'Select the command and copy it manually.',
+        source: 'View install script',
+        macos: 'The macOS app is currently ad-hoc signed. If macOS blocks the first launch, use System Settings → Privacy & Security → Open Anyway.',
+        linux: 'On Linux, APT installs the official .deb and its dependencies. Have Python 3 or jq available, and follow the sudo and APT prompts.',
+      },
+      platformsTitle: 'Other installation options',
+      platformsNote: 'Find the DMG, Windows installer and Linux packages in the latest GitHub Release.',
       platforms: [
         { platform: 'macOS Apple Silicon', method: 'Homebrew cask / .dmg' },
         { platform: 'Windows x64', method: 'setup.exe' },
-        { platform: 'Linux x64', method: 'AppImage / deb / rpm' },
+        { platform: 'Linux x64', method: 'DEB / RPM' },
       ],
       metaTitle: 'Download Bodhi · Latest release and real product surfaces',
       screenshots: [

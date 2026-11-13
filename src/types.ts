@@ -106,9 +106,18 @@ export type DownloadContent = {
     screenshotTitle: string
     screenshotDescription: string
     screenshotNote: string
+    installer: {
+      title: string
+      platforms: string
+      copy: string
+      copied: string
+      copyFailed: string
+      source: string
+      macos: string
+      linux: string
+    }
     platformsTitle: string
     platformsNote: string
-    unrelatedNote: string
     platforms: DownloadPlatform[]
     metaTitle: string
     screenshots: DownloadScreenshot[]
